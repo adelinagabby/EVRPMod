@@ -1,0 +1,4 @@
+Scaffold-DbContext  "Server=DESKTOP-IDS9RKI;Initial Catalog=EVRPMod;Integrated Security=True;Trusted_Connection=True;" -Provider Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models\DB -force -UseDatabaseNames
+
+
+Scaffold-DbContext "Server=DESKTOP-IDS9RKI;Database=EVRPMod;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer

@@ -2,8 +2,8 @@
 @{
     ViewBag.Title = "Транспортные средства";
 }
-
-    <h2>Транспортные средства</h2>
+@*<link href="~/Content/style.css" rel="stylesheet" />*@
+<h2>Транспортные средства</h2>
 @*<link href="~/bootstrap-4.4.1-dist/bootstrap-4.4.1-dist/css/bootstrap.min.css" rel="stylesheet" />*@
 <link href="~/font-awesome-4.7.0/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" />
 <div id="vehicleData" class="container">
@@ -11,7 +11,6 @@
         <table id="table" class="table table-sm  table-bordered table-hover" style="padding:100px 0px">
             <thead class="thead-dark" id="thead"></thead>
             <tbody name="tbody" id="tbody">
-
             </tbody>
         </table>
     </div>
@@ -55,7 +54,44 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="editModalLong" tabindex="-1" role="dialog" aria-labelledby="editModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLongTitle">Редактирование информации о транспортном средстве</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="editForm">
+                <div class="modal-body">
 
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Вид</label>
+                        <input type="text" class="form-control" id="editTypeOfVehicle" name="editTypeOfVehicle" placeholder="Введите вид транспортного средства">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Грузоподъемность</label>
+                        <input type="text" class="form-control" id="editCapacity" name="editCapacity" placeholder="Введите грузоподъемность">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Обслуживание</label>
+                        <input type="text" class="form-control" id="editServiceCost" name="editServiceCost" placeholder="Введите стоимость обслуживания">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Стоимость платных дорог</label>
+                        <input type="text" class="form-control" id="editCostRoads" name="editCostRoads" placeholder="Введите стоимость платных дорог">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="editObject" type="submit" class="btn btn-primary">Изменить</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отменить</button>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 
 <div class="modal fade" id="messageModalLong" tabindex="-1" role="dialog" aria-labelledby="messageModalLongTitle" aria-hidden="true">
@@ -81,13 +117,17 @@
 </div>
 @*<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>*@
 <script src="~/Scripts/jquery-3.4.1.min.js"></script>
-<script src="~/bootstrap-4.4.1-dist/bootstrap-4.4.1-dist/js/bootstrap.min.js"></script>
+@*<script src="~/bootstrap-4.4.1-dist/bootstrap-4.4.1-dist/js/bootstrap.min.js"></script>*@
+
 <script>
 
 
     var dataHead = ['Вид', 'Грузоподъемность', 'Обслуживание (руб.)', 'Стоимость платных дорог (руб.)', 'Изменить', 'Удалить'];
 
-
+    $('.messageClose').on('click', function () {
+        $('#messageModalLong').modal('hide');
+        window.location.reload()
+    })
 
     $('.table thead').append('<tr> <th>' + dataHead[0] + '</th> <th>'
         + dataHead[1] + '</th> <th>'
@@ -102,10 +142,10 @@
         success: function (data) {
             if(data!=null)
             $.each(data, function (index, row) {
-                $('.table tbody').append('<tr> <td>' + row.Name + '</td> <td>'
-                    + row.Capacity + '</td> <td>'
-                    + row.ServiceCost + '</td> <td>'
-                    + row.CostRoads
+                $('.table tbody').append('<tr> <td>' + row.name + '</td> <td>'
+                    + row.capacity + '</td> <td>'
+                    + row.serviceCost + '</td> <td>'
+                    + row.costRoads
                     + '</td> <td  data-id=' + row.id + '> <button class="btn" id="editBtn"><i class="fa fa-edit" aria-hidden="true"></i></button> </td>'
                     + '<td  data-id=' + row.id +'> <button class="btn" id="deleteBtn"><i class="fa fa-times" aria-hidden="true"></i></button> </td> </tr>')
             });
@@ -113,5 +153,105 @@
         error: function (data) {
             alert('Error occurred');
         }
+    });
+
+    $("#addNewObject").on('click', function (e) {
+     $.ajax({
+            url: "@Url.Action("AddVehiceData", "Home")",
+            type: "POST",
+                data: {
+                    Name: $('#addTypeOfVehicle').val(),
+                    Capacity: $('#addCapacity').val(),
+                    ServiceCost: $('#addServiceCost').val(),
+                    CostRoads: $('#addCostRoads').val(),
+            },
+            success: function (data) {
+                $('#message').text(data);
+                $('#messageModalLong').modal('show');
+            },
+            error: function (data) {
+                alert('Error occurred');
+            }
+     });
+    })
+
+
+     $('.table').on('click', 'td', function () {
+        var colIndex = $(this).parent().children().index($(this));
+        var rowIndex = $(this).parent().parent().children().index($(this).parent());
+
+        var id = $(this).data("id");
+
+        if (colIndex == 4) {
+
+            editId = id;
+
+
+            $.ajax({
+                url: "@Url.Action("GetVehiceDataForId", "Home")",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    editTypeOfVehicle = data.name;
+                    editCapacity = data.capacity;
+                    editServiceCost = data.serviceCost;
+                    editCostRoads = data.costRoads;
+                    $('#editTypeOfVehicle').val(data.name);
+                    $('#editCapacity').val(data.capacity);
+                    $('#editServiceCost').val(data.serviceCost);
+                    $('#editCostRoads').val(data.costRoads);
+                    $('#editModalLong').modal('show');
+                },
+                error: function (data) {
+                    alert('Error occurred');
+                }
+            });
+        }
+
+        if (colIndex == 5) {
+            $.ajax({
+                url: "@Url.Action("DeleteVehiceData", "Home")",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    $('#message').text(data);
+                    $('#messageModalLong').modal('show');
+                    //window.location.reload()
+                },
+                error: function (data) {
+                    alert('Error occurred');
+                }
+            });
+        }
+
+     });
+
+    $("#editObject").on('click', function (e) {
+          $.ajax({
+                url: "@Url.Action("EditVehiceData", "Home")",
+                type: "POST",
+                    data: {
+                        id: editId,
+                        oldName: editTypeOfVehicle,
+                        oldCapacity: editCapacity,
+                        oldServiceCost: editServiceCost,
+                        oldCostRoads: editCostRoads,
+                        newName: $('#editTypeOfVehicle').val(),
+                        newCapacity: $('#editCapacity').val(),
+                        newServiceCost: $('#editServiceCost').val(),
+                        newCostRoads: $('#editCostRoads').val(),
+                },
+                success: function (data) {
+                    $('#message').text(data);
+                    $('#messageModalLong').modal('show');
+                },
+                error: function (data) {
+                    alert('Error occurred');
+                }
+            });
     });
 </script>

@@ -1,0 +1,117 @@
+﻿
+@{
+    ViewBag.Title = "Транспортные средства";
+}
+
+    <h2>Транспортные средства</h2>
+@*<link href="~/bootstrap-4.4.1-dist/bootstrap-4.4.1-dist/css/bootstrap.min.css" rel="stylesheet" />*@
+<link href="~/font-awesome-4.7.0/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+<div id="vehicleData" class="container">
+    <div class="table-responsive">
+        <table id="table" class="table table-sm  table-bordered table-hover" style="padding:100px 0px">
+            <thead class="thead-dark" id="thead"></thead>
+            <tbody name="tbody" id="tbody">
+
+            </tbody>
+        </table>
+    </div>
+    <button id="add" class="btn" data-toggle="modal" data-target="#addModalLong" style="float:right"> <i class="fa fa-plus" aria-hidden="true"></i> Добавить</button>
+</div>
+
+<div class="modal fade" id="addModalLong" tabindex="-1" role="dialog" aria-labelledby="addModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addModalLongTitle">Добавление информации о новом транспортном средстве</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="addForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Вид</label>
+                        <input type="text" class="form-control" id="addTypeOfVehicle" name="addTypeOfVehicle" placeholder="Введите вид транспортного средства">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Грузоподъемность</label>
+                        <input type="text" class="form-control" id="addCapacity" name="addCapacity" placeholder="Введите грузоподъемность">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Обслуживание</label>
+                        <input type="text" class="form-control" id="addServiceCost" name="addServiceCost" placeholder="Введите стоимость обслуживания">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Стоимость платных дорог</label>
+                        <input type="text" class="form-control" id="addCostRoads" name="addCostRoads" placeholder="Введите стоимость платных дорог">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="addNewObject" type="submit" class="btn btn-primary">Добавить</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отменить</button>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="messageModalLong" tabindex="-1" role="dialog" aria-labelledby="messageModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageModalLongTitle">Результат</h5>
+                <button type="button" class="close messageClose" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="messageForm">
+                <div class="modal-body">
+                    <p id="message"> </p>
+                </div>
+
+                <div class="modal-footer">
+                    <button id="messageOk" type="submit" class=" btn btn-primary messageClose" data-dismiss="modal">Ок</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>*@
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="~/bootstrap-4.4.1-dist/bootstrap-4.4.1-dist/js/bootstrap.min.js"></script>
+<script>
+
+
+    var dataHead = ['Вид', 'Грузоподъемность', 'Обслуживание (руб.)', 'Стоимость платных дорог (руб.)', 'Изменить', 'Удалить'];
+
+
+
+    $('.table thead').append('<tr> <th>' + dataHead[0] + '</th> <th>'
+        + dataHead[1] + '</th> <th>'
+        + dataHead[2]
+        + '</th> <th>' + dataHead[3] + '</th> <th>' + dataHead[4] + '</th> <th>' + dataHead[5] +'</th> </th>')
+
+    $.ajax({
+        url: "@Url.Action("GetVehiceData", "Home")",
+        type: "POST",
+        data: {
+        },
+        success: function (data) {
+            if(data!=null)
+            $.each(data, function (index, row) {
+                $('.table tbody').append('<tr> <td>' + row.Name + '</td> <td>'
+                    + row.Capacity + '</td> <td>'
+                    + row.ServiceCost + '</td> <td>'
+                    + row.CostRoads
+                    + '</td> <td  data-id=' + row.id + '> <button class="btn" id="editBtn"><i class="fa fa-edit" aria-hidden="true"></i></button> </td>'
+                    + '<td  data-id=' + row.id +'> <button class="btn" id="deleteBtn"><i class="fa fa-times" aria-hidden="true"></i></button> </td> </tr>')
+            });
+        },
+        error: function (data) {
+            alert('Error occurred');
+        }
+    });
+</script>

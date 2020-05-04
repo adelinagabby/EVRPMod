@@ -1,0 +1,262 @@
+﻿
+@{
+    ViewBag.Title = "Заказы";
+}
+
+<h2>Заказы</h2>
+<link href="~/font-awesome-4.7.0/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+<div id="vehicleData" class="container">
+    <div class="table-responsive">
+        <table id="table" class="table table-sm  table-bordered table-hover" style="padding:100px 0px">
+            <thead class="thead-dark" id="thead"></thead>
+            <tbody name="tbody" id="tbody">
+            </tbody>
+        </table>
+    </div>
+    <button id="add" class="btn" data-toggle="modal" data-target="#addModalLong" style="float:right"> <i class="fa fa-plus" aria-hidden="true"></i> Добавить</button>
+</div>
+
+<div class="modal fade" id="addModalLong" tabindex="-1" role="dialog" aria-labelledby="addModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addModalLongTitle">Добавление информации о новом заказе</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="addForm">
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Широта</label>
+                        <input type="text" class="form-control" id="addLatitude" name="addLatitude" placeholder="Введите широту">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Долгота</label>
+                        <input type="text" class="form-control" id="addLongitude" name="addLongitude" placeholder="Введите долготу">
+                    </div>
+                
+                <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">Тип комплекта</label>
+                    <input type="text" class="form-control" id="addKitType" name="addKitType" placeholder="Введите тип комплекта">
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">Количество</label>
+                    <input type="text" class="form-control" id="addCount" name="addCount" placeholder="Введите количество">
+                </div>
+                <div class="modal-footer">
+                    <button id="addNewObject" type="submit" class="btn btn-primary">Добавить</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отменить</button>
+                </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="editModalLong" tabindex="-1" role="dialog" aria-labelledby="editModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLongTitle">Редактирование информации о заказе</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="editForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Широта</label>
+                        <input type="text" class="form-control" id="editLatitude" name="addLatitude" placeholder="Введите широту">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Долгота</label>
+                        <input type="text" class="form-control" id="editLongitude" name="addLongitude" placeholder="Введите долготу">
+                    </div>
+               
+                <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">Тип комплекта</label>
+                    <input type="text" class="form-control" id="editKitType" name="addKitType" placeholder="Введите тип комплекта">
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">Количество</label>
+                    <input type="text" class="form-control" id="editCount" name="addCount" placeholder="Введите количество">
+                </div>
+                <div class="modal-footer">
+                    <button id="editObject" type="submit" class="btn btn-primary">Изменить</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отменить</button>
+                </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="messageModalLong" tabindex="-1" role="dialog" aria-labelledby="messageModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageModalLongTitle">Результат</h5>
+                <button type="button" class="close messageClose" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="messageForm">
+                <div class="modal-body">
+                    <p id="message"> </p>
+                </div>
+
+                <div class="modal-footer">
+                    <button id="messageOk" type="submit" class=" btn btn-primary messageClose" data-dismiss="modal">Ок</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>*@
+@*<script src="~/Scripts/jquery-3.4.1.min.js"></script>*@
+@*<script src="~/bootstrap-4.4.1-dist/bootstrap-4.4.1-dist/js/bootstrap.min.js"></script>*@
+@Scripts.Render("~/bundles/jquery")
+<script>
+
+
+    var dataHead = ['Широта', 'Долгота','Комплект', 'Количество', 'Изменить', 'Удалить'];
+
+    $('.messageClose').on('click', function () {
+        $('#messageModalLong').modal('hide');
+        //window.location.reload()
+    })
+
+    $('.table thead').append('<tr> <th>' + dataHead[0] + '</th> <th>'
+        + dataHead[1] + '</th> <th>'
+        + dataHead[2]
+        + '</th> <th>' + dataHead[3] + '</th> <th>' + dataHead[4] + '</th> <th>' + dataHead[5] +'</th> </th>')
+
+    $.ajax({
+        url: "@Url.Action("GetCustomerData", "CustomerData")",
+        type: "POST",
+        data: {
+        },
+        success: function (data) {
+            if(data!=null)
+            $.each(data, function (index, row) {
+                $('.table tbody').append('<tr> <td>' 
+                    + row.latitude + '</td> <td>'
+                    + row.longitude + '</td> <td>'
+                    + row.kitType + '</td> <td>'
+                    + row.count 
+                    + '</td> <td  data-id=' + row.id + '> <button class="btn" id="editBtn"><i class="fa fa-edit" aria-hidden="true"></i></button> </td>'
+                    + '<td  data-id=' + row.id +'> <button class="btn" id="deleteBtn"><i class="fa fa-times" aria-hidden="true"></i></button> </td> </tr>')
+            });
+        },
+        error: function (data) {
+            alert('Error occurred');
+        }
+    });
+
+    $("#addNewObject").on('click', function (e) {
+     $.ajax({
+            url: "@Url.Action("AddCustomerData", "CustomerData")",
+            type: "POST",
+                data: {
+                 
+                    latitude: $('#addLatitude').val(),
+                    longitude: $('#addLongitude').val(),
+                    kitType: $('#addKitType').val(),
+                    count: $('#addCount').val(),
+            },
+            success: function (data) {
+                $('#message').text(data);
+                $('#messageModalLong').modal('show');
+            },
+            error: function (data) {
+                alert('Error occurred');
+            }
+     });
+    })
+
+
+     $('.table').on('click', 'td', function () {
+        var colIndex = $(this).parent().children().index($(this));
+        var rowIndex = $(this).parent().parent().children().index($(this).parent());
+
+        var id = $(this).data("id");
+
+        if (colIndex == 4) {
+
+            editId = id;
+
+
+            $.ajax({
+                url: "@Url.Action("GetCustomerDataForId", "CustomerData")",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    
+                    editLatitude = data.latitude;
+                    editLongitude = data.longitude;
+                    editKitType = data.kitType;
+                    editCount = data.count;
+                    
+                    $('#editLatitude').val(data.latitude);
+                    $('#editLongitude').val(data.longitude);
+                    $('#editKitType').val(data.kitType);
+                    $('#editCount').val(data.count);
+                    $('#editModalLong').modal('show');
+                },
+                error: function (data) {
+                    alert('Error occurred');
+                }
+            });
+        }
+
+        if (colIndex == 5) {
+            $.ajax({
+                url: "@Url.Action("DeleteCustomerData", "CustomerData")",
+                type: "POST",
+                data: {
+                    id: id
+                },
+                success: function (data) {
+                    $('#message').text(data);
+                    $('#messageModalLong').modal('show');
+                    //window.location.reload()
+                },
+                error: function (data) {
+                    alert('Error occurred');
+                }
+            });
+        }
+
+     });
+
+    $("#editObject").on('click', function (e) {
+          $.ajax({
+                url: "@Url.Action("EditCustomerData", "CustomerData")",
+                type: "POST",
+                    data: {
+                        id: editId,
+                        
+                        oldLatitude: editLatitude,
+                        oldLongitude: editLongitude,
+                        oldKitType: editKitType,
+                        oldCount: editCount,
+
+                        newLatitude: $('#editLatitude').val(),
+                        newLongitude: $('#editLongitude').val(),
+                        newKitType: $('#editKitType').val(),
+                        newCount: $('#editCount').val(),
+                },
+                success: function (data) {
+                    $('#message').text(data);
+                    $('#messageModalLong').modal('show');
+                },
+                error: function (data) {
+                    alert('Error occurred');
+                }
+            });
+    });
+</script>

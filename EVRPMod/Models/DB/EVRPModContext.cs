@@ -19,9 +19,7 @@ namespace EVRPMod.Models.DB
         public virtual DbSet<depotData> depotData { get; set; }
         public virtual DbSet<kitType> kitType { get; set; }
         public virtual DbSet<vehicleData> vehicleData { get; set; }
-        public virtual DbSet<vehicleData2> vehicleData2 { get; set; }
-        public virtual DbSet<vehicleData3> vehicleData3 { get; set; }
-        public virtual DbSet<vehicleData4> vehicleData4 { get; set; }
+        public virtual DbSet<vehicleInDepot> vehicleInDepot { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -36,10 +34,6 @@ namespace EVRPMod.Models.DB
         {
             modelBuilder.Entity<customerData>(entity =>
             {
-                entity.HasNoKey();
-
-                entity.Property(e => e.id).ValueGeneratedOnAdd();
-
                 entity.Property(e => e.latitude).HasMaxLength(50);
 
                 entity.Property(e => e.longitude).HasMaxLength(50);
@@ -47,10 +41,6 @@ namespace EVRPMod.Models.DB
 
             modelBuilder.Entity<depotData>(entity =>
             {
-                entity.HasNoKey();
-
-                entity.Property(e => e.id).ValueGeneratedOnAdd();
-
                 entity.Property(e => e.latitude).HasMaxLength(50);
 
                 entity.Property(e => e.longitude).HasMaxLength(50);
@@ -60,37 +50,10 @@ namespace EVRPMod.Models.DB
 
             modelBuilder.Entity<kitType>(entity =>
             {
-                entity.HasNoKey();
-
-                entity.Property(e => e.id).ValueGeneratedOnAdd();
-
                 entity.Property(e => e.name).HasMaxLength(50);
             });
 
             modelBuilder.Entity<vehicleData>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.Property(e => e.id).ValueGeneratedOnAdd();
-
-                entity.Property(e => e.name).HasMaxLength(50);
-            });
-
-            modelBuilder.Entity<vehicleData2>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.Property(e => e.name).HasMaxLength(50);
-            });
-
-            modelBuilder.Entity<vehicleData3>(entity =>
-            {
-                entity.HasNoKey();
-
-                entity.Property(e => e.name).HasMaxLength(50);
-            });
-
-            modelBuilder.Entity<vehicleData4>(entity =>
             {
                 entity.Property(e => e.name).HasMaxLength(50);
             });

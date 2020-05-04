@@ -116,9 +116,9 @@
     </div>
 </div>
 @*<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>*@
-<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+@*<script src="~/Scripts/jquery-3.4.1.min.js"></script>*@
 @*<script src="~/bootstrap-4.4.1-dist/bootstrap-4.4.1-dist/js/bootstrap.min.js"></script>*@
-
+@Scripts.Render("~/bundles/jquery")
 <script>
 
 
@@ -126,7 +126,7 @@
 
     $('.messageClose').on('click', function () {
         $('#messageModalLong').modal('hide');
-        window.location.reload()
+        //window.location.reload()
     })
 
     $('.table thead').append('<tr> <th>' + dataHead[0] + '</th> <th>'
@@ -135,7 +135,7 @@
         + '</th> <th>' + dataHead[3] + '</th> <th>' + dataHead[4] + '</th> <th>' + dataHead[5] +'</th> </th>')
 
     $.ajax({
-        url: "@Url.Action("GetVehiceData", "Home")",
+        url: "@Url.Action("GetVehiceData", "VehicleData")",
         type: "POST",
         data: {
         },
@@ -157,7 +157,7 @@
 
     $("#addNewObject").on('click', function (e) {
      $.ajax({
-            url: "@Url.Action("AddVehiceData", "Home")",
+            url: "@Url.Action("AddVehiceData", "VehicleData")",
             type: "POST",
                 data: {
                     Name: $('#addTypeOfVehicle').val(),
@@ -188,7 +188,7 @@
 
 
             $.ajax({
-                url: "@Url.Action("GetVehiceDataForId", "Home")",
+                url: "@Url.Action("GetVehiceDataForId", "VehicleData")",
                 type: "POST",
                 data: {
                     id: id
@@ -212,7 +212,7 @@
 
         if (colIndex == 5) {
             $.ajax({
-                url: "@Url.Action("DeleteVehiceData", "Home")",
+                url: "@Url.Action("DeleteVehiceData", "VehicleData")",
                 type: "POST",
                 data: {
                     id: id
@@ -232,7 +232,7 @@
 
     $("#editObject").on('click', function (e) {
           $.ajax({
-                url: "@Url.Action("EditVehiceData", "Home")",
+                url: "@Url.Action("EditVehiceData", "VehicleData")",
                 type: "POST",
                     data: {
                         id: editId,

@@ -223,18 +223,21 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\CustomerDataController.cs" />
+    <Compile Include="Controllers\DepotDataController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\KitTypeController.cs" />
+    <Compile Include="Controllers\VehicleDataController.cs" />
+    <Compile Include="Controllers\VehicleInDepotController.cs" />
     <Compile Include="Models\DB\customerData.cs" />
     <Compile Include="Models\DB\depotData.cs" />
     <Compile Include="Models\DB\EVRPModContext.cs" />
     <Compile Include="Models\DB\kitType.cs" />
     <Compile Include="Models\DB\vehicleData.cs" />
-    <Compile Include="Models\DB\vehicleData2.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\DB\vehicleData3.cs" />
-    <Compile Include="Models\DB\vehicleData4.cs" />
+    <Compile Include="Models\DB\vehicleInDepot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -332,7 +335,11 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Home\VehicleData.cshtml" />
+    <Content Include="Views\VehicleData\VehicleData.cshtml" />
+    <Content Include="Views\DepotData\DepotData.cshtml" />
+    <Content Include="Views\CustomerData\CustomerData.cshtml" />
+    <Content Include="Views\KitType\KitType.cshtml" />
+    <Content Include="Views\VehicleInDepot\VehicleInDepot.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

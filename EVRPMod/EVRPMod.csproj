@@ -223,12 +223,14 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="GeneticAlgoritm.cs" />
     <Compile Include="Controllers\CustomerDataController.cs" />
     <Compile Include="Controllers\DepotDataController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\KitTypeController.cs" />
     <Compile Include="Controllers\VehicleDataController.cs" />
     <Compile Include="Controllers\VehicleInDepotController.cs" />
+    <Compile Include="MethodKiniRayfa.cs" />
     <Compile Include="Models\DB\customerData.cs" />
     <Compile Include="Models\DB\depotData.cs" />
     <Compile Include="Models\DB\EVRPModContext.cs" />

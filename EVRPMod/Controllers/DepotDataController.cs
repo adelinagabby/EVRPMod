@@ -35,7 +35,7 @@ namespace EVRPMod.Controllers
             return Json(Obj);
         }
         [HttpPost]
-        public ActionResult AddDepotData(string name, string latitude, string longitude)
+        public ActionResult AddDepotData(string name, string latitude, string longitude, string address)
         {
 
             EVRPModContext db = new EVRPModContext();
@@ -60,6 +60,7 @@ namespace EVRPMod.Controllers
                     name = name,
                     latitude = latitude,
                     longitude = longitude,
+                    address = address,
                 };
 
 
@@ -67,13 +68,14 @@ namespace EVRPMod.Controllers
 
                 db.SaveChanges();
 
-                Result = "Новый ";
+                Result = "Новое депо добавлено";
 
                 return Json(Result);
             }
         }
         [HttpPost]
-        public ActionResult EditDepotData(string id, string newName, string newLatitude, string newLongitude, string oldName, string oldLatitude, string oldLongitude)
+        public ActionResult EditDepotData(string id, string newName, string newLatitude, 
+            string newLongitude, string oldName, string oldLatitude, string oldLongitude, string address)
         {
 
             EVRPModContext db = new EVRPModContext();
@@ -100,6 +102,7 @@ namespace EVRPMod.Controllers
                     ObjEdit.name = newName;
                     ObjEdit.latitude = newLatitude;
                     ObjEdit.longitude = newLongitude;
+                    ObjEdit.address = address;
                     db.SaveChanges();
 
                 }

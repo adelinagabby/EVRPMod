@@ -69,7 +69,7 @@ namespace EVRPMod.Controllers
 
                 db.SaveChanges();
 
-                Result = "Новый ";
+                Result = "Новое транспортное средство добавлено";
 
                 return Json(Result);
             }

@@ -3,7 +3,13 @@
     ViewBag.Title = "Депо";
 }
 
+<head>
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=f4252eab-9ec5-4695-8fed-2d8b3d4c395f&lang=ru_RU" type="text/javascript">
+
+    </script>
+</head>
 <h2>Депо</h2>
+
 <link href="~/font-awesome-4.7.0/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" />
 <div id="vehicleData" class="container">
     <div class="table-responsive">
@@ -25,95 +31,122 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+            <div id="map" style="width:400px; height:300px; padding:40px"></div>
             <form id="addForm">
-                <div class="modal-body">
+                <div class="modal-body"> 
                     <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Депо</label>
+                        <label for="recipient-name" class="col-form-label">Название депо</label>
                         <input type="text" class="form-control" id="addNameDepot" name="addNameDepot" placeholder="Введите название депо">
                     </div>
-                    <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Широта</label>
-                        <input type="text" class="form-control" id="addLatitude" name="addLatitude" placeholder="Введите широту">
-                    </div>
-                    <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Долгота</label>
-                        <input type="text" class="form-control" id="addLongitude" name="addLongitude" placeholder="Введите долготу">
-                    </div>
+ 
                 </div>
                 <div class="modal-footer">
-                    <button id="addNewObject" type="submit" class="btn btn-primary">Добавить</button>
+                    <button type="button" id="addNewObject" class="btn btn-primary">Добавить</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Отменить</button>
 
                 </div>
             </form>
+
+
         </div>
-    </div>
-</div>
-<div class="modal fade" id="editModalLong" tabindex="-1" role="dialog" aria-labelledby="editModalLongTitle" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editModalLongTitle">Редактирование информации о депо</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                </div>
             </div>
-            <form id="editForm">
-                <div class="modal-body">
+            <div class="modal fade" id="editModalLong" tabindex="-1" role="dialog" aria-labelledby="editModalLongTitle" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editModalLongTitle">Редактирование информации о депо</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div id="mapEdit" style="width:400px; height:300px; padding:40px"></div>
+                        <form id="editForm">
+                            <div class="modal-body">
 
-                    <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Депо</label>
-                        <input type="text" class="form-control" id="editNameDepot" name="editNameDepot" placeholder="Введите название депо">
-                    </div>
-                    <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Широта</label>
-                        <input type="text" class="form-control" id="editLatitude" name="editLatitude" placeholder="Введите широту">
-                    </div>
-                    <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Долгота</label>
-                        <input type="text" class="form-control" id="editLongitude" name="editLongitude" placeholder="Введите долготу">
+                                <div class="form-group">
+                                    <label for="recipient-name" class="col-form-label">Название депо</label>
+                                    <input type="text" class="form-control" id="editNameDepot" name="editNameDepot" placeholder="Введите название депо">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button id="editObject" type="button" class="btn btn-primary">Изменить</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отменить</button>
+
+                            </div>
+                        </form>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button id="editObject" type="submit" class="btn btn-primary">Изменить</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отменить</button>
-
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-
-<div class="modal fade" id="messageModalLong" tabindex="-1" role="dialog" aria-labelledby="messageModalLongTitle" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="messageModalLongTitle">Результат</h5>
-                <button type="button" class="close messageClose" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
             </div>
-            <form id="messageForm">
-                <div class="modal-body">
-                    <p id="message"> </p>
+
+
+            <div class="modal fade" id="messageModalLong" tabindex="-1" role="dialog" aria-labelledby="messageModalLongTitle" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="messageModalLongTitle">Результат</h5>
+                            <button type="button" class="close messageClose" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form id="messageForm">
+                            <div class="modal-body">
+                                <p id="message"> </p>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button id="messageOk" type="submit" class=" btn btn-primary messageClose" data-dismiss="modal">Ок</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
+            </div>
+            @*<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>*@
+            @*<script src="~/Scripts/jquery-3.4.1.min.js"></script>*@
+            @*<script src="~/bootstrap-4.4.1-dist/bootstrap-4.4.1-dist/js/bootstrap.min.js"></script>*@
 
-                <div class="modal-footer">
-                    <button id="messageOk" type="submit" class=" btn btn-primary messageClose" data-dismiss="modal">Ок</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>*@
-@*<script src="~/Scripts/jquery-3.4.1.min.js"></script>*@
-@*<script src="~/bootstrap-4.4.1-dist/bootstrap-4.4.1-dist/js/bootstrap.min.js"></script>*@
-@Scripts.Render("~/bundles/jquery")
-<script>
+            @Scripts.Render("~/bundles/jquery")
+            <script>
+            var result;
+            ymaps.ready(function () {
+                    var myMap = new ymaps.Map('map', {
+                        center: [54.7431, 55.9678],
+                        zoom: 9,
+                        controls: ['geolocationControl', 'searchControl']
+                    });
+                var mapEdit = new ymaps.Map('mapEdit', {
+                    center: [54.7431, 55.9678],
+                    zoom: 9,
+                    controls: ['geolocationControl', 'searchControl']
+                });
+        //var searchControl = new ymaps.control.SearchControl({
+        //    options: {
+        //        // Будет производиться поиск по топонимам и организациям.
+        //        provider: 'yandex#search'
+        //    }
+        //});
+        //myMap.controls.add(searchControl);
+        //var result = searchControl.getResult(0);
+        //result.then(function (res) {
+        //    console.log("Результат " + res);
+        //}, function (err) {
+        //    console.log("Ошибка");
+        //});
+        //var searchControl = new ymaps.control.SearchControl({
+        //    options: {
+        //        // Будет производиться поиск только по топонимам.
+        //        provider: 'yandex#map'
+        //    }
+        //});
+        //myMap.controls.add(searchControl);
+        SearchControl = myMap.controls.get('searchControl');
+        
 
 
-    var dataHead = ['Депо', 'Широта', 'Долгота', 'Изменить', 'Удалить'];
+   
+                
+
+    var dataHead = ['Депо', 'Адрес', 'Изменить', 'Удалить'];
 
     $('.messageClose').on('click', function () {
         $('#messageModalLong').modal('hide');
@@ -123,7 +156,7 @@
     $('.table thead').append('<tr> <th>' + dataHead[0] + '</th> <th>'
         + dataHead[1] + '</th> <th>'
         + dataHead[2]
-        + '</th> <th>' + dataHead[3] + '</th> <th>' + dataHead[4] + '</th> </th>')
+        + '</th> <th>' + dataHead[3] + '</th> </th>')
 
     $.ajax({
         url: "@Url.Action("GetDepotData", "DepotData")",
@@ -134,8 +167,7 @@
             if(data!=null)
             $.each(data, function (index, row) {
                 $('.table tbody').append('<tr> <td>' + row.name + '</td> <td>'
-                    + row.latitude + '</td> <td>'
-                    + row.longitude
+                    + row.address
                     + '</td> <td  data-id=' + row.id + '> <button class="btn" id="editBtn"><i class="fa fa-edit" aria-hidden="true"></i></button> </td>'
                     + '<td  data-id=' + row.id +'> <button class="btn" id="deleteBtn"><i class="fa fa-times" aria-hidden="true"></i></button> </td> </tr>')
             });
@@ -145,14 +177,17 @@
         }
     });
 
-    $("#addNewObject").on('click', function (e) {
-     $.ajax({
+        $("#addNewObject").on('click', function (e) {
+           $.ajax({
+                        
             url: "@Url.Action("AddDepotData", "DepotData")",
             type: "POST",
-                data: {
+         data: {
+
                     name: $('#addNameDepot').val(),
-                    latitude: $('#addLatitude').val(),
-                    longitude: $('#addLongitude').val(),
+                    latitude: SearchControl.getResult(0).valueOf().geometry.getCoordinates()[0],
+                    longitude: SearchControl.getResult(0).valueOf().geometry.getCoordinates()[1],
+                    address: SearchControl.getResult(0).valueOf().properties._data.name
             },
             success: function (data) {
                 $('#message').text(data);
@@ -171,7 +206,7 @@
 
         var id = $(this).data("id");
 
-        if (colIndex == 3) {
+        if (colIndex == 2) {
 
             editId = id;
 
@@ -183,6 +218,8 @@
                     id: id
                 },
                 success: function (data) {
+                    mapEdit.setCenter([data.latitude, data.longitude]);
+                    mapEdit.geoObjects.add(new ymaps.Placemark([data.latitude, data.longitude]));  
                     editNameDepot = data.name;
                     editLatitude = data.latitude;
                     editLongitude = data.longitude;
@@ -197,7 +234,7 @@
             });
         }
 
-        if (colIndex == 4) {
+        if (colIndex == 3) {
             $.ajax({
                 url: "@Url.Action("DeleteDepotData", "DepotData")",
                 type: "POST",
@@ -227,8 +264,9 @@
                         oldLatitude: editLatitude,
                         oldLongitude: editLongitude,
                         newName: $('#editNameDepot').val(),
-                        newLatitude: $('#editLatitude').val(),
-                        newLongitude: $('#editLongitude').val(),
+                        newLatitude: SearchControl.getResult(0).valueOf().geometry.getCoordinates()[0],
+                        newLongitude: SearchControl.getResult(0).valueOf().geometry.getCoordinates()[1],
+                        address: SearchControl.getResult(0).valueOf().properties._data.name
                 },
                 success: function (data) {
                     $('#message').text(data);
@@ -239,4 +277,5 @@
                 }
             });
     });
-</script>
+    });
+            </script>

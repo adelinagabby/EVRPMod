@@ -10,5 +10,6 @@ namespace EVRPMod.Models.DB
         public string latitude { get; set; }
         public string longitude { get; set; }
         public string address { get; set; }
+        public int? orderAddress { get; set; }
     }
 }

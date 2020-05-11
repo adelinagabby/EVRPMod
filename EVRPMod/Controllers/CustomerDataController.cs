@@ -35,7 +35,7 @@ namespace EVRPMod.Controllers
             return Json(Obj);
         }
         [HttpPost]
-        public ActionResult AddCustomerData(int kitType, string latitude, string longitude, int count)
+        public ActionResult AddCustomerData(int kitType, string latitude, string longitude, int count, string address)
         {
 
             EVRPModContext db = new EVRPModContext();
@@ -61,6 +61,7 @@ namespace EVRPMod.Controllers
                     latitude = latitude,
                     longitude = longitude,
                     count = count,
+                    address = address,
                 };
 
 
@@ -75,7 +76,7 @@ namespace EVRPMod.Controllers
         }
         [HttpPost]
         public ActionResult EditCustomerData(string id, int newKitType, string newLatitude, string newLongitude, int newCount, 
-            int oldKitType, string oldLatitude, string oldLongitude, int oldCount)
+            int oldKitType, string oldLatitude, string oldLongitude, int oldCount, string address)
         {
 
             EVRPModContext db = new EVRPModContext();
@@ -103,6 +104,7 @@ namespace EVRPMod.Controllers
                     ObjEdit.latitude = newLatitude;
                     ObjEdit.longitude = newLongitude;
                     ObjEdit.count = newCount;
+                    ObjEdit.address = address;
                     db.SaveChanges();
 
                 }

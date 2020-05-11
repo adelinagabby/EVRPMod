@@ -34,121 +34,86 @@ namespace EVRPMod.Controllers
 
             return View();
         }
-        //[HttpPost]
-        //public ActionResult GetVehiceData()
-        //{
-        //    EVRPModContext db = new EVRPModContext();
 
-        //    var Obj = db.vehicleData.ToList();
+        struct Coordinate
+        {
+            public string latitude, longitude;
 
-        //    return Json(Obj);
-        //}
-        //[HttpPost]
-        //public ActionResult GetVehiceDataForId(string id)
-        //{
-        //    EVRPModContext db = new EVRPModContext();
+        }
 
-        //    var Obj = db.vehicleData.FirstOrDefault(x => x.id == Convert.ToInt32(id));
+        struct CoordinateAndCountDepotAndCustomer
+        {
+            public int countDepot, countCustomer;
+            public List<Coordinate> CoordinateDepot, CoordinateCustomer;
 
-        //    return Json(Obj);
-        //}
-        //[HttpPost]
-        //public ActionResult AddVehiceData(string Name, int Capacity, int ServiceCost, int CostRoads)
-        //{
+        }
+        struct CoordinateAndCount
+        {
+            public int count;
+            public List<Coordinate> Coordinate;
+        }
 
-        //    EVRPModContext db = new EVRPModContext();
+        [HttpPost]
+        public ActionResult FindingDistancesBetweenCustomersAndDepots()
+        {
+            EVRPModContext db = new EVRPModContext();
 
+            var DepotData = db.depotData.ToList();
+            var CustomerData = db.customerData.ToList();
 
-        //    var Obj = db.vehicleData.FirstOrDefault(x => x.name == Name && x.capacity == Capacity && x.serviceCost == ServiceCost && x.costRoads == CostRoads);
+            List<Coordinate> CoordinateDepot = new List<Coordinate>();
+            List<Coordinate> CoordinateCustomer = new List<Coordinate>();
+            //for()
+            //Coonew Coordinate
+            //CoordinateAllAddress.Add(new Coordinate() {latitude = });
 
-        //    string Result;
+            foreach (var item in DepotData)
+            {
+                CoordinateDepot.Add(new Coordinate() { latitude = item.latitude, longitude = item.latitude });
+            }
+            foreach (var item in CustomerData)
+            {
+                CoordinateCustomer.Add(new Coordinate() { latitude = item.latitude, longitude = item.latitude });
+            }
 
-        //    if (Obj != null)
-        //    {
-        //        Result = "Данное транспортное средство уже имеется в списке";
+            CoordinateAndCountDepotAndCustomer CoordinateAndCount = new CoordinateAndCountDepotAndCustomer() { CoordinateDepot = CoordinateDepot, CoordinateCustomer = CoordinateCustomer, countDepot = DepotData.Count, countCustomer = CustomerData.Count };
 
-        //        return Json(Result);
-        //    }
-        //    else
-        //    {
+            return Json(CoordinateAndCount);
+        }
 
-        //        var newObj = new vehicleData
-        //        {
-        //            //id = (db.vehicleData.Max(x=>x.id)!=null? db.vehicleData.Max(x => x.id)+1:1),
-        //            name = Name,
-        //            capacity = Capacity,
-        //            serviceCost = ServiceCost,
-        //            costRoads = CostRoads,
-                   
-        //        };
+        [HttpPost]
+        public ActionResult FindingMatrixDistancesBetweenCustomersAndDepots()
+        {
+            EVRPModContext db = new EVRPModContext();
 
-
-        //        db.vehicleData.Add(newObj);
-
-        //        db.SaveChanges();
-
-        //        Result = "Новый ";
-
-        //        return Json(Result);
-        //    }
-        //}
-        //[HttpPost]
-        //public ActionResult EditVehiceData(string id, string newName, int newCapacity, int newServiceCost, int newCostRoads, string oldName, int oldCapacity, int oldServiceCost, int oldCostRoads)
-        //{
-
-        //    EVRPModContext db = new EVRPModContext();
-
-        //    string Result;
-
-        //    if (oldName == newName && oldCapacity == newCapacity && oldServiceCost == newServiceCost && oldCostRoads == newCostRoads)
-        //    {
-
-        //    }
-        //    else
-        //    {
-        //        var Obj = db.vehicleData.FirstOrDefault(x => x.name == newName && x.capacity == newCapacity && x.serviceCost == newServiceCost && x.costRoads == newCostRoads);
-
-        //        if (Obj != null)
-        //        {
-        //            Result = "Данное транспортное средство уже присутствует в списке";
-
-        //            return Json(Result);
-        //        }
-        //        else
-        //        {
-        //            var ObjEdit = db.vehicleData.FirstOrDefault(x => x.id == Convert.ToInt32(id));
-        //            ObjEdit.name = newName;
-        //            ObjEdit.capacity = newCapacity;
-        //            ObjEdit.serviceCost = newServiceCost;
-        //            ObjEdit.costRoads = newCostRoads;
-        //            db.SaveChanges();
-
-        //        }
+            var DepotData = db.depotData.ToList();
+            var CustomerData = db.customerData.ToList();
 
 
-        //    }
-
-        //    Result = "Данные изменены";
-
-        //    return Json(Result);
-        //}
-        //[HttpPost]
-        //public ActionResult DeleteVehiceData(string id)
-        //{
-        //    EVRPModContext db = new EVRPModContext();
+            List<CoordinateAndCount> MatrixCoordinateAllAddress = new List<CoordinateAndCount>();
 
 
-        //    var Obj = db.vehicleData.FirstOrDefault(x => x.id == Convert.ToInt32(id));
+            foreach (var itemDepot in DepotData)
+            {
+                List<CoordinateAndCount> CoordinateAndCount = new List<CoordinateAndCount>();
+                List<Coordinate> CoordinateAllAddress = new List<Coordinate>();
+                CoordinateAllAddress.Add(new Coordinate() { latitude = itemDepot.latitude, longitude = itemDepot.longitude });
+                CustomerData = CustomerData.Where(x => x.depot == itemDepot.id).ToList();
+                foreach (var itemCustomer in CustomerData)
+                {
+                    CoordinateAllAddress.Add(new Coordinate() { latitude = itemCustomer.latitude, longitude = itemCustomer.longitude });
+                }
+                CoordinateAndCount.Add(new CoordinateAndCount() { count = CustomerData.Count, Coordinate = CoordinateAllAddress });
+                MatrixCoordinateAllAddress.Add(new CoordinateAndCount() { count = CustomerData.Count, Coordinate = CoordinateAllAddress });
+            }
 
-        //    if ((Obj != null))
-        //    {
-        //        db.vehicleData.Remove(Obj);
-        //        db.SaveChanges();
-        //    }
-        //    var Result = "Транспортное средство удалено из списка";
+            return Json(MatrixCoordinateAllAddress);
+        }
 
-        //    return Json(Result);
 
-        //}
+        public void DistributionOfCustomersByDepot()
+            {
+            }
+
     }
-}
+    }

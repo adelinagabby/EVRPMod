@@ -11,5 +11,7 @@ namespace EVRPMod.Models.DB
         public int? kitType { get; set; }
         public int? count { get; set; }
         public string address { get; set; }
+        public int? orderAddress { get; set; }
+        public int? depot { get; set; }
     }
 }

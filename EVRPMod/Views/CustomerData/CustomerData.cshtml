@@ -2,7 +2,11 @@
 @{
     ViewBag.Title = "Заказы";
 }
+    <head>
+        <script src="https://api-maps.yandex.ru/2.1/?apikey=f4252eab-9ec5-4695-8fed-2d8b3d4c395f&lang=ru_RU" type="text/javascript">
 
+        </script>
+    </head>
 <h2>Заказы</h2>
 <link href="~/font-awesome-4.7.0/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" />
 <div id="vehicleData" class="container">
@@ -25,30 +29,21 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+            <div id="mapAdd" style="width:400px; height:300px; padding:40px"></div>
             <form id="addForm">
                 <div class="modal-body">
-
                     <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Широта</label>
-                        <input type="text" class="form-control" id="addLatitude" name="addLatitude" placeholder="Введите широту">
+                        <label for="recipient-name" class="col-form-label">Тип комплекта</label>
+                        <input type="text" class="form-control" id="addKitType" name="addKitType" placeholder="Введите тип комплекта">
                     </div>
                     <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Долгота</label>
-                        <input type="text" class="form-control" id="addLongitude" name="addLongitude" placeholder="Введите долготу">
+                        <label for="recipient-name" class="col-form-label">Количество</label>
+                        <input type="text" class="form-control" id="addCount" name="addCount" placeholder="Введите количество">
                     </div>
-                
-                <div class="form-group">
-                    <label for="recipient-name" class="col-form-label">Тип комплекта</label>
-                    <input type="text" class="form-control" id="addKitType" name="addKitType" placeholder="Введите тип комплекта">
-                </div>
-                <div class="form-group">
-                    <label for="recipient-name" class="col-form-label">Количество</label>
-                    <input type="text" class="form-control" id="addCount" name="addCount" placeholder="Введите количество">
-                </div>
-                <div class="modal-footer">
-                    <button id="addNewObject" type="button" class="btn btn-primary">Добавить</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отменить</button>
-                </div>
+                    <div class="modal-footer">
+                        <button id="addNewObject" type="button" class="btn btn-primary">Добавить</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отменить</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -63,29 +58,21 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+            <div id="mapEdit" style="width:400px; height:300px; padding:40px"></div>
             <form id="editForm">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Широта</label>
-                        <input type="text" class="form-control" id="editLatitude" name="addLatitude" placeholder="Введите широту">
+                        <label for="recipient-name" class="col-form-label">Тип комплекта</label>
+                        <input type="text" class="form-control" id="editKitType" name="addKitType" placeholder="Введите тип комплекта">
                     </div>
                     <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Долгота</label>
-                        <input type="text" class="form-control" id="editLongitude" name="addLongitude" placeholder="Введите долготу">
+                        <label for="recipient-name" class="col-form-label">Количество</label>
+                        <input type="text" class="form-control" id="editCount" name="addCount" placeholder="Введите количество">
                     </div>
-               
-                <div class="form-group">
-                    <label for="recipient-name" class="col-form-label">Тип комплекта</label>
-                    <input type="text" class="form-control" id="editKitType" name="addKitType" placeholder="Введите тип комплекта">
-                </div>
-                <div class="form-group">
-                    <label for="recipient-name" class="col-form-label">Количество</label>
-                    <input type="text" class="form-control" id="editCount" name="addCount" placeholder="Введите количество">
-                </div>
-                <div class="modal-footer">
-                    <button id="editObject" type="button" class="btn btn-primary">Изменить</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отменить</button>
-                </div>
+                    <div class="modal-footer">
+                        <button id="editObject" type="button" class="btn btn-primary">Изменить</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Отменить</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -119,9 +106,22 @@
 @*<script src="~/bootstrap-4.4.1-dist/bootstrap-4.4.1-dist/js/bootstrap.min.js"></script>*@
 @Scripts.Render("~/bundles/jquery")
 <script>
+    ymaps.ready(function () {
+        var mapAdd = new ymaps.Map('mapAdd', {
+            center: [54.7431, 55.9678],
+            zoom: 9,
+            controls: ['geolocationControl', 'searchControl']
+        });
+        var mapEdit = new ymaps.Map('mapEdit', {
+            center: [54.7431, 55.9678],
+            zoom: 9,
+            controls: ['geolocationControl', 'searchControl']
+        });
 
+        SearchControlAdd = mapAdd.controls.get('searchControl');
+        SearchControlEdit = mapEdit.controls.get('searchControl');
 
-    var dataHead = ['Широта', 'Долгота','Комплект', 'Количество', 'Изменить', 'Удалить'];
+    var dataHead = ['Номер заказа', 'Адрес','Комплект', 'Количество', 'Изменить', 'Удалить'];
 
     $('.messageClose').on('click', function () {
         $('#messageModalLong').modal('hide');
@@ -142,8 +142,8 @@
             if(data!=null)
             $.each(data, function (index, row) {
                 $('.table tbody').append('<tr> <td>' 
-                    + row.latitude + '</td> <td>'
-                    + row.longitude + '</td> <td>'
+                    + row.id + '</td> <td>'
+                    + row.address + '</td> <td>'
                     + row.kitType + '</td> <td>'
                     + row.count 
                     + '</td> <td  data-id=' + row.id + '> <button class="btn" id="editBtn"><i class="fa fa-edit" aria-hidden="true"></i></button> </td>'
@@ -161,8 +161,9 @@
             type: "POST",
                 data: {
                  
-                    latitude: $('#addLatitude').val(),
-                    longitude: $('#addLongitude').val(),
+                    latitude: SearchControlAdd.getResult(0).valueOf().geometry.getCoordinates()[0],
+                    longitude: SearchControlAdd.getResult(0).valueOf().geometry.getCoordinates()[1],
+                    address: SearchControlAdd.getResult(0).valueOf().properties._data.name,
                     kitType: $('#addKitType').val(),
                     count: $('#addCount').val(),
             },
@@ -195,14 +196,17 @@
                     id: id
                 },
                 success: function (data) {
-                    
+                    mapEdit.geoObjects.removeAll();
+                    mapEdit.setCenter([data.latitude, data.longitude]);
+                    mapEdit.geoObjects.add(new ymaps.Placemark([data.latitude, data.longitude]));
+                    SearchControlEdit.search(data.address);
+
                     editLatitude = data.latitude;
                     editLongitude = data.longitude;
                     editKitType = data.kitType;
                     editCount = data.count;
                     
-                    $('#editLatitude').val(data.latitude);
-                    $('#editLongitude').val(data.longitude);
+
                     $('#editKitType').val(data.kitType);
                     $('#editCount').val(data.count);
                     $('#editModalLong').modal('show');
@@ -245,8 +249,9 @@
                         oldKitType: editKitType,
                         oldCount: editCount,
 
-                        newLatitude: $('#editLatitude').val(),
-                        newLongitude: $('#editLongitude').val(),
+                        newLatitude: SearchControlEdit.getResult(0).valueOf().geometry.getCoordinates()[0],
+                        newLongitude: SearchControlEdit.getResult(0).valueOf().geometry.getCoordinates()[1],
+                        address: SearchControlEdit.getResult(0).valueOf().properties._data.name,
                         newKitType: $('#editKitType').val(),
                         newCount: $('#editCount').val(),
                 },
@@ -258,5 +263,6 @@
                     alert('Error occurred');
                 }
             });
+    });
     });
 </script>

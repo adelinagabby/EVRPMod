@@ -31,7 +31,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div id="map" style="width:400px; height:300px; padding:40px"></div>
+            <div id="mapAdd" style="width:400px; height:300px; padding:40px"></div>
             <form id="addForm">
                 <div class="modal-body"> 
                     <div class="form-group">
@@ -107,9 +107,8 @@
 
             @Scripts.Render("~/bundles/jquery")
             <script>
-            var result;
             ymaps.ready(function () {
-                    var myMap = new ymaps.Map('map', {
+                    var mapAdd = new ymaps.Map('mapAdd', {
                         center: [54.7431, 55.9678],
                         zoom: 9,
                         controls: ['geolocationControl', 'searchControl']
@@ -125,7 +124,7 @@
         //        provider: 'yandex#search'
         //    }
         //});
-        //myMap.controls.add(searchControl);
+        //mapAdd.controls.add(searchControl);
         //var result = searchControl.getResult(0);
         //result.then(function (res) {
         //    console.log("Результат " + res);
@@ -138,9 +137,9 @@
         //        provider: 'yandex#map'
         //    }
         //});
-        //myMap.controls.add(searchControl);
-        SearchControl = myMap.controls.get('searchControl');
-        
+        //mapAdd.controls.add(searchControl);
+        SearchControlAdd = mapAdd.controls.get('searchControl');
+        SearchControlEdit = mapEdit.controls.get('searchControl');
 
 
    
@@ -185,9 +184,9 @@
          data: {
 
                     name: $('#addNameDepot').val(),
-                    latitude: SearchControl.getResult(0).valueOf().geometry.getCoordinates()[0],
-                    longitude: SearchControl.getResult(0).valueOf().geometry.getCoordinates()[1],
-                    address: SearchControl.getResult(0).valueOf().properties._data.name
+             latitude: SearchControlAdd.getResult(0).valueOf().geometry.getCoordinates()[0],
+             longitude: SearchControlAdd.getResult(0).valueOf().geometry.getCoordinates()[1],
+             address: SearchControlAdd.getResult(0).valueOf().properties._data.name
             },
             success: function (data) {
                 $('#message').text(data);
@@ -218,15 +217,18 @@
                     id: id
                 },
                 success: function (data) {
+                    mapEdit.geoObjects.removeAll();
                     mapEdit.setCenter([data.latitude, data.longitude]);
                     mapEdit.geoObjects.add(new ymaps.Placemark([data.latitude, data.longitude]));  
+                    SearchControlEdit.search(data.address);
+
                     editNameDepot = data.name;
                     editLatitude = data.latitude;
                     editLongitude = data.longitude;
+
                     $('#editNameDepot').val(data.name);
-                    $('#editLatitude').val(data.latitude);
-                    $('#editLongitude').val(data.longitude);
                     $('#editModalLong').modal('show');
+
                 },
                 error: function (data) {
                     alert('Error occurred');
@@ -254,7 +256,8 @@
 
      });
 
-    $("#editObject").on('click', function (e) {
+                $("#editObject").on('click', function (e) {
+                    mapEdit.geoObjects.removeAll();
           $.ajax({
                 url: "@Url.Action("EditDepotData", "DepotData")",
                 type: "POST",
@@ -264,9 +267,9 @@
                         oldLatitude: editLatitude,
                         oldLongitude: editLongitude,
                         newName: $('#editNameDepot').val(),
-                        newLatitude: SearchControl.getResult(0).valueOf().geometry.getCoordinates()[0],
-                        newLongitude: SearchControl.getResult(0).valueOf().geometry.getCoordinates()[1],
-                        address: SearchControl.getResult(0).valueOf().properties._data.name
+                        newLatitude: SearchControlEdit.getResult(0).valueOf().geometry.getCoordinates()[0],
+                        newLongitude: SearchControlEdit.getResult(0).valueOf().geometry.getCoordinates()[1],
+                        address: SearchControlEdit.getResult(0).valueOf().properties._data.name
                 },
                 success: function (data) {
                     $('#message').text(data);

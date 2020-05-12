@@ -223,6 +223,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\RoadAccountingController.cs" />
     <Compile Include="GeneticAlgoritm.cs" />
     <Compile Include="Controllers\CustomerDataController.cs" />
     <Compile Include="Controllers\DepotDataController.cs" />
@@ -342,6 +343,7 @@
     <Content Include="Views\CustomerData\CustomerData.cshtml" />
     <Content Include="Views\KitType\KitType.cshtml" />
     <Content Include="Views\VehicleInDepot\VehicleInDepot.cshtml" />
+    <Content Include="Views\RoadAccounting\RoadAccounting.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

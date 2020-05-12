@@ -1,0 +1,114 @@
+﻿@{
+    ViewBag.Title = "Учет типа и качества дорог";
+}
+
+<h2>Учет типа и качества дорог</h2>
+<button id="save" type="button" class="btn">Сохранить</button>
+<h3>Скорость</h3>
+<div class="table-responsive">
+    <table id="tableSpeed" class="table table-sm  table-bordered table-hover" style="padding:100px 0px">
+        <thead class="thead-dark" id="thead"></thead>
+        <tbody name="tbody" id="tbody">
+            @*<tr><td></td><th>Первый</th><th>Второй</th></tr>
+            <tr><th>Первый</th><td>Пусто</td><td>Пусто</td></tr>
+            <tr><th>Второй</th><td>Пусто</td><td>Пусто</td></tr>*@
+        </tbody>
+    </table>
+</div>
+<h3>Качество дорог</h3>
+<div class="table-responsive">
+    <table id="tableQuality" class="table table-sm  table-bordered table-hover" style="padding:100px 0px">
+        <thead class="thead-dark" id="thead"></thead>
+        <tbody name="tbody" id="tbody">
+        </tbody>
+    </table>
+</div>
+<h3>Проходимость</h3>
+<div class="table-responsive">
+    <table id="tablePatency" class="table table-sm  table-bordered table-hover" style="padding:100px 0px">
+        <thead class="thead-dark" id="thead"></thead>
+        <tbody name="tbody" id="tbody">
+        </tbody>
+    </table>
+</div>
+<h3>Стоимость</h3>
+<div class="table-responsive">
+    <table id="tableСost" class="table table-sm  table-bordered table-hover" style="padding:100px 0px">
+        <thead class="thead-dark" id="thead"></thead>
+        <tbody name="tbody" id="tbody">
+        </tbody>
+    </table>
+</div>
+@Scripts.Render("~/bundles/jquery")
+<script>
+
+
+    //var dataHead = ['Вид', 'Вес', 'Изменить', 'Удалить'];
+
+    //$('.messageClose').on('click', function () {
+    //    $('#messageModalLong').modal('hide');
+    //    //window.location.reload()
+    //})
+
+    //$('.table thead').append('<tr> <th>' + dataHead[0] + '</th> <th>'
+    //    + dataHead[1] + '</th> <th>'
+    //    + dataHead[2]
+    //    + '</th> <th>' + dataHead[3] + '</th> </th>')
+
+
+
+    $("#save").on('click', function (e) {
+     
+        var tableSpeed = [];
+        for (var i = 0; i < count; i++) {
+            var tableSpeedRow = [];
+            var tableSpeedRow = [];
+            var tableSpeedRow = [];
+            var tableSpeedRow = [];
+            for (var j = 0; j < count; j++) {
+                tableSpeedRow[j] = $('#tableSpeed tbody')[0].children[i + 1].children[j + 1].children[0].value;
+                tableSpeedRow[j] = $('#tableSpeed tbody')[0].children[i + 1].children[j + 1].children[0].value;
+                tableSpeedRow[j] = $('#tableSpeed tbody')[0].children[i + 1].children[j + 1].children[0].value;
+            }
+
+        }
+        //var tableSpeed = $('#tableSpeed tbody')[0].children[1].children[1].children[0].value;
+        tableSpeed[i] = tableSpeedRow;
+    });
+
+
+    var count;
+    $.ajax({
+        url: "@Url.Action("GetAddressList", "RoadAccounting")",
+        type: "POST",
+        data: {
+        },
+        success: function (data) {
+            var count = data.length;
+            if (data != null)
+                var stringTable = '<tr><th></th>';
+                for (var i = 0; i < data.length; i++) {
+                    stringTable += '<th>' + data[i] +'</th>';
+            }
+            stringTable += '</tr>';
+            $('.table tbody').append(stringTable);
+
+
+            for (var j = 0; j < data.length; j++) {
+                stringTable = '<tr><th>' + data[j] + '</th>';
+                for (var i = 0; i < data.length; i++) {
+                    stringTable += '<td> <input name="comment" ></input></td>';
+                }
+                    stringTable += '</tr>';
+
+                $('.table tbody').append(stringTable);
+            }
+
+
+        },
+        error: function (data) {
+            alert('Error occurred');
+        }
+    });
+
+</script>

@@ -9,20 +9,20 @@ namespace EVRPMod
     {
 
         //Метод Кини - Райфа
-        struct propertyValues
+        public struct propertyValues
         {
             public double xmax, xavg075, xavg05, xavg025, xmin;
             public double ymax, yaverage075, yaverage05, yaverage025, ymin;
             public double rating, lambda, avgWeightCriteria;
         }
 
-        propertyValues speedRestriction = new propertyValues();
-        propertyValues roadQuality = new propertyValues();
-        propertyValues avgLightCount = new propertyValues();
-        
+        public static propertyValues speedRestriction = new propertyValues();
+        public static propertyValues roadQuality = new propertyValues();
+        public static propertyValues avgLightCount = new propertyValues();
+
 
         //Оценка скорости
-        double vSpeed(double x)
+        public static double vSpeed(double x)
         {
             double k = 1, b = 0, y = 0;
 
@@ -55,7 +55,7 @@ namespace EVRPMod
         }
 
         //Оценка качества дорог
-        double vQuality(double x)
+        public static double vQuality(double x)
         {
 
             double k = 1, b = 0, y = 0;
@@ -86,7 +86,7 @@ namespace EVRPMod
         }
 
         //Оценка светофоров на дороге
-        double vNumbersOfLight(double x)
+        public static double vNumbersOfLight(double x)
         {
 
             double k = 1, b = 0, y = 0;
@@ -120,7 +120,7 @@ namespace EVRPMod
         }
 
         //Оценка дороги
-        void lambda()
+        public static void lambda()
         {
             //let speedRestriction = params.coefficientCriteria.speedRestriction;
             //let avgLightCount = params.coefficientCriteria.avgLightCount;
@@ -163,14 +163,14 @@ namespace EVRPMod
         }
 
         //Аддитивная оценка дороги
-        double vAdditiveEstimation(double xSpeed, double xQuality, double xNumbersOfLights)
+        public static double vAdditiveEstimation(double xSpeed, double xQuality, double xNumbersOfLights)
         {
 
             return speedRestriction.lambda* vSpeed(xSpeed) + roadQuality.lambda* vQuality(xQuality) + avgLightCount.lambda* vNumbersOfLight(xNumbersOfLights);
         }
 
         //Функция модификации матрицы стоимости
-        double[][] ModificationOfMatrix(double[][] Matrix, double[][] MatrixOfEstimatesOfPermittedVelocities, 
+        public static double[][]  ModificationOfMatrix(double[][] Matrix, double[][] MatrixOfEstimatesOfPermittedVelocities, 
             double[][] MatrixOfQualityOfRoads, double[][] MatrixOfNumbersOfLights)
         {
             lambda();

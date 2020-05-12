@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using EVRPMod.Models.DB;
 
+
 namespace EVRPMod.Controllers
 {
     public class HomeController : Controller
@@ -82,7 +83,7 @@ namespace EVRPMod.Controllers
         }
 
         [HttpPost]
-        public ActionResult FindingMatrixDistancesBetweenCustomersAndDepots()
+        public ActionResult FindingMatrixsDistancesBetweenCustomersAndDepots()
         {
             EVRPModContext db = new EVRPModContext();
 
@@ -111,9 +112,35 @@ namespace EVRPMod.Controllers
         }
 
 
-        public void DistributionOfCustomersByDepot()
+        public void DistributionOfCustomersByDepot(double[][] distanceFromOrdersToDepot)
+        {
+            EVRPModContext db = new EVRPModContext();
+
+            var DepotData = db.depotData.ToList();
+            var CustomerData = db.customerData.ToList();
+
+            for (int i = 0; i < CustomerData.Count; i++)
             {
+                double min = 999999999;
+                int minDepot = -1;
+                for (int j = 0; j < DepotData.Count; j++)
+                {
+                    if (min > distanceFromOrdersToDepot[j][i])
+                    {
+                        min = distanceFromOrdersToDepot[j][i];
+                        minDepot = j;
+                    }
+                }
+
+                CustomerData[i].depot = DepotData[minDepot].id;
             }
+        }
+        public ActionResult ModificationDistancesBetweenCustomersAndDepots(double[][] distanceFromOrdersToDepot, double[][] MatrixOfEstimatesOfPermittedVelocities,
+             double[][] MatrixOfQualityOfRoads, double[][] MatrixOfNumbersOfLights)
+        {
+            distanceFromOrdersToDepot = MethodKiniRayfa.ModificationOfMatrix(distanceFromOrdersToDepot, MatrixOfEstimatesOfPermittedVelocities, MatrixOfQualityOfRoads, MatrixOfNumbersOfLights);
+            return Json(distanceFromOrdersToDepot);
+        }
 
     }
     }

@@ -220,9 +220,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdditionalVariablesAndFunctions.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="BranchAndBoundaryMethod.cs" />
     <Compile Include="Controllers\RoadAccountingController.cs" />
     <Compile Include="GeneticAlgoritm.cs" />
     <Compile Include="Controllers\CustomerDataController.cs" />
@@ -313,6 +315,7 @@
     <Content Include="font-awesome-4.7.0\font-awesome-4.7.0\scss\_screen-reader.scss" />
     <Content Include="font-awesome-4.7.0\font-awesome-4.7.0\scss\_stacked.scss" />
     <Content Include="font-awesome-4.7.0\font-awesome-4.7.0\scss\_variables.scss" />
+    <Content Include="ClassDiagram1.cd" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />

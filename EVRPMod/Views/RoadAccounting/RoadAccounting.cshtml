@@ -3,6 +3,7 @@
 }
 
 <h2>Учет типа и качества дорог</h2>
+<button id="createTables" type="button" class="btn">Сформировать таблицы</button>
 <button id="save" type="button" class="btn">Сохранить</button>
 <h3>Скорость</h3>
 <div class="table-responsive">
@@ -23,7 +24,7 @@
         </tbody>
     </table>
 </div>
-<h3>Проходимость</h3>
+<h3>Интенсивность движения</h3>
 <div class="table-responsive">
     <table id="tablePatency" class="table table-sm  table-bordered table-hover" style="padding:100px 0px">
         <thead class="thead-dark" id="thead"></thead>
@@ -58,22 +59,44 @@
 
 
     $("#save").on('click', function (e) {
-     
+
         var tableSpeed = [];
+        var tableQuality = [];
+        var tablePatency = [];
+        var tableСost = [];
         for (var i = 0; i < count; i++) {
             var tableSpeedRow = [];
-            var tableSpeedRow = [];
-            var tableSpeedRow = [];
-            var tableSpeedRow = [];
+            var tableQualityRow = [];
+            var tablePatencyRow = [];
+            var tableСostRow = [];
             for (var j = 0; j < count; j++) {
                 tableSpeedRow[j] = $('#tableSpeed tbody')[0].children[i + 1].children[j + 1].children[0].value;
-                tableSpeedRow[j] = $('#tableSpeed tbody')[0].children[i + 1].children[j + 1].children[0].value;
-                tableSpeedRow[j] = $('#tableSpeed tbody')[0].children[i + 1].children[j + 1].children[0].value;
+                tableQualityRow[j] = $('#tableQuality tbody')[0].children[i + 1].children[j + 1].children[0].value;
+                tablePatencyRow[j] = $('#tablePatency tbody')[0].children[i + 1].children[j + 1].children[0].value;
+                tableСostRow[j] = $('#tableСost tbody')[0].children[i + 1].children[j + 1].children[0].value;
             }
-
+            tableSpeed[i] = tableSpeedRow;
+            tableQuality[i] = tableQualityRow;
+            tablePatency[i] = tablePatencyRow;
+            tableСost[i] = tableСostRow;
         }
         //var tableSpeed = $('#tableSpeed tbody')[0].children[1].children[1].children[0].value;
-        tableSpeed[i] = tableSpeedRow;
+
+    });
+
+    $("#createTables").on('click', function (e) {
+         $.ajax({
+                url: "@Url.Action("CreateTables", "RoadAccounting")",
+                type: "POST",
+                data: {
+                },
+                success: function (data) {
+            
+             };
+                error: function (data) {
+                    alert('Error occurred');
+                }
+            });
     });
 
 
@@ -84,7 +107,7 @@
         data: {
         },
         success: function (data) {
-            var count = data.length;
+             count = data.length;
             if (data != null)
                 var stringTable = '<tr><th></th>';
                 for (var i = 0; i < data.length; i++) {
@@ -97,7 +120,10 @@
             for (var j = 0; j < data.length; j++) {
                 stringTable = '<tr><th>' + data[j] + '</th>';
                 for (var i = 0; i < data.length; i++) {
-                    stringTable += '<td> <input name="comment" ></input></td>';
+                    if(i!=j)
+                        stringTable += '<td> <input name="comment" ></input></td>';
+                    else
+                        stringTable += '<td></td>';
                 }
                     stringTable += '</tr>';
 

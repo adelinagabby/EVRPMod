@@ -34,5 +34,12 @@ namespace EVRPMod.Controllers
 
             return Json(Address);
         }
+
+        public ActionResult CreateTables()
+        {
+            AdditionalVariablesAndFunctions.ArrangementOfAddresses();
+
+            return Json(0);
+        }
     }
 }

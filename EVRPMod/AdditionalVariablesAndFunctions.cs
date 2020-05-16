@@ -10,6 +10,13 @@ namespace EVRPMod
 {
     public class AdditionalVariablesAndFunctions
     {
+        //таблицы учета дорог сохранены
+        public static bool RoadAccountingTablesAreSaved = false;
+        //таблицы учета дорог заполнены
+        public static bool RoadTablesAreFilled = false;
+        //учет дорог
+        public static bool RoadAccounting = true;
+
 
         public static void ArrangementOfAddresses()
         {

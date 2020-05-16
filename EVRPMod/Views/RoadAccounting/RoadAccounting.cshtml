@@ -80,6 +80,20 @@
             tablePatency[i] = tablePatencyRow;
             tableСost[i] = tableСostRow;
         }
+
+          $.ajax({
+                url: "@Url.Action("CreateTables", "RoadAccounting")",
+                type: "POST",
+             data: {
+
+                },
+                success: function (data) {
+
+             };
+                error: function (data) {
+                    alert('Error occurred');
+                }
+            });
         //var tableSpeed = $('#tableSpeed tbody')[0].children[1].children[1].children[0].value;
 
     });
@@ -88,10 +102,11 @@
          $.ajax({
                 url: "@Url.Action("CreateTables", "RoadAccounting")",
                 type: "POST",
-                data: {
+             data: {
+
                 },
                 success: function (data) {
-            
+
              };
                 error: function (data) {
                     alert('Error occurred');
@@ -114,21 +129,74 @@
                     stringTable += '<th>' + data[i] +'</th>';
             }
             stringTable += '</tr>';
-            $('.table tbody').append(stringTable);
+            //$('.table tbody').append(stringTable);
+            $('#tableSpeed tbody').append(stringTable);
+            $('#tableQuality tbody').append(stringTable);
+            $('#tablePatency tbody').append(stringTable);
+            $('#tableСost tbody').append(stringTable);
 
 
-            for (var j = 0; j < data.length; j++) {
-                stringTable = '<tr><th>' + data[j] + '</th>';
-                for (var i = 0; i < data.length; i++) {
-                    if(i!=j)
-                        stringTable += '<td> <input name="comment" ></input></td>';
-                    else
-                        stringTable += '<td></td>';
-                }
-                    stringTable += '</tr>';
+                    $.ajax({
+                    url: "@Url.Action("GetTables", "RoadAccounting")",
+                    type: "POST",
+                    data: {
+                    },
+                    success: function (data2) {
 
-                $('.table tbody').append(stringTable);
-            }
+                        for (var j = 0; j < data.length; j++) {
+                            stringTableSpeed = '<tr><th>' + data[j] + '</th>';
+                            stringTableQuality = '<tr><th>' + data[j] + '</th>';
+                            stringTablePatency = '<tr><th>' + data[j] + '</th>';
+                            stringTableСost = '<tr><th>' + data[j] + '</th>';
+                            if (data2 != 0) {
+                                for (var i = 0; i < data.length; i++) {
+                                    if (i != j) {
+                                        stringTableSpeed += '<td> <input name="comment" >' + data2.AverageSpeedTable[i][j] + '</input></td>';
+                                        stringTableQuality += '<td> <input name="comment" >' + data2.AverageRoadIntensityTable[i][j] + '</input></td>';
+                                        stringTablePatency += '<td> <input name="comment" >' + data2.RoadQualityTable[i][j] + '</input></td>';
+                                        stringTableСost += '<td> <input name="comment" >' + data2.RoadQualityTable[i][j] + '</input></td>';
+                                    }
+                                    else {
+                                        stringTableSpeed += '<td></td>';
+                                        stringTableQuality += '<td></td>';
+                                        stringTablePatency += '<td></td>';
+                                        stringTableСost += '<td></td>';
+                                    }
+                                }
+                            }
+                            else {
+                                for (var i = 0; i < data.length; i++) {
+                                    if (i != j) {
+                                        stringTableSpeed += '<td> <input name="comment" ></input></td>';
+                                        stringTableQuality += '<td> <input name="comment" ></input></td>';
+                                        stringTablePatency += '<td> <input name="comment" ></input></td>';
+                                        stringTableСost += '<td> <input name="comment" ></input></td>';
+                                    }
+                                    else {
+                                        stringTableSpeed += '<td></td>';
+                                        stringTableQuality += '<td></td>';
+                                        stringTablePatency += '<td></td>';
+                                        stringTableСost += '<td></td>';
+                                    }
+                                }
+                            }
+                            stringTableSpeed += '</tr>';
+                            stringTableQuality += '</tr>';
+                            stringTablePatency += '</tr>';
+                            stringTableСost += '</tr>';
+
+                            $('#tableSpeed tbody').append(stringTableSpeed);
+                            $('#tableQuality tbody').append(stringTableQuality);
+                            $('#tablePatency tbody').append(stringTablePatency);
+                            $('#tableСost tbody').append(stringTableСost);
+                        }
+                    },
+                    error: function (data2) {
+                        alert('Error occurred');
+                    }
+                });
+
+
 
 
         },

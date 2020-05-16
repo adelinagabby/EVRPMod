@@ -15,6 +15,10 @@ namespace EVRPMod.Models.DB
         {
         }
 
+        public virtual DbSet<AverageRoadIntensityTable> AverageRoadIntensityTable { get; set; }
+        public virtual DbSet<AverageSpeedTable> AverageSpeedTable { get; set; }
+        public virtual DbSet<RoadQualityTable> RoadQualityTable { get; set; }
+        public virtual DbSet<costTable> costTable { get; set; }
         public virtual DbSet<customerData> customerData { get; set; }
         public virtual DbSet<depotData> depotData { get; set; }
         public virtual DbSet<kitType> kitType { get; set; }
@@ -32,6 +36,26 @@ namespace EVRPMod.Models.DB
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<AverageRoadIntensityTable>(entity =>
+            {
+                entity.Property(e => e.id).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<AverageSpeedTable>(entity =>
+            {
+                entity.Property(e => e.id).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<RoadQualityTable>(entity =>
+            {
+                entity.Property(e => e.id).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<costTable>(entity =>
+            {
+                entity.Property(e => e.id).ValueGeneratedNever();
+            });
+
             modelBuilder.Entity<customerData>(entity =>
             {
                 entity.Property(e => e.latitude).HasMaxLength(50);

@@ -70,6 +70,9 @@ namespace EVRPMod.Controllers
 
                 Result = "Новое депо добавлено";
 
+                AdditionalVariablesAndFunctions.ArrangementOfAddresses();
+                AdditionalVariablesAndFunctions.RoadAccountingTablesAreSaved = false;
+
                 return Json(Result);
             }
         }

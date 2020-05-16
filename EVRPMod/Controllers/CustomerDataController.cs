@@ -71,6 +71,9 @@ namespace EVRPMod.Controllers
 
                 Result = "Новый заказ добавлен";
 
+                AdditionalVariablesAndFunctions.ArrangementOfAddresses();
+                AdditionalVariablesAndFunctions.RoadAccountingTablesAreSaved = false;
+
                 return Json(Result);
             }
         }

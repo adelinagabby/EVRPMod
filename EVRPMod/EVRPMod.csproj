@@ -234,10 +234,14 @@
     <Compile Include="Controllers\VehicleDataController.cs" />
     <Compile Include="Controllers\VehicleInDepotController.cs" />
     <Compile Include="MethodKiniRayfa.cs" />
+    <Compile Include="Models\DB\AverageRoadIntensityTable.cs" />
+    <Compile Include="Models\DB\AverageSpeedTable.cs" />
+    <Compile Include="Models\DB\costTable.cs" />
     <Compile Include="Models\DB\customerData.cs" />
     <Compile Include="Models\DB\depotData.cs" />
     <Compile Include="Models\DB\EVRPModContext.cs" />
     <Compile Include="Models\DB\kitType.cs" />
+    <Compile Include="Models\DB\RoadQualityTable.cs" />
     <Compile Include="Models\DB\vehicleData.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

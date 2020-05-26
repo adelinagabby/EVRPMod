@@ -54,9 +54,61 @@ namespace EVRPMod.Controllers
             public List<Coordinate> Coordinate;
         }
 
+        public struct StatesVariables
+        {
+            public bool ConsideringTypeAndQualityOfRoads, SeparateDeliveryAccounting;
+          
+        }
+
+        public static StatesVariables StatesVariablesAlgoritm = new StatesVariables() {ConsideringTypeAndQualityOfRoads = false, SeparateDeliveryAccounting = false};
+
+
+        [HttpPost]
+        public ActionResult GetStatesVariables()
+        {
+            EVRPModContext db = new EVRPModContext();
+
+            var AlgorithmSettings = db.AlgorithmSettings.ToList();
+            StatesVariablesAlgoritm.ConsideringTypeAndQualityOfRoads = AlgorithmSettings.Where(x => x.variable == "ConsideringTypeAndQualityOfRoads").First().state;
+            StatesVariablesAlgoritm.SeparateDeliveryAccounting = AlgorithmSettings.Where(x => x.variable == "SeparateDeliveryAccounting").First().state;
+
+            return Json(StatesVariablesAlgoritm);
+        }
+
+        [HttpPost]
+        public ActionResult SetStatesVariables(bool ConsideringTypeAndQualityOfRoads, bool SeparateDeliveryAccounting)
+        {
+            EVRPModContext db = new EVRPModContext();
+
+
+            StatesVariablesAlgoritm.ConsideringTypeAndQualityOfRoads = ConsideringTypeAndQualityOfRoads;
+            StatesVariablesAlgoritm.SeparateDeliveryAccounting = SeparateDeliveryAccounting;
+
+
+            var AlgorithmSettings = db.AlgorithmSettings.ToList();
+
+            db.AlgorithmSettings.Where(x => x.variable == "ConsideringTypeAndQualityOfRoads").First().state = ConsideringTypeAndQualityOfRoads;
+            db.AlgorithmSettings.Where(x => x.variable == "SeparateDeliveryAccounting").First().state = SeparateDeliveryAccounting;
+            //var ObjConsideringTypeAndQualityOfRoads = db.AlgorithmSettings.FirstOrDefault(x => x.variable == "ConsideringTypeAndQualityOfRoads");
+            //var ObjSeparateDeliveryAccounting = db.AlgorithmSettings.FirstOrDefault(x => x.variable == "SeparateDeliveryAccounting");
+
+            //ObjConsideringTypeAndQualityOfRoads.state = ConsideringTypeAndQualityOfRoads;
+            //ObjSeparateDeliveryAccounting.state = SeparateDeliveryAccounting;
+
+
+            //db.Entry(ObjConsideringTypeAndQualityOfRoads).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            //db.Entry(ObjSeparateDeliveryAccounting).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            db.SaveChanges();
+
+            return Json(StatesVariablesAlgoritm);
+        }
+
         [HttpPost]
         public ActionResult FindingDistancesBetweenCustomersAndDepots()
         {
+
+            AdditionalVariablesAndFunctions.ArrangementOfAddresses();
+
             EVRPModContext db = new EVRPModContext();
 
             var DepotData = db.depotData.ToList();
@@ -82,13 +134,61 @@ namespace EVRPMod.Controllers
             return Json(CoordinateAndCount);
         }
 
+
+
         [HttpPost]
-        public ActionResult FindingMatrixsDistancesBetweenCustomersAndDepots()
+        public ActionResult FindingMatrixsDistancesBetweenCustomersAndDepots(string[][] distanceMatrixBetweenCustomersAndDepots)
         {
+
+            double[][] doubleDistanceMatrixBetweenCustomersAndDepots = new double[distanceMatrixBetweenCustomersAndDepots.Length][];
+
+            for (int i = 0; i < distanceMatrixBetweenCustomersAndDepots.Length; i++)
+            {
+                doubleDistanceMatrixBetweenCustomersAndDepots[i] = new double[distanceMatrixBetweenCustomersAndDepots.Length];
+                for (int j = 0; j < distanceMatrixBetweenCustomersAndDepots[0].Length; j++)
+                {
+                    doubleDistanceMatrixBetweenCustomersAndDepots[i][j] = Convert.ToDouble(distanceMatrixBetweenCustomersAndDepots[i][j].Replace(".", ","));
+                }
+            }
+
             EVRPModContext db = new EVRPModContext();
 
             var DepotData = db.depotData.ToList();
             var CustomerData = db.customerData.ToList();
+            var AverageSpeedData = db.AverageSpeedTable.ToList();
+            var AverageRoadIntensityData = db.AverageRoadIntensityTable.ToList();
+            var RoadQualityData = db.RoadQualityTable.ToList();
+            var CostData = db.costTable.ToList();
+
+
+
+            //Получение матриц дорог между депо и клиентами
+            double[][] MatrixAverageSpeed = new double[distanceMatrixBetweenCustomersAndDepots.Length][];
+            double[][] MatrixRoadQuality = new double[distanceMatrixBetweenCustomersAndDepots.Length][];
+            double[][] MatrixAverageRoadIntensity = new double[distanceMatrixBetweenCustomersAndDepots.Length][];
+
+
+            for (int i = 0; i < DepotData.Count; i++)
+            {
+                MatrixAverageSpeed[i] = new double[distanceMatrixBetweenCustomersAndDepots[0].Length];
+                MatrixRoadQuality[i] = new double[distanceMatrixBetweenCustomersAndDepots[0].Length];
+                MatrixAverageRoadIntensity[i] = new double[distanceMatrixBetweenCustomersAndDepots[0].Length];
+
+                for (int j = 0; j < CustomerData.Count; j++)
+                {
+                    MatrixAverageSpeed[i][j] = AverageSpeedData.Where(x => x.rowTable == DepotData[i].orderAddress && x.columnTable == CustomerData[j].orderAddress).First().valueTable ?? 0;
+                    MatrixRoadQuality[i][j] = RoadQualityData.Where(x => x.rowTable == DepotData[i].orderAddress && x.columnTable == CustomerData[j].orderAddress).First().valueTable ?? 0;
+                    MatrixAverageRoadIntensity[i][j] = AverageRoadIntensityData.Where(x => x.rowTable == DepotData[i].orderAddress && x.columnTable == CustomerData[j].orderAddress).First().valueTable ?? 0;
+                }
+            }
+
+
+            doubleDistanceMatrixBetweenCustomersAndDepots = MethodKiniRayfa.ModificationOfMatrix(doubleDistanceMatrixBetweenCustomersAndDepots,
+                MatrixAverageSpeed,MatrixRoadQuality,MatrixAverageRoadIntensity);
+
+            DistributionOfCustomersByDepot(doubleDistanceMatrixBetweenCustomersAndDepots);
+
+        
 
 
             List<CoordinateAndCount> MatrixCoordinateAllAddress = new List<CoordinateAndCount>();
@@ -96,7 +196,7 @@ namespace EVRPMod.Controllers
 
             foreach (var itemDepot in DepotData)
             {
-                List<CoordinateAndCount> CoordinateAndCount = new List<CoordinateAndCount>();
+              //  List<CoordinateAndCount> CoordinateAndCount = new List<CoordinateAndCount>();
                 List<Coordinate> CoordinateAllAddress = new List<Coordinate>();
                 CoordinateAllAddress.Add(new Coordinate() { latitude = itemDepot.latitude, longitude = itemDepot.longitude });
                 CustomerData = CustomerData.Where(x => x.depot == itemDepot.id).ToList();
@@ -104,10 +204,13 @@ namespace EVRPMod.Controllers
                 {
                     CoordinateAllAddress.Add(new Coordinate() { latitude = itemCustomer.latitude, longitude = itemCustomer.longitude });
                 }
-                CoordinateAndCount.Add(new CoordinateAndCount() { count = CustomerData.Count, Coordinate = CoordinateAllAddress });
+               // CoordinateAndCount.Add(new CoordinateAndCount() { count = CustomerData.Count, Coordinate = CoordinateAllAddress });
                 MatrixCoordinateAllAddress.Add(new CoordinateAndCount() { count = CustomerData.Count, Coordinate = CoordinateAllAddress });
             }
 
+
+
+            //?CoordinateAndCount
             return Json(MatrixCoordinateAllAddress);
         }
 
@@ -134,6 +237,7 @@ namespace EVRPMod.Controllers
 
                 CustomerData[i].depot = DepotData[minDepot].id;
             }
+            db.SaveChanges();
         }
         public ActionResult ModificationDistancesBetweenCustomersAndDepots(double[][] distanceFromOrdersToDepot, double[][] MatrixOfEstimatesOfPermittedVelocities,
              double[][] MatrixOfQualityOfRoads, double[][] MatrixOfNumbersOfLights)

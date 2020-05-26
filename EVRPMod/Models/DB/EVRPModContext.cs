@@ -15,6 +15,7 @@ namespace EVRPMod.Models.DB
         {
         }
 
+        public virtual DbSet<AlgorithmSettings> AlgorithmSettings { get; set; }
         public virtual DbSet<AverageRoadIntensityTable> AverageRoadIntensityTable { get; set; }
         public virtual DbSet<AverageSpeedTable> AverageSpeedTable { get; set; }
         public virtual DbSet<RoadQualityTable> RoadQualityTable { get; set; }
@@ -36,6 +37,13 @@ namespace EVRPMod.Models.DB
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<AlgorithmSettings>(entity =>
+            {
+                entity.HasKey(e => e.variable);
+
+                entity.Property(e => e.variable).HasMaxLength(50);
+            });
+
             modelBuilder.Entity<AverageRoadIntensityTable>(entity =>
             {
                 entity.Property(e => e.id).ValueGeneratedNever();

@@ -38,10 +38,10 @@ namespace EVRPMod.Controllers
 
         struct RoadTable
         {
-            public int[,] AverageSpeedTable;
-            public int[,] AverageRoadIntensityTable;
-            public int[,] RoadQualityTable;
-            public int[,] CostTable;
+            public int[][] AverageSpeedTable;
+            public int[][] AverageRoadIntensityTable;
+            public int[][] RoadQualityTable;
+            public int[][] CostTable;
         }
 
         public ActionResult GetTables()
@@ -56,19 +56,23 @@ namespace EVRPMod.Controllers
             if (AverageSpeedData.Any() && AverageRoadIntensityData.Any() && RoadQualityData.Any() && CostData.Any())
             {
                 int countAddress = (int)Math.Sqrt(AverageSpeedData.Count);
-                int[,] AverageSpeedTable = new int[countAddress, countAddress];
-                int[,] AverageRoadIntensityTable = new int[countAddress, countAddress];
-                int[,] RoadQualityTable = new int[countAddress, countAddress];
-                int[,] CostTable = new int[countAddress, countAddress];
+                int[][] AverageSpeedTable = new int[countAddress][];
+                int[][] AverageRoadIntensityTable = new int[countAddress][];
+                int[][] RoadQualityTable = new int[countAddress][];
+                int[][] CostTable = new int[countAddress][];
 
                 for (int i = 0; i < countAddress; i++)
                 {
+                    AverageSpeedTable[i] = new int[countAddress];
+                    AverageRoadIntensityTable[i] = new int[countAddress];
+                    RoadQualityTable[i] = new int[countAddress];
+                    CostTable[i] = new int[countAddress];
                     for (int j = 0; j < countAddress; j++)
                     {
-                        AverageSpeedTable[i, j] = AverageSpeedData.Where(x => x.rowTable == i && x.columnTable == j).First().valueTable ?? 0;
-                        AverageRoadIntensityTable[i, j] = AverageRoadIntensityData.Where(x => x.rowTable == i && x.columnTable == j).First().valueTable ?? 0;
-                        RoadQualityTable[i, j] = RoadQualityData.Where(x => x.rowTable == i && x.columnTable == j).First().valueTable ?? 0;
-                        CostTable[i, j] = CostData.Where(x => x.rowTable == i && x.columnTable == j).First().valueTable ?? 0;
+                        AverageSpeedTable[i][j] = AverageSpeedData.Where(x => x.rowTable == i && x.columnTable == j).First().valueTable ?? 0;
+                        AverageRoadIntensityTable[i][j] = AverageRoadIntensityData.Where(x => x.rowTable == i && x.columnTable == j).First().valueTable ?? 0;
+                        RoadQualityTable[i][j] = RoadQualityData.Where(x => x.rowTable == i && x.columnTable == j).First().valueTable ?? 0;
+                        CostTable[i][j] = CostData.Where(x => x.rowTable == i && x.columnTable == j).First().valueTable ?? 0;
                     }
                 }
 
@@ -95,7 +99,7 @@ namespace EVRPMod.Controllers
         }
 
 
-        public ActionResult SaveTables(int[,] AverageSpeedTable, int[,] AverageRoadIntensityTable, int[,] RoadQualityTable, int[,] CostTable)
+        public ActionResult SaveTables(string[][] AverageSpeedTable, string[][] AverageRoadIntensityTable, string[][] RoadQualityTable, string[][] CostTable)
         {
             //AdditionalVariablesAndFunctions.ArrangementOfAddresses();
 
@@ -126,7 +130,7 @@ namespace EVRPMod.Controllers
                         id = id,
                         rowTable = i,
                         columnTable = j,
-                        valueTable = AverageSpeedTable[i,j]
+                        valueTable = Convert.ToInt32(string.IsNullOrEmpty(AverageSpeedTable[i][j])?"0": AverageSpeedTable[i][j])
 
                     };
                     var newObjAverageRoadIntensityTable = new AverageRoadIntensityTable
@@ -134,7 +138,7 @@ namespace EVRPMod.Controllers
                         id = id,
                         rowTable = i,
                         columnTable = j,
-                        valueTable = AverageRoadIntensityTable[i, j]
+                        valueTable = Convert.ToInt32(string.IsNullOrEmpty(AverageRoadIntensityTable[i][j]) ? "0" : AverageRoadIntensityTable[i][j])
 
                     };
                     var newObjRoadQualityTable = new RoadQualityTable
@@ -142,7 +146,7 @@ namespace EVRPMod.Controllers
                         id = id,
                         rowTable = i,
                         columnTable = j,
-                        valueTable = RoadQualityTable[i, j]
+                        valueTable = Convert.ToInt32(string.IsNullOrEmpty(RoadQualityTable[i][j]) ? "0" : RoadQualityTable[i][j])
 
                     };
                     var newObjCostTable = new costTable
@@ -150,7 +154,7 @@ namespace EVRPMod.Controllers
                         id = id,
                         rowTable = i,
                         columnTable = j,
-                        valueTable = CostTable[i, j]
+                        valueTable = Convert.ToInt32(string.IsNullOrEmpty(CostTable[i][j]) ? "0" : CostTable[i][j])
 
                     };
                     db.AverageSpeedTable.Add(newObjAverageSpeedTable);

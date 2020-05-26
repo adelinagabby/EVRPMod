@@ -11,36 +11,115 @@
 </head>
 
 <h2>Поиск маршрутов</h2>
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" value="" id="ConsideringTypeAndQualityOfRoads">
+    <label class="form-check-label" for="ConsideringTypeAndQualityOfRoads">
+        Учет типа и качества дорог
+    </label>
+</div>
+<div class="form-check">
+    <input class="form-check-input" type="checkbox" value="" id="SeparateDeliveryAccounting">
+    <label class="form-check-label" for="SeparateDeliveryAccounting">
+        Учет раздельной доставки
+    </label>
+</div>
 <button id="routeSearch" type="button" class="btn">Поиск</button>
 @Scripts.Render("~/bundles/jquery")
 <script>
     ymaps.ready(function () {
-    $("#routeSearch").on('click', function (e) {
+        $("#routeSearch").on('click', function (e) {
+            $.ajax({
+
+                url: "@Url.Action("FindingDistancesBetweenCustomersAndDepots", "Home")",
+                type: "POST",
+                data: {
+
+
+
+                },
+                success: function (data) {
+                    let distanceMatrixBetweenCustomersAndDepots = [];
+                    for (var i = 0; i < data.countDepot; i++) {
+                        let auxiliaryMatrix = [];
+                        for (var j = 0; j < data.countCustomer; j++) {
+                            auxiliaryMatrix[j] = ymaps.coordSystem.geo.getDistance([data.CoordinateDepot[i].latitude, data.CoordinateDepot[i].longitude],
+                                [data.CoordinateCustomer[j].latitude, data.CoordinateCustomer[j].longitude]);
+                        }
+                        distanceMatrixBetweenCustomersAndDepots[i] = auxiliaryMatrix;
+                    }
+
+
+                    $.ajax({
+
+                        url: "@Url.Action("FindingMatrixsDistancesBetweenCustomersAndDepots", "Home")",
+                        type: "POST",
+                        data: {
+                            distanceMatrixBetweenCustomersAndDepots: distanceMatrixBetweenCustomersAndDepots
+                        },
+                        success: function (data2) {
+
+                        },
+                        error: function (data2) {
+                            alert('Error occurred');
+                        }
+                    });
+                },
+                error: function (data) {
+                    alert('Error occurred');
+                }
+            });
+        })
+    });
+
+    $.ajax({
+        url: "@Url.Action("GetStatesVariables", "Home")",
+        type: "POST",
+        data: {
+
+        },
+        success: function (data) {
+            $('#ConsideringTypeAndQualityOfRoads').prop('checked', data.ConsideringTypeAndQualityOfRoads);
+            $('#SeparateDeliveryAccounting').prop('checked', data.SeparateDeliveryAccounting);
+        },
+        error: function (data) {
+            alert('Error occurred');
+        }
+    });
+
+
+    $("#ConsideringTypeAndQualityOfRoads").on('click', function (e) {
         $.ajax({
 
-            url: "@Url.Action("FindingDistancesBetweenCustomersAndDepots", "Home")",
+            url: "@Url.Action("SetStatesVariables", "Home")",
             type: "POST",
             data: {
+                ConsideringTypeAndQualityOfRoads: $('#ConsideringTypeAndQualityOfRoads').is(':checked'),
+                SeparateDeliveryAccounting: $('#SeparateDeliveryAccounting').is(':checked')
+            },
+            success: function (data) {
 
-            
-               
-    },
-    success: function (data) {
-            let distanceMatrix = [];
-                for(var i = 0; i<data.countDepot; i++)
-                {
-                    let auxiliaryMatrix = [];
-                    for (var j = 0; j < data.countCustomer; j++) {
-                        auxiliaryMatrix[j] = ymaps.coordSystem.geo.getDistance([data.CoordinateDepot[i].latitude, data.CoordinateDepot[i].longitude],
-                            [data.CoordinateCustomer[j].latitude, data.CoordinateCustomer[j].longitude]);
-                    }
-                    distanceMatrix[i] = auxiliaryMatrix;
-                }
-    },
-    error: function (data) {
-    alert('Error occurred');
-    }
-    });
+            },
+            error: function (data) {
+                alert('Error occurred');
+            }
+        });
     })
-      });
+
+    $("#SeparateDeliveryAccounting").on('click', function (e) {
+        $.ajax({
+
+            url: "@Url.Action("SetStatesVariables", "Home")",
+            type: "POST",
+            data: {
+                ConsideringTypeAndQualityOfRoads: $('#ConsideringTypeAndQualityOfRoads').is(':checked'),
+                SeparateDeliveryAccounting: $('#SeparateDeliveryAccounting').is(':checked')
+            },
+            success: function (data) {
+
+            },
+            error: function (data) {
+                alert('Error occurred');
+            }
+        });
+    })
 </script>

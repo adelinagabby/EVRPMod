@@ -35,7 +35,7 @@ namespace EVRPMod
             {
                 DepotData[i].orderAddress = i + CustomerData.Count;
             }
-
+            db.SaveChanges();
         }
 
     }

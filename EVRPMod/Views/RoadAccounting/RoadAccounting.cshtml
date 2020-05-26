@@ -70,10 +70,18 @@
             var tablePatencyRow = [];
             var tableСostRow = [];
             for (var j = 0; j < count; j++) {
-                tableSpeedRow[j] = $('#tableSpeed tbody')[0].children[i + 1].children[j + 1].children[0].value;
-                tableQualityRow[j] = $('#tableQuality tbody')[0].children[i + 1].children[j + 1].children[0].value;
-                tablePatencyRow[j] = $('#tablePatency tbody')[0].children[i + 1].children[j + 1].children[0].value;
-                tableСostRow[j] = $('#tableСost tbody')[0].children[i + 1].children[j + 1].children[0].value;
+                if (i != j) {
+                    tableSpeedRow[j] = $('#tableSpeed tbody')[0].children[i + 1].children[j + 1].children[0].value;
+                    tableQualityRow[j] = $('#tableQuality tbody')[0].children[i + 1].children[j + 1].children[0].value;
+                    tablePatencyRow[j] = $('#tablePatency tbody')[0].children[i + 1].children[j + 1].children[0].value;
+                    tableСostRow[j] = $('#tableСost tbody')[0].children[i + 1].children[j + 1].children[0].value;
+                }
+                else {
+                    tableSpeedRow[j] = 0;
+                    tableQualityRow[j] = 0;
+                    tablePatencyRow[j] = 0;
+                    tableСostRow[j] = 0;
+                }
             }
             tableSpeed[i] = tableSpeedRow;
             tableQuality[i] = tableQualityRow;
@@ -82,14 +90,17 @@
         }
 
           $.ajax({
-                url: "@Url.Action("CreateTables", "RoadAccounting")",
+                url: "@Url.Action("SaveTables", "RoadAccounting")",
                 type: "POST",
              data: {
-
+                 AverageSpeedTable: tableSpeed,
+                 RoadQualityTable: tableQuality,
+                 AverageRoadIntensityTable: tablePatency,
+                 CostTable: tableСost,
                 },
                 success: function (data) {
 
-             };
+             },
                 error: function (data) {
                     alert('Error occurred');
                 }
@@ -98,7 +109,7 @@
 
     });
 
-    $("#createTables").on('click', function (e) {
+    @*$("#createTables").on('click', function (e) {
          $.ajax({
                 url: "@Url.Action("CreateTables", "RoadAccounting")",
                 type: "POST",
@@ -107,12 +118,12 @@
                 },
                 success: function (data) {
 
-             };
+             },
                 error: function (data) {
                     alert('Error occurred');
                 }
             });
-    });
+    });*@
 
 
     var count;
@@ -143,18 +154,19 @@
                     },
                     success: function (data2) {
 
-                        for (var j = 0; j < data.length; j++) {
-                            stringTableSpeed = '<tr><th>' + data[j] + '</th>';
-                            stringTableQuality = '<tr><th>' + data[j] + '</th>';
-                            stringTablePatency = '<tr><th>' + data[j] + '</th>';
-                            stringTableСost = '<tr><th>' + data[j] + '</th>';
+                        for (var i = 0; i < data.length; i++) {
+                            stringTableSpeed = '<tr><th>' + data[i] + '</th>';
+                            stringTableQuality = '<tr><th>' + data[i] + '</th>';
+                            stringTablePatency = '<tr><th>' + data[i] + '</th>';
+                            stringTableСost = '<tr><th>' + data[i] + '</th>';
                             if (data2 != 0) {
-                                for (var i = 0; i < data.length; i++) {
+                                for (var j = 0; j < data.length; j++) {
                                     if (i != j) {
-                                        stringTableSpeed += '<td> <input name="comment" >' + data2.AverageSpeedTable[i][j] + '</input></td>';
-                                        stringTableQuality += '<td> <input name="comment" >' + data2.AverageRoadIntensityTable[i][j] + '</input></td>';
-                                        stringTablePatency += '<td> <input name="comment" >' + data2.RoadQualityTable[i][j] + '</input></td>';
-                                        stringTableСost += '<td> <input name="comment" >' + data2.RoadQualityTable[i][j] + '</input></td>';
+                                        stringTableSpeed += '<td> <input id = "idInputAverageSpeedTable'+i+j+'">'+'</input></td>';
+                                        stringTableQuality += '<td> <input  id = "idInputAverageRoadIntensityTable' + i + j + '">' + '</input></td>';
+                                        stringTablePatency += '<td> <input id = "idInputRoadQualityTable' + i + j + '">'  + '</input></td>';
+                                        stringTableСost += '<td> <input id = "idInputCostTable' + i + j + '">'+ '</input></td>';
+
                                     }
                                     else {
                                         stringTableSpeed += '<td></td>';
@@ -165,12 +177,12 @@
                                 }
                             }
                             else {
-                                for (var i = 0; i < data.length; i++) {
+                                for (var j = 0; j < data.length; j++) {
                                     if (i != j) {
-                                        stringTableSpeed += '<td> <input name="comment" ></input></td>';
-                                        stringTableQuality += '<td> <input name="comment" ></input></td>';
-                                        stringTablePatency += '<td> <input name="comment" ></input></td>';
-                                        stringTableСost += '<td> <input name="comment" ></input></td>';
+                                        stringTableSpeed += '<td> <input id = "idInput' + i + j + '"></input></td>';
+                                        stringTableQuality += '<td> <input id = "idInput' + i + j + '"></input></td>';
+                                        stringTablePatency += '<td> <input id = "idInput' + i + j + '" ></input></td>';
+                                        stringTableСost += '<td> <input id = "idInput' + i + j + '" ></input></td>';
                                     }
                                     else {
                                         stringTableSpeed += '<td></td>';
@@ -189,6 +201,19 @@
                             $('#tableQuality tbody').append(stringTableQuality);
                             $('#tablePatency tbody').append(stringTablePatency);
                             $('#tableСost tbody').append(stringTableСost);
+                        }
+
+                        for (var i = 0; i < data.length; i++) {
+                            if (data2 != 0) {
+                                for (var j = 0; j < data.length; j++) {
+                                    if (i != j) {
+                                        $("#idInputAverageSpeedTable" + i + j).val(data2.AverageSpeedTable[i][j]);
+                                        $("#idInputAverageRoadIntensityTable" + i + j).val(data2.AverageRoadIntensityTable[i][j]);
+                                        $("#idInputRoadQualityTable" + i + j).val(data2.RoadQualityTable[i][j]);
+                                        $("#idInputCostTable" + i + j).val(data2.CostTable[i][j]);      
+                                    } 
+                                }
+                            }
                         }
                     },
                     error: function (data2) {

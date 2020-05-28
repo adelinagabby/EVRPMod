@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using EVRPMod.Models.DB;
 
 namespace EVRPMod
 {
@@ -20,6 +21,65 @@ namespace EVRPMod
         public static propertyValues roadQuality = new propertyValues();
         public static propertyValues avgLightCount = new propertyValues();
 
+
+        public static void SetPropertyValues() {
+
+            EVRPModContext db = new EVRPModContext();
+
+            var ParametersKiniRayfaMethods = db.parametersKiniRayfaMethods.ToList();
+   
+            var AverageSpeed = ParametersKiniRayfaMethods.Where(x => x.Criterion == "AverageSpeed").First();
+            var RoadQuality = ParametersKiniRayfaMethods.Where(x => x.Criterion == "RoadQuality").First();
+            var AverageRoadIntensity = ParametersKiniRayfaMethods.Where(x => x.Criterion == "AverageRoadIntensity").First();
+
+            speedRestriction.xmax = (int) AverageSpeed.HighestValue;
+            speedRestriction.xavg075 = (int)AverageSpeed.AverageValueFor__Values75;
+            speedRestriction.xavg05 = (int)AverageSpeed.AverageValueFor__Values50;
+            speedRestriction.xavg025 = (int)AverageSpeed.AverageValueFor__Values25;
+            speedRestriction.xmin = (int)AverageSpeed.SmallestValue;
+
+            speedRestriction.ymax = 1;
+            speedRestriction.yaverage075 = 0.75;
+            speedRestriction.yaverage05 = 0.5;
+            speedRestriction.yaverage025 = 0.25;
+            speedRestriction.ymin = 0;
+
+            speedRestriction.rating = (int)AverageSpeed.Rating;
+            speedRestriction.avgWeightCriteria = (int)AverageSpeed.ValueFor__WeightComparison__Criteria;
+
+
+            roadQuality.xmax = (int)RoadQuality.HighestValue;
+            roadQuality.xavg075 = (int)RoadQuality.AverageValueFor__Values75;
+            roadQuality.xavg05 = (int)RoadQuality.AverageValueFor__Values50;
+            roadQuality.xavg025 = (int)RoadQuality.AverageValueFor__Values25;
+            roadQuality.xmin = (int)RoadQuality.SmallestValue;
+
+            roadQuality.ymax = 1;
+            roadQuality.yaverage075 = 0.75;
+            roadQuality.yaverage05 = 0.5;
+            roadQuality.yaverage025 = 0.25;
+            roadQuality.ymin = 0;
+
+            roadQuality.rating = (int)RoadQuality.Rating;
+            roadQuality.avgWeightCriteria = (int)RoadQuality.ValueFor__WeightComparison__Criteria;
+
+
+            avgLightCount.xmax = (int)AverageRoadIntensity.HighestValue;
+            avgLightCount.xavg075 = (int)AverageRoadIntensity.AverageValueFor__Values75;
+            avgLightCount.xavg05 = (int)AverageRoadIntensity.AverageValueFor__Values50;
+            avgLightCount.xavg025 = (int)AverageRoadIntensity.AverageValueFor__Values25;
+            avgLightCount.xmin = (int)AverageRoadIntensity.SmallestValue;
+
+            avgLightCount.ymax = 0;
+            avgLightCount.yaverage075 = 0.25;
+            avgLightCount.yaverage05 = 0.5;
+            avgLightCount.yaverage025 = 0.75;
+            avgLightCount.ymin = 1;
+
+            avgLightCount.rating = (int)AverageRoadIntensity.Rating;
+            avgLightCount.avgWeightCriteria = (int)AverageRoadIntensity.ValueFor__WeightComparison__Criteria;
+
+        }
 
         //Оценка скорости
         public static double vSpeed(double x)
@@ -173,6 +233,8 @@ namespace EVRPMod
         public static double[][]  ModificationOfMatrix(double[][] Matrix, double[][] MatrixOfEstimatesOfPermittedVelocities, 
             double[][] MatrixOfQualityOfRoads, double[][] MatrixOfNumbersOfLights)
         {
+
+            SetPropertyValues();
             lambda();
             for (int i = 0; i < Matrix.Length; i++)
                 for (int j = 0; j < Matrix[0].Length; j++)

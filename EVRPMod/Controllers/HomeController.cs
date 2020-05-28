@@ -199,9 +199,13 @@ namespace EVRPMod.Controllers
               //  List<CoordinateAndCount> CoordinateAndCount = new List<CoordinateAndCount>();
                 List<Coordinate> CoordinateAllAddress = new List<Coordinate>();
                 CoordinateAllAddress.Add(new Coordinate() { latitude = itemDepot.latitude, longitude = itemDepot.longitude });
+                int orderInAlgoritm = 0;
+                itemDepot.orderInAlgoritm = orderInAlgoritm;
                 CustomerData = CustomerData.Where(x => x.depot == itemDepot.id).ToList();
                 foreach (var itemCustomer in CustomerData)
                 {
+                    orderInAlgoritm++;
+                    itemCustomer.orderInAlgoritm = orderInAlgoritm;
                     CoordinateAllAddress.Add(new Coordinate() { latitude = itemCustomer.latitude, longitude = itemCustomer.longitude });
                 }
                // CoordinateAndCount.Add(new CoordinateAndCount() { count = CustomerData.Count, Coordinate = CoordinateAllAddress });
@@ -214,6 +218,30 @@ namespace EVRPMod.Controllers
             return Json(MatrixCoordinateAllAddress);
         }
 
+        [HttpPost]
+        public ActionResult FindingShortestPaths(string[][][] distanceMatrixBetweenCustomersAndDepots)
+        {
+
+
+            double[][][] doubleDistanceMatrixBetweenCustomersAndDepots = new double[distanceMatrixBetweenCustomersAndDepots.Length][][];
+
+            for (int k = 0; k < distanceMatrixBetweenCustomersAndDepots.Length; k++)
+            {
+                doubleDistanceMatrixBetweenCustomersAndDepots[k] = new double[distanceMatrixBetweenCustomersAndDepots.Length][];
+                for (int i = 0; i < distanceMatrixBetweenCustomersAndDepots[k].Length; i++)
+                {
+                    doubleDistanceMatrixBetweenCustomersAndDepots[k][i] = new double[distanceMatrixBetweenCustomersAndDepots.Length];
+                    for (int j = 0; j < distanceMatrixBetweenCustomersAndDepots[k].Length; j++)
+                    {
+                        doubleDistanceMatrixBetweenCustomersAndDepots[k][i][j] = Convert.ToDouble(distanceMatrixBetweenCustomersAndDepots[k][i][j].Replace(".", ","));
+                    }
+                }
+            }
+
+
+         
+            return Json(0);
+        }
 
         public void DistributionOfCustomersByDepot(double[][] distanceFromOrdersToDepot)
         {

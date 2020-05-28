@@ -23,6 +23,7 @@ namespace EVRPMod.Models.DB
         public virtual DbSet<customerData> customerData { get; set; }
         public virtual DbSet<depotData> depotData { get; set; }
         public virtual DbSet<kitType> kitType { get; set; }
+        public virtual DbSet<parametersKiniRayfaMethods> parametersKiniRayfaMethods { get; set; }
         public virtual DbSet<vehicleData> vehicleData { get; set; }
         public virtual DbSet<vehicleInDepot> vehicleInDepot { get; set; }
 
@@ -83,6 +84,26 @@ namespace EVRPMod.Models.DB
             modelBuilder.Entity<kitType>(entity =>
             {
                 entity.Property(e => e.name).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<parametersKiniRayfaMethods>(entity =>
+            {
+                entity.HasKey(e => e.Criterion);
+
+                entity.Property(e => e.Criterion).HasMaxLength(50);
+
+                entity.Property(e => e.AverageValueFor__Values25).HasColumnName(@"AverageValueFor
+Values25");
+
+                entity.Property(e => e.AverageValueFor__Values50).HasColumnName(@"AverageValueFor
+Values50");
+
+                entity.Property(e => e.AverageValueFor__Values75).HasColumnName(@"AverageValueFor
+Values75");
+
+                entity.Property(e => e.ValueFor__WeightComparison__Criteria).HasColumnName(@"ValueFor
+WeightComparison
+Criteria");
             });
 
             modelBuilder.Entity<vehicleData>(entity =>

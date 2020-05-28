@@ -11,5 +11,6 @@ namespace EVRPMod.Models.DB
         public string longitude { get; set; }
         public string address { get; set; }
         public int? orderAddress { get; set; }
+        public int? orderInAlgoritm { get; set; }
     }
 }

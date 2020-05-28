@@ -58,6 +58,45 @@
                         },
                         success: function (data2) {
 
+                            let distanceMatrixBetweenCustomersAndDepots = [];
+
+                            for (var k = 0; k < data2.length; k++) {
+                                let distanceMatrix = [];
+
+                                for (var i = 0; i < data2[k].Coordinate.length; i++) {
+                                    let auxiliaryMatrix = [];
+
+                                    for (var j = 0; j < data2[k].Coordinate.length; j++) {
+                                        auxiliaryMatrix[j] = ymaps.coordSystem.geo.getDistance([data2[k].Coordinate[i].latitude, data2[k].Coordinate[i].longitude],
+                                            [data2[k].Coordinate[j].latitude, data2[k].Coordinate[j].longitude]);
+                                    }
+
+                                    distanceMatrix[i] = auxiliaryMatrix;
+                                }
+
+                                distanceMatrixBetweenCustomersAndDepots[k] = distanceMatrix;
+
+
+
+                                      $.ajax({
+
+                        url: "@Url.Action("FindingShortestPaths", "Home")",
+                        type: "POST",
+                        data: {
+                            distanceMatrixBetweenCustomersAndDepots: distanceMatrixBetweenCustomersAndDepots
+                        },
+                        success: function (data3) {
+
+
+
+                        },
+                        error: function (data3) {
+                            alert('Error occurred');
+                        }
+                    });
+                            }
+
+
                         },
                         error: function (data2) {
                             alert('Error occurred');

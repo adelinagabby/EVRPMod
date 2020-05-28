@@ -13,5 +13,6 @@ namespace EVRPMod.Models.DB
         public string address { get; set; }
         public int? orderAddress { get; set; }
         public int? depot { get; set; }
+        public int? orderInAlgoritm { get; set; }
     }
 }

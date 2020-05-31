@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using EVRPMod.Models.DB;
-
+using Microsoft.Ajax.Utilities;
 
 namespace EVRPMod.Controllers
 {
@@ -62,6 +62,32 @@ namespace EVRPMod.Controllers
 
         public static StatesVariables StatesVariablesAlgoritm = new StatesVariables() {ConsideringTypeAndQualityOfRoads = false, SeparateDeliveryAccounting = false};
 
+        public struct CustomerAndKit
+        {
+            int Customer;
+            int Kit;
+            int Count;
+        }
+
+        public struct VehicleOrders
+        {
+            int Vehicle;
+            List<CustomerAndKit> customersAndKits;
+        }
+
+        public struct Vehicle
+        {
+            public int VehicleId;
+            public int carryingСapacity;
+            public int loadOccupied;
+            public int orderInAlgoritm;
+        }
+
+        public struct VehiclesOfDepot
+        {
+            int depot;
+            List<VehicleOrders> vehicleOrders;
+        }
 
         [HttpPost]
         public ActionResult GetStatesVariables()
@@ -153,8 +179,8 @@ namespace EVRPMod.Controllers
 
             EVRPModContext db = new EVRPModContext();
 
-            var DepotData = db.depotData.ToList();
-            var CustomerData = db.customerData.ToList();
+            var DepotData = db.depotData.OrderBy(x=>x.orderAddress).ToList();
+            var CustomerData = db.customerData.OrderBy(x => x.orderAddress).ToList();
             var AverageSpeedData = db.AverageSpeedTable.ToList();
             var AverageRoadIntensityData = db.AverageRoadIntensityTable.ToList();
             var RoadQualityData = db.RoadQualityTable.ToList();
@@ -196,21 +222,30 @@ namespace EVRPMod.Controllers
 
             foreach (var itemDepot in DepotData)
             {
-              //  List<CoordinateAndCount> CoordinateAndCount = new List<CoordinateAndCount>();
+                //List<CoordinateAndCount> CoordinateAndCount = new List<CoordinateAndCount>();
                 List<Coordinate> CoordinateAllAddress = new List<Coordinate>();
                 CoordinateAllAddress.Add(new Coordinate() { latitude = itemDepot.latitude, longitude = itemDepot.longitude });
                 int orderInAlgoritm = 0;
+                int orderAddress = -1;
                 itemDepot.orderInAlgoritm = orderInAlgoritm;
-                CustomerData = CustomerData.Where(x => x.depot == itemDepot.id).ToList();
+                CustomerData = CustomerData.Where(x => x.depot == itemDepot.id).OrderBy(x=>x.orderAddress).ToList();
                 foreach (var itemCustomer in CustomerData)
                 {
-                    orderInAlgoritm++;
-                    itemCustomer.orderInAlgoritm = orderInAlgoritm;
-                    CoordinateAllAddress.Add(new Coordinate() { latitude = itemCustomer.latitude, longitude = itemCustomer.longitude });
+                    
+                    if (itemCustomer.orderAddress != orderAddress)
+                    {
+                        orderInAlgoritm++;
+                        CustomerData.Where(x => x.orderAddress == itemCustomer.orderAddress).ForEach(x => x.orderInAlgoritm = orderInAlgoritm);
+                       // itemCustomer.orderInAlgoritm = orderInAlgoritm;
+                        orderAddress = (int) itemCustomer.orderAddress;
+                        CoordinateAllAddress.Add(new Coordinate() { latitude = itemCustomer.latitude, longitude = itemCustomer.longitude });
+                    }
                 }
-               // CoordinateAndCount.Add(new CoordinateAndCount() { count = CustomerData.Count, Coordinate = CoordinateAllAddress });
+                //CoordinateAndCount.Add(new CoordinateAndCount() { count = CustomerData.Count, Coordinate = CoordinateAllAddress });
                 MatrixCoordinateAllAddress.Add(new CoordinateAndCount() { count = CustomerData.Count, Coordinate = CoordinateAllAddress });
             }
+
+            
 
 
 
@@ -238,9 +273,110 @@ namespace EVRPMod.Controllers
                 }
             }
 
-
          
             return Json(0);
+        }
+
+
+        public void FindingShortestPaths(double[][] distanceMatrixBetweenCustomersAndDepots, int depotId)
+        {
+
+            EVRPModContext db = new EVRPModContext();
+            var VehicleData = db.vehicleData.OrderBy(x => x.orderInAlgoritm).ToList();
+            var VehicleInDepot = db.vehicleInDepot.Where(x=>x.depotId == depotId).ToList();
+            List<Vehicle> vehicles = new List<Vehicle>();
+            //int Vehicle;
+            //int carryingСapacity;
+            //int loadOccupied;
+            int orderVehicleInAlgoritm = 0;
+            for (int i = 0; i < VehicleInDepot.Count; i++)
+            {
+                var objVehicle = VehicleData.Where(x=>x.id== VehicleInDepot[i].vehicleId).First();
+
+                for (int j = 0; j < VehicleInDepot[i].count; j++)
+                {
+                   // Vehicle tempVehicle = new Vehicle { VehicleId = objVehicle.id, carryingСapacity = (int)objVehicle.capacity, orderInAlgoritm  = orderInAlgoritm};
+                    vehicles.Add(new Vehicle { VehicleId = objVehicle.id, carryingСapacity = (int)objVehicle.capacity, orderInAlgoritm = orderVehicleInAlgoritm });
+                    orderVehicleInAlgoritm++;
+                }
+            }
+
+            List<VehicleOrders> bestVehicleOrdering = new List<VehicleOrders>();
+            List<VehicleOrders> tempVehicleOrdering = new List<VehicleOrders>();
+
+            int numberOfAddress = distanceMatrixBetweenCustomersAndDepots.Length;
+            int numberOfVehicles = vehicles.Count;
+
+            int numberIterationForVehicle = 1000;
+            int numberIterationForOrder = 1000;
+
+            //int[] bestWay = new int[matrixWay.Length + 1];
+            //double bestCostWay = infinity;
+
+
+            //List<int[]> populationForAddress = new List<int[]>();
+            //List<int[]> newPopulationForAddress = new List<int[]>();
+
+
+            List<int[]> populationForVehicle = new List<int[]>();
+            List<int[]> newPopulationForVehicle = new List<int[]>();
+
+            List<int[]> populationForOrder = new List<int[]>();
+            List<int[]> newPopulationForOrder = new List<int[]>();
+
+            int sizePopulationForVehicle = 10;
+            int sizePopulationForOrder = 10;
+
+            populationForVehicle = GeneticAlgoritm.PrimaryPopulation(sizePopulationForVehicle, numberOfVehicles);
+
+            int[] tmpForVehicle;
+            for (int i = 0; i < sizePopulationForVehicle; i++)//по наборам
+            {
+                tmpForVehicle = GeneticAlgoritm.GetSet(populationForVehicle, i);
+                newPopulationForVehicle.Add(GeneticAlgoritm.GetSet(populationForVehicle, i));
+            }
+
+
+            while (numberIterationForVehicle > 0)
+            {
+                populationForOrder = GeneticAlgoritm.PrimaryPopulation(sizePopulationForOrder, numberOfVehicles);
+
+                int[] tmpForOrder;
+                for (int i = 0; i < sizePopulationForOrder; i++)//по наборам
+                {
+                    tmpForOrder = GeneticAlgoritm.GetSet(populationForOrder, i);
+                    newPopulationForOrder.Add(GeneticAlgoritm.GetSet(populationForOrder, i));
+                }
+
+                //newPopulationForVehicle = GeneticAlgoritm.CreatingANewPopulation(newPopulationForVehicle, matrixWay);
+
+
+                //for (int i = 0; i < sizePopulation; i++)//по наборам
+                //{
+                //    costWay = CostWayGeneticAlgorithm(matrixWay, newPopulation[i]);
+                //    if (costWay < bestCostWay)
+                //    {
+                //        bestCostWay = costWay;
+
+                //        tmp = GetSet(newPopulation, i);
+                //        for (int j = 0; j < population[i].Length; j++)//по наборам
+                //        {
+                //            bestWay[j] = tmp[j];
+                //        }
+
+                //    }
+                //}
+
+                //for (int i = 0; i < sizePopulation; i++)//по наборам
+                //{
+                //    Mutation(newPopulation);
+                //}
+
+
+                numberIterationForVehicle--;
+            }
+
+
         }
 
         public void DistributionOfCustomersByDepot(double[][] distanceFromOrdersToDepot)
@@ -250,7 +386,23 @@ namespace EVRPMod.Controllers
             var DepotData = db.depotData.ToList();
             var CustomerData = db.customerData.ToList();
 
-            for (int i = 0; i < CustomerData.Count; i++)
+            //for (int i = 0; i < CustomerData.Count; i++)
+            //{
+            //    double min = 999999999;
+            //    int minDepot = -1;
+            //    for (int j = 0; j < DepotData.Count; j++)
+            //    {
+            //        if (min > distanceFromOrdersToDepot[j][i])
+            //        {
+            //            min = distanceFromOrdersToDepot[j][i];
+            //            minDepot = j;
+            //        }
+            //    }
+
+            //    CustomerData[i].depot = DepotData[minDepot].id;
+            //}
+
+            for (int i = 0; i < distanceFromOrdersToDepot[0].Length; i++)
             {
                 double min = 999999999;
                 int minDepot = -1;
@@ -263,8 +415,9 @@ namespace EVRPMod.Controllers
                     }
                 }
 
-                CustomerData[i].depot = DepotData[minDepot].id;
+                CustomerData.Where(x => x.orderAddress == i).ForEach(x => x.depot = DepotData[minDepot].id);
             }
+
             db.SaveChanges();
         }
         public ActionResult ModificationDistancesBetweenCustomersAndDepots(double[][] distanceFromOrdersToDepot, double[][] MatrixOfEstimatesOfPermittedVelocities,

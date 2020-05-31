@@ -10,5 +10,6 @@ namespace EVRPMod.Models.DB
         public int? capacity { get; set; }
         public int? serviceCost { get; set; }
         public int? costRoads { get; set; }
+        public int? orderInAlgoritm { get; set; }
     }
 }

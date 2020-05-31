@@ -22,10 +22,14 @@ namespace EVRPMod.Controllers
             var CustomerData = db.customerData.OrderBy(x => x.orderAddress).ToList();
 
             List<string> Address = new List<string>();
-
+            int orderAddress = -1;
             foreach (var itemCustomerData in CustomerData)
             {
-                Address.Add(itemCustomerData.address);
+                if (itemCustomerData.orderAddress != orderAddress)
+                {
+                    Address.Add(itemCustomerData.address);
+                    orderAddress = (int) itemCustomerData.orderAddress;
+                }
             }
             foreach (var itemDepotData in DepotData)
             {

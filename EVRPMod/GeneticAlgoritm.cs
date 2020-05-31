@@ -27,7 +27,7 @@ namespace EVRPMod
         }
 
         //Создание популяции
-        List<int[]> PrimaryPopulation(int sizePopulation, int sizeReshuffle, int firstCity)
+        public static List<int[]> PrimaryPopulationWithFirstCity(int sizePopulation, int sizeReshuffle, int firstCity)
         {
 
             List<int[]> population = new List<int[]>();
@@ -59,6 +59,37 @@ namespace EVRPMod
             return population;
         }
 
+       public static List<int[]> PrimaryPopulation(int sizePopulation, int sizeReshuffle)
+        {
+
+            List<int[]> population = new List<int[]>();
+            for (int i = 0; i < sizePopulation; i++)
+            {
+                int[] reshuffle = new int[sizeReshuffle + 1];
+                int flag;
+                int city;
+
+               
+                for (int j = 0; j < sizeReshuffle+1; j++)
+                {
+                    flag = 0;
+                    while (flag == 0)
+                    {
+
+                        //city = Math.floor(Math.random() * sizeReshuffle);
+                        city = rnd.Next(sizeReshuffle);
+                        if (!reshuffle.Contains(city))
+                        {
+                            flag = 1;
+                            reshuffle[j] = city;
+                        }
+                    }
+                }
+
+                population.Add(reshuffle);
+            }
+            return population;
+        }
 
         //Кроссинговер
         private List<int[]> Crossing(List<int[]> population)
@@ -148,7 +179,7 @@ namespace EVRPMod
 
 
         //Создание новой популяции
-        List<int[]> CreatingANewPopulation(List<int[]> population, double[][] matrixWay,int firstCity)
+        List<int[]> CreatingANewPopulationWithFirstCity(List<int[]> population, double[][] matrixWay,int firstCity)
         {
             
             List<int[]> newPopulation = new List<int[]>();
@@ -209,8 +240,57 @@ namespace EVRPMod
             return newPopulation2;
         }
 
+        //Создание новой популяции
+        List<int[]> CreatingANewPopulation(List<int[]> population, double[][] matrixWay)
+        {
+
+            List<int[]> newPopulation = new List<int[]>();
+            newPopulation = Crossing(population);
+            double[] costWays = new double[population.Count];
+
+            for (int i = 0; i < population.Count; i++)//по наборам
+            {
+                costWays[i] = CostWayGeneticAlgorithm(matrixWay, newPopulation[i]);
+            }
+
+            List<int[]> newPopulation2 = new List<int[]>();
+            for (int i = 0; i < population.Count; i++)
+            {
+                newPopulation2.Add(newPopulation2[i]);
+            }
+            //Расположим наборы в порядке возрастания F
+            newPopulation2 = Sort(costWays, newPopulation, newPopulation2);
+            int R;
+
+            int flag = 0;
+
+            //Генерируем новые наборы вместо последних
+            for (int i = population.Count / 2; i < population.Count; i++)
+            {
+
+                int[] newReshuffle = new int[population[0].Length + 1];
+
+                for (int j = 0; j < population[0].Length; j++)
+                {
+                    flag = 0;
+                    while (flag == 0)
+                    {
+                        R = rnd.Next(population[0].Length);
+                        if (!newReshuffle.Contains(R))
+                        {
+                            flag = 1;
+                            newReshuffle[j] = R;
+                        }
+                    }
+                }
+                newPopulation2[i] = newReshuffle;
+            }
+
+            return newPopulation2;
+        }
+
         // Получить  i-ый набор из популяции
-        int[] GetSet(List<int[]> population, int i)
+        public static int[] GetSet(List<int[]> population, int i)
         {
             int[] reshuffle = new int[population[0].Length];
             
@@ -294,7 +374,7 @@ namespace EVRPMod
             List<int[]> population = new List<int[]>();
             List<int[]> newPopulation = new List<int[]>();
 
-            population = PrimaryPopulation(sizePopulation, matrixWay.Length, firstCity);
+            population = PrimaryPopulationWithFirstCity(sizePopulation, matrixWay.Length, firstCity);
             int[] tmp;
 
             for (int i = 0; i < sizePopulation; i++)//по наборам
@@ -324,7 +404,7 @@ namespace EVRPMod
 
             while (numberIteration > 0)
             {
-                newPopulation = CreatingANewPopulation(newPopulation, matrixWay, firstCity);
+                newPopulation = CreatingANewPopulationWithFirstCity(newPopulation, matrixWay, firstCity);
 
 
                 for (int i = 0; i < sizePopulation; i++)//по наборам

@@ -19,7 +19,7 @@ namespace EVRPMod
 
         public static propertyValues speedRestriction = new propertyValues();
         public static propertyValues roadQuality = new propertyValues();
-        public static propertyValues avgLightCount = new propertyValues();
+        public static propertyValues avgPatency = new propertyValues();
 
 
         public static void SetPropertyValues() {
@@ -64,20 +64,20 @@ namespace EVRPMod
             roadQuality.avgWeightCriteria = (int)RoadQuality.ValueFor__WeightComparison__Criteria;
 
 
-            avgLightCount.xmax = (int)AverageRoadIntensity.HighestValue;
-            avgLightCount.xavg075 = (int)AverageRoadIntensity.AverageValueFor__Values75;
-            avgLightCount.xavg05 = (int)AverageRoadIntensity.AverageValueFor__Values50;
-            avgLightCount.xavg025 = (int)AverageRoadIntensity.AverageValueFor__Values25;
-            avgLightCount.xmin = (int)AverageRoadIntensity.SmallestValue;
+            avgPatency.xmax = (int)AverageRoadIntensity.HighestValue;
+            avgPatency.xavg075 = (int)AverageRoadIntensity.AverageValueFor__Values75;
+            avgPatency.xavg05 = (int)AverageRoadIntensity.AverageValueFor__Values50;
+            avgPatency.xavg025 = (int)AverageRoadIntensity.AverageValueFor__Values25;
+            avgPatency.xmin = (int)AverageRoadIntensity.SmallestValue;
 
-            avgLightCount.ymax = 0;
-            avgLightCount.yaverage075 = 0.25;
-            avgLightCount.yaverage05 = 0.5;
-            avgLightCount.yaverage025 = 0.75;
-            avgLightCount.ymin = 1;
+            avgPatency.ymax = 0;
+            avgPatency.yaverage075 = 0.25;
+            avgPatency.yaverage05 = 0.5;
+            avgPatency.yaverage025 = 0.75;
+            avgPatency.ymin = 1;
 
-            avgLightCount.rating = (int)AverageRoadIntensity.Rating;
-            avgLightCount.avgWeightCriteria = (int)AverageRoadIntensity.ValueFor__WeightComparison__Criteria;
+            avgPatency.rating = (int)AverageRoadIntensity.Rating;
+            avgPatency.avgWeightCriteria = (int)AverageRoadIntensity.ValueFor__WeightComparison__Criteria;
 
         }
 
@@ -151,27 +151,27 @@ namespace EVRPMod
 
             double k = 1, b = 0, y = 0;
 
-            //let avgLightCount = params.oneDimentionalFunctionValue.avgLightCount;
-            if (x <= avgLightCount.xmax && x > avgLightCount.xavg075)
+            //let avgPatency = params.oneDimentionalFunctionValue.avgPatency;
+            if (x <= avgPatency.xmax && x > avgPatency.xavg075)
             {
 
-                k = (avgLightCount.yaverage025 - avgLightCount.ymin) / (avgLightCount.xavg075 - avgLightCount.xmax);
-                b = (avgLightCount.xavg075 * avgLightCount.ymin - avgLightCount.yaverage025 * avgLightCount.xmax) / (avgLightCount.xavg075 - avgLightCount.xmax);
+                k = (avgPatency.yaverage025 - avgPatency.ymin) / (avgPatency.xavg075 - avgPatency.xmax);
+                b = (avgPatency.xavg075 * avgPatency.ymin - avgPatency.yaverage025 * avgPatency.xmax) / (avgPatency.xavg075 - avgPatency.xmax);
             }
-            else if (x <= avgLightCount.xavg075 && x > avgLightCount.xavg05)
+            else if (x <= avgPatency.xavg075 && x > avgPatency.xavg05)
             {
-                k = (avgLightCount.yaverage05 - avgLightCount.yaverage025) / (avgLightCount.xavg05 - avgLightCount.xavg075);
-                b = (avgLightCount.xavg05 * avgLightCount.yaverage025 - avgLightCount.yaverage05 * avgLightCount.xavg075) / (avgLightCount.xavg05 - avgLightCount.xavg075);
+                k = (avgPatency.yaverage05 - avgPatency.yaverage025) / (avgPatency.xavg05 - avgPatency.xavg075);
+                b = (avgPatency.xavg05 * avgPatency.yaverage025 - avgPatency.yaverage05 * avgPatency.xavg075) / (avgPatency.xavg05 - avgPatency.xavg075);
             }
-            else if (x <= avgLightCount.xavg05 && x > avgLightCount.xavg025)
+            else if (x <= avgPatency.xavg05 && x > avgPatency.xavg025)
             {
-                k = (avgLightCount.yaverage075 - avgLightCount.yaverage05) / (avgLightCount.xavg025 - avgLightCount.xavg05);
-                b = (avgLightCount.xavg025 * avgLightCount.yaverage05 - avgLightCount.yaverage075 * avgLightCount.xavg05) / (avgLightCount.xavg025 - avgLightCount.xavg05);
+                k = (avgPatency.yaverage075 - avgPatency.yaverage05) / (avgPatency.xavg025 - avgPatency.xavg05);
+                b = (avgPatency.xavg025 * avgPatency.yaverage05 - avgPatency.yaverage075 * avgPatency.xavg05) / (avgPatency.xavg025 - avgPatency.xavg05);
             }
-            else if (x <= avgLightCount.xavg025 && x >= avgLightCount.xmin)
+            else if (x <= avgPatency.xavg025 && x >= avgPatency.xmin)
             {
-                k = (avgLightCount.ymax - avgLightCount.yaverage075) / (avgLightCount.xmin - avgLightCount.xavg025);
-                b = (avgLightCount.xmin * avgLightCount.yaverage075 - avgLightCount.ymax * avgLightCount.xavg025) / (avgLightCount.xmin - avgLightCount.xavg025);
+                k = (avgPatency.ymax - avgPatency.yaverage075) / (avgPatency.xmin - avgPatency.xavg025);
+                b = (avgPatency.xmin * avgPatency.yaverage075 - avgPatency.ymax * avgPatency.xavg025) / (avgPatency.xmin - avgPatency.xavg025);
             }
 
 
@@ -183,41 +183,41 @@ namespace EVRPMod
         public static void lambda()
         {
             //let speedRestriction = params.coefficientCriteria.speedRestriction;
-            //let avgLightCount = params.coefficientCriteria.avgLightCount;
+            //let avgPatency = params.coefficientCriteria.avgPatency;
             //let roadQuality = params.coefficientCriteria.roadQuality;
 
             /*if (speedRestriction.rating == 1) {
-                speedRestriction.lambda = 1 / (vSpeed(avgLightCount.avgWeightCriteria) + vSpeed(roadQuality.avgWeightCriteria) + 1);
+                speedRestriction.lambda = 1 / (vSpeed(avgPatency.avgWeightCriteria) + vSpeed(roadQuality.avgWeightCriteria) + 1);
                 roadQuality.lambda = speedRestriction.lambda * vSpeed(roadQuality.avgWeightCriteria);
-                avgLightCount.lambda = speedRestriction.lambda * vSpeed(avgLightCount.avgWeightCriteria);
+                avgPatency.lambda = speedRestriction.lambda * vSpeed(avgPatency.avgWeightCriteria);
             }
             else if (roadQuality.rating == 1) {
-                roadQuality.lambda = 1 / (vQuality(speedRestriction.avgWeightCriteria) + vQuality(avgLightCount.avgWeightCriteria) + 1);
+                roadQuality.lambda = 1 / (vQuality(speedRestriction.avgWeightCriteria) + vQuality(avgPatency.avgWeightCriteria) + 1);
                 speedRestriction.lambda = roadQuality.lambda * vQuality(speedRestriction.avgWeightCriteria);
-                avgLightCount.lambda = roadQuality.lambda * vQuality(avgLightCount.avgWeightCriteria);
+                avgPatency.lambda = roadQuality.lambda * vQuality(avgPatency.avgWeightCriteria);
             }
-            else if (avgLightCount.rating == 1) {
-                avgLightCount.lambda = 1 / (vNumbersOfLight(speedRestriction.avgWeightCriteria) + vNumbersOfLight(avgLightCount.avgWeightCriteria) + 1);
-                speedRestriction.lambda = avgLightCount.lambda * vNumbersOfLight(speedRestriction.avgWeightCriteria);
-                roadQuality.lambda = avgLightCount.lambda * vNumbersOfLight(roadQuality.avgWeightCriteria);
+            else if (avgPatency.rating == 1) {
+                avgPatency.lambda = 1 / (vNumbersOfLight(speedRestriction.avgWeightCriteria) + vNumbersOfLight(avgPatency.avgWeightCriteria) + 1);
+                speedRestriction.lambda = avgPatency.lambda * vNumbersOfLight(speedRestriction.avgWeightCriteria);
+                roadQuality.lambda = avgPatency.lambda * vNumbersOfLight(roadQuality.avgWeightCriteria);
             }*/
             if (speedRestriction.rating == 1)
             {
-                speedRestriction.lambda = 1 / (vNumbersOfLight(avgLightCount.avgWeightCriteria) + vQuality(roadQuality.avgWeightCriteria) + 1);
+                speedRestriction.lambda = 1 / (vNumbersOfLight(avgPatency.avgWeightCriteria) + vQuality(roadQuality.avgWeightCriteria) + 1);
                 roadQuality.lambda = speedRestriction.lambda * vQuality(roadQuality.avgWeightCriteria);
-                avgLightCount.lambda = speedRestriction.lambda * vNumbersOfLight(avgLightCount.avgWeightCriteria);
+                avgPatency.lambda = speedRestriction.lambda * vNumbersOfLight(avgPatency.avgWeightCriteria);
             }
             else if (roadQuality.rating == 1)
             {
-                roadQuality.lambda = 1 / (vSpeed(speedRestriction.avgWeightCriteria) + vNumbersOfLight(avgLightCount.avgWeightCriteria) + 1);
+                roadQuality.lambda = 1 / (vSpeed(speedRestriction.avgWeightCriteria) + vNumbersOfLight(avgPatency.avgWeightCriteria) + 1);
                 speedRestriction.lambda = roadQuality.lambda * vSpeed(speedRestriction.avgWeightCriteria);
-                avgLightCount.lambda = roadQuality.lambda * vNumbersOfLight(avgLightCount.avgWeightCriteria);
+                avgPatency.lambda = roadQuality.lambda * vNumbersOfLight(avgPatency.avgWeightCriteria);
             }
-            else if (avgLightCount.rating == 1)
+            else if (avgPatency.rating == 1)
             {
-                avgLightCount.lambda = 1 / (vSpeed(speedRestriction.avgWeightCriteria) + vQuality(roadQuality.avgWeightCriteria) + 1);
-                speedRestriction.lambda = avgLightCount.lambda * vSpeed(speedRestriction.avgWeightCriteria);
-                roadQuality.lambda = avgLightCount.lambda * vQuality(roadQuality.avgWeightCriteria);
+                avgPatency.lambda = 1 / (vSpeed(speedRestriction.avgWeightCriteria) + vQuality(roadQuality.avgWeightCriteria) + 1);
+                speedRestriction.lambda = avgPatency.lambda * vSpeed(speedRestriction.avgWeightCriteria);
+                roadQuality.lambda = avgPatency.lambda * vQuality(roadQuality.avgWeightCriteria);
             }
 
         }
@@ -226,7 +226,7 @@ namespace EVRPMod
         public static double vAdditiveEstimation(double xSpeed, double xQuality, double xNumbersOfLights)
         {
 
-            return speedRestriction.lambda* vSpeed(xSpeed) + roadQuality.lambda* vQuality(xQuality) + avgLightCount.lambda* vNumbersOfLight(xNumbersOfLights);
+            return speedRestriction.lambda* vSpeed(xSpeed) + roadQuality.lambda* vQuality(xQuality) + avgPatency.lambda* vNumbersOfLight(xNumbersOfLights);
         }
 
         //Функция модификации матрицы стоимости

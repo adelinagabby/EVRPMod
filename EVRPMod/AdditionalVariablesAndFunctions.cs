@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using EVRPMod.Models.DB;
-
-
+using Microsoft.Ajax.Utilities;
 
 namespace EVRPMod
 {
@@ -26,17 +25,58 @@ namespace EVRPMod
             var DepotData = db.depotData.ToList();
             var CustomerData = db.customerData.ToList();
 
-
+            //обнуляем порядок
             for (int i = 0; i < CustomerData.Count; i++)
             {
-                CustomerData[i].orderAddress = i;
+                CustomerData[i].orderAddress = -1;
             }
             for (int i = 0; i < DepotData.Count; i++)
             {
-                DepotData[i].orderAddress = i + CustomerData.Count;
+                DepotData[i].orderAddress = -1;
             }
+
+
+            int orderAddress = 0;
+            //устанавливаем порядок
+            for (int i = 0; i < CustomerData.Count; i++)
+            {
+                if(CustomerData[i].orderAddress == -1)
+                {
+                    //CustomerData[i].orderAddress = orderAddress;
+                    CustomerData.Where(x => x.latitude == CustomerData[i].latitude && x.longitude == CustomerData[i].longitude).ForEach(x=>x.orderAddress = orderAddress);
+                    orderAddress++;
+                }
+            }
+            for (int i = 0; i < DepotData.Count; i++)
+            {
+                DepotData[i].orderAddress = orderAddress;
+                orderAddress++;
+            }
+
             db.SaveChanges();
         }
 
+
+
+        //public static void VehicleOrderInAlgorithm()
+        //{
+
+        //    EVRPModContext db = new EVRPModContext();
+
+        //    var VehicleData = db.vehicleData.ToList();
+        //    var DepotData = db.depotData.OrderBy(x => x.orderAddress).ToList();
+
+        //    for (int i = 0; i < DepotData.Count; i++)
+        //    {
+        //        int orderInAlgoritm = 0;
+        //        for (int j = 0; j < VehicleData.Count; j++)
+        //        {
+        //            if(VehicleData[j].)
+        //            VehicleData[i].orderInAlgoritm = i;
+        //        }
+        //    }
+          
+        //    db.SaveChanges();
+        //}
     }
 }

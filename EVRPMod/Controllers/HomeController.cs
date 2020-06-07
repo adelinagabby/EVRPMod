@@ -177,7 +177,7 @@ namespace EVRPMod.Controllers
 
 
 
-        public static List<PopulationAndCost> Sort(List<PopulationAndCost> populationAndCosts)
+        public static List<int[]> Sort(List<PopulationAndCost> populationAndCosts)
         {
             double[] costWays = new double[populationAndCosts.Count];
 
@@ -199,7 +199,7 @@ namespace EVRPMod.Controllers
               
             }
 
-            List<PopulationAndCost> newPopulationAndCosts = new List<PopulationAndCost>();
+            List<int[]> newPopulationAndCosts = new List<int[]>();
 
             for (int i = 0; i < costWays.Length; i++)
             {
@@ -209,7 +209,7 @@ namespace EVRPMod.Controllers
                 {
                     if(populationAndCosts[j].cost == costWays[i])
                     {
-                        newPopulationAndCosts.Add(populationAndCosts[j]);
+                        newPopulationAndCosts.Add(populationAndCosts[j].population);
                         populationAndCosts.RemoveAt(j);
                     }
                     j++;
@@ -314,6 +314,7 @@ namespace EVRPMod.Controllers
         [HttpPost]
         public ActionResult FindingShortestPaths(string[][][] distanceMatrixBetweenCustomersAndDepots)
         {
+            EVRPModContext db = new EVRPModContext();
 
 
             double[][][] doubleDistanceMatrixBetweenCustomersAndDepots = new double[distanceMatrixBetweenCustomersAndDepots.Length][][];
@@ -331,11 +332,18 @@ namespace EVRPMod.Controllers
                 }
             }
 
-         
+
+            List<VehiclesOfDepot> vehiclesOfDepots = new List<VehiclesOfDepot>();
+
+            for (int k = 0; k < distanceMatrixBetweenCustomersAndDepots.Length; k++)
+            {
+                FindingShortestPaths(doubleDistanceMatrixBetweenCustomersAndDepots[k],db.depotData.Where(x=>x.orderInAlgoritm == k).First().id);
+            }
+
             return Json(0);
         }
 
-        List<VehiclesOfDepot> vehiclesOfDepots = new List<VehiclesOfDepot>();
+        
 
         public VehiclesOfDepot FindingShortestPaths(double[][] distanceMatrixBetweenCustomersAndDepots, int depotId)
         {
@@ -386,7 +394,7 @@ namespace EVRPMod.Controllers
             //List<int[]> newPopulationForOrder = new List<int[]>();
 
             int sizePopulationForVehicle = 10;
-            int sizePopulationForOrder = 10;
+            //int sizePopulationForOrder = 10;
 
             //получаем перестановки для ТС
             populationForVehicle = GeneticAlgoritm.PrimaryPopulation(sizePopulationForVehicle, numberOfVehicles);
@@ -622,16 +630,14 @@ namespace EVRPMod.Controllers
                 }
 
                 //Сортируем и создаем новую популяцию
-                Sort(populationsAndCosts);
+                populationForVehicle = Sort(populationsAndCosts);
+                //Кроссинговер
+                populationForVehicle = GeneticAlgoritm.Crossing(populationForVehicle);
+                //Мутация
+                GeneticAlgoritm.Mutation(populationForVehicle);
 
 
-                //populationForVehicle =
-
-            //Кроссинговер
-            // populationForVehicle = GeneticAlgoritm.Crossing(populationForVehicle);
-
-
-            numberIterationForVehicle--;
+                numberIterationForVehicle--;
             }
 
             VehiclesOfDepot VehiclesOfDepot = new VehiclesOfDepot() { depot = depotId, vehicleOrders = bestCostAndPopulation.vehicleOrders};

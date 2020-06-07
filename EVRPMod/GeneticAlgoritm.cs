@@ -9,12 +9,12 @@ namespace EVRPMod
     {
 
 
-        Random rnd = new Random();
-        double infinity = 999999;
+        public static Random rnd = new Random();
+        public static double infinity = 999999;
         // Генетический алгоритм
 
         //Функция для подсчета длины пути в генетическом алгоритме
-        double CostWayGeneticAlgorithm(double[][] matrixWay, int[] way)
+        public static double CostWayGeneticAlgorithm(double[][] matrixWay, int[] way)
         {
             double costWay = 0;
 
@@ -92,7 +92,7 @@ namespace EVRPMod
         }
 
         //Кроссинговер
-        private List<int[]> Crossing(List<int[]> population)
+        public static List<int[]> Crossing(List<int[]> population)
         {
 
             List<int> index = new List<int>();
@@ -152,7 +152,7 @@ namespace EVRPMod
         }
 
         //Проверка на уникальность
-        void CheckOnUniqueness(int[] reshuffle)
+        public static void CheckOnUniqueness(int[] reshuffle)
         {
             int flag;
             int city;
@@ -179,7 +179,7 @@ namespace EVRPMod
 
 
         //Создание новой популяции
-        List<int[]> CreatingANewPopulationWithFirstCity(List<int[]> population, double[][] matrixWay,int firstCity)
+        public static List<int[]> CreatingANewPopulationWithFirstCity(List<int[]> population, double[][] matrixWay,int firstCity)
         {
             
             List<int[]> newPopulation = new List<int[]>();
@@ -289,6 +289,53 @@ namespace EVRPMod
             return newPopulation2;
         }
 
+
+        //Создание новой популяции
+        List<int[]> CreatingANewPopulation(List<int[]> population)
+        {
+
+            List<int[]> newPopulation = new List<int[]>();
+            newPopulation = Crossing(population);
+            double[] costWays = new double[population.Count];
+
+
+            List<int[]> newPopulation2 = new List<int[]>();
+            for (int i = 0; i < population.Count; i++)
+            {
+                newPopulation2.Add(newPopulation2[i]);
+            }
+            //Расположим наборы в порядке возрастания F
+            newPopulation2 = Sort(costWays, newPopulation, newPopulation2);
+            int R;
+
+            int flag = 0;
+
+            //Генерируем новые наборы вместо последних
+            for (int i = population.Count / 2; i < population.Count; i++)
+            {
+
+                int[] newReshuffle = new int[population[0].Length + 1];
+
+                for (int j = 0; j < population[0].Length; j++)
+                {
+                    flag = 0;
+                    while (flag == 0)
+                    {
+                        R = rnd.Next(population[0].Length);
+                        if (!newReshuffle.Contains(R))
+                        {
+                            flag = 1;
+                            newReshuffle[j] = R;
+                        }
+                    }
+                }
+                newPopulation2[i] = newReshuffle;
+            }
+
+            return newPopulation2;
+        }
+
+
         // Получить  i-ый набор из популяции
         public static int[] GetSet(List<int[]> population, int i)
         {
@@ -299,8 +346,12 @@ namespace EVRPMod
             return reshuffle;
         }
 
+
+
+
+
         //сортировка путей по стоимости
-        List<int[]> Sort(double[] costWays, List<int[]> population, List<int[]> newPopulation)
+        public static List<int[]> Sort(double[] costWays, List<int[]> population, List<int[]> newPopulation)
         {
 
             double tmp;
@@ -332,7 +383,7 @@ namespace EVRPMod
             return newPopulation2;
         }
 
-        List<int[]> Mutation(List<int[]> population)
+        public static List<int[]> Mutation(List<int[]> population)
         {
             int k = 0;
             int l = 0;
@@ -362,8 +413,9 @@ namespace EVRPMod
             }
             return population;
         }
+
         //Генетический алгоритм
-        int[] GeneticAlgorithm(double[][] matrixWay,int sizePopulation, int firstCity)
+       public static int[] GeneticAlgorithm(double[][] matrixWay,int sizePopulation, int firstCity)
         {
 
             int numberIteration = 1000;
@@ -404,6 +456,7 @@ namespace EVRPMod
 
             while (numberIteration > 0)
             {
+
                 newPopulation = CreatingANewPopulationWithFirstCity(newPopulation, matrixWay, firstCity);
 
 

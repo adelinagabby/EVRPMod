@@ -7,11 +7,11 @@ namespace EVRPMod
 {
     public class BranchAndBoundaryMethod
     {
-        double bestCostWayBranchAndBoundaryMethod = double.MaxValue;
+        public static double bestCostWayBranchAndBoundaryMethod = double.MaxValue;
 
-        bool flag = false;
+        public static bool flag = false;
         //Метод ветвей и границ
-        int[] Branch_And_Boundary_Method(double[,] A, int[] I, int[] J, int[] X0)
+       public static int[] Branch_And_Boundary_Method(double[,] A, int[] I, int[] J, int[] X0)
         {
             if (flag == true)
                 return X0;
@@ -195,7 +195,7 @@ namespace EVRPMod
         }
 
         //Функция для подсчета стоимости дороги
-        double CostWayBranchAndBoundaryMethod(double[,] matrixWay, int[] way)
+        public static double CostWayBranchAndBoundaryMethod(double[,] matrixWay, int[] way)
         {
             double costWay = 0;
 
@@ -210,7 +210,7 @@ namespace EVRPMod
         }
 
         //Жадный алгоритм
-        int[] GreedyAlgorithm(double [,] matrixWay, int[] I, int[] J)
+        public static int[] GreedyAlgorithm(double [,] matrixWay, int[] I, int[] J)
         {
 
             int n = matrixWay.GetLength(0);

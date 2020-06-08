@@ -145,7 +145,7 @@
    
                 
 
-    var dataHead = ['Депо', 'Адрес', 'Изменить', 'Удалить'];
+    var dataHead = ['Номер депо', 'Депо', 'Адрес', 'Изменить', 'Удалить'];
 
     $('.messageClose').on('click', function () {
         $('#messageModalLong').modal('hide');
@@ -154,8 +154,9 @@
 
     $('.table thead').append('<tr> <th>' + dataHead[0] + '</th> <th>'
         + dataHead[1] + '</th> <th>'
-        + dataHead[2]
-        + '</th> <th>' + dataHead[3] + '</th> </th>')
+        + dataHead[2] + '</th> <th>'
+        + dataHead[3]
+        + '</th> <th>' + dataHead[4] + '</th> </th>')
 
     $.ajax({
         url: "@Url.Action("GetDepotData", "DepotData")",
@@ -165,7 +166,7 @@
         success: function (data) {
             if(data!=null)
             $.each(data, function (index, row) {
-                $('.table tbody').append('<tr> <td>' + row.name + '</td> <td>'
+                $('.table tbody').append('<tr> <td>' + row.id + '</td> <td>' + row.name + '</td> <td>'
                     + row.address
                     + '</td> <td  data-id=' + row.id + '> <button class="btn" id="editBtn"><i class="fa fa-edit" aria-hidden="true"></i></button> </td>'
                     + '<td  data-id=' + row.id +'> <button class="btn" id="deleteBtn"><i class="fa fa-times" aria-hidden="true"></i></button> </td> </tr>')
@@ -205,7 +206,7 @@
 
         var id = $(this).data("id");
 
-        if (colIndex == 2) {
+        if (colIndex == 3) {
 
             editId = id;
 
@@ -236,7 +237,7 @@
             });
         }
 
-        if (colIndex == 3) {
+        if (colIndex == 4) {
             $.ajax({
                 url: "@Url.Action("DeleteDepotData", "DepotData")",
                 type: "POST",

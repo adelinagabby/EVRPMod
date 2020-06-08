@@ -8,6 +8,6 @@ namespace EVRPMod.Models.DB
         public int id { get; set; }
         public int? rowTable { get; set; }
         public int? columnTable { get; set; }
-        public int? valueTable { get; set; }
+        public float? valueTable { get; set; }
     }
 }

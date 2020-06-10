@@ -45,12 +45,23 @@ namespace EVRPMod.Controllers
 
             string Result;
 
-            if (Obj != null)
-            {
-                Result = "Данное транспортное средство в депо уже имеется в списке";
+            //if (Obj != null)
+            //{
+            //    Result = "Данное транспортное средство в депо уже имеется в списке";
 
-                return Json(Result);
+                
+            //}
+            //else 
+            if (db.depotData.FirstOrDefault(x => x.id == depotId) == null)
+            {
+                Result = "Указанное депо не существует";
             }
+            else if (db.vehicleData.FirstOrDefault(x => x.id == vehicleId) == null)
+            {
+                Result = "Указанное транспортное средство не существует";
+            }
+            else if (count < 1)
+                Result = "Количество должно быть целым положительным числом";
             else
             {
 
@@ -69,8 +80,9 @@ namespace EVRPMod.Controllers
 
                 Result = "Новое транспортное средство в депо добавлено";
 
-                return Json(Result);
+                //return Json(Result);
             }
+            return Json(Result);
         }
         [HttpPost]
         public ActionResult EditVehicleInDepot(string id, int newDepotId, int newVehicleId, int newCount, int oldDepotId, int oldVehicleId, int oldCount)
@@ -80,11 +92,22 @@ namespace EVRPMod.Controllers
 
             string Result;
 
-            if (oldDepotId == newDepotId && oldVehicleId == newVehicleId && oldCount == newCount)
-            {
+            //if (oldDepotId == newDepotId && oldVehicleId == newVehicleId && oldCount == newCount)
+            //{
 
+            //}
+            //else 
+            if (db.depotData.FirstOrDefault(x => x.id == newDepotId) == null)
+            {
+                Result = "Указанное депо не существует";
             }
-            else
+            else if (db.vehicleData.FirstOrDefault(x => x.id == newVehicleId) == null)
+            {
+                Result = "Указанное транспортное средство не существует";
+            }
+            else if (newCount < 1)
+                    Result = "Количество должно быть целым положительным числом";
+                else
             {
                 var Obj = db.vehicleInDepot.FirstOrDefault(x => x.vehicleId == newVehicleId && x.depotId == newDepotId && x.count == newCount);
 
@@ -92,7 +115,7 @@ namespace EVRPMod.Controllers
                 {
                     Result = "Данное транспортное средство в депо уже присутствует в списке";
 
-                    return Json(Result);
+                    //return Json(Result);
                 }
                 else
                 {
@@ -101,13 +124,13 @@ namespace EVRPMod.Controllers
                     ObjEdit.depotId = newDepotId;
                     ObjEdit.count = newCount;
                     db.SaveChanges();
-
+                    Result = "Данные изменены";
                 }
 
 
             }
 
-            Result = "Данные изменены";
+           
 
             return Json(Result);
         }

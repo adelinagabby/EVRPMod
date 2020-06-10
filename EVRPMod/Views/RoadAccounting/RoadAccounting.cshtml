@@ -6,17 +6,21 @@
 @*<button id="createTables" type="button" class="btn">Сформировать таблицы</button>*@
 <button id="save" type="button" class="btn">Сохранить</button>
 <h3>Скорость</h3>
+<h5>Необходимо указать среднюю скорость на дорогах (км/ч).</h5>
+<h5>Минимальная скорость 20 км/ч, максимальная 110 км/ч.</h5>
 <div class="table-responsive">
     <table id="tableSpeed" class="table table-sm  table-bordered table-hover" style="padding:100px 0px">
         <thead class="thead-dark" id="thead"></thead>
         <tbody name="tbody" id="tbody">
             @*<tr><td></td><th>Первый</th><th>Второй</th></tr>
-            <tr><th>Первый</th><td>Пусто</td><td>Пусто</td></tr>
-            <tr><th>Второй</th><td>Пусто</td><td>Пусто</td></tr>*@
+                <tr><th>Первый</th><td>Пусто</td><td>Пусто</td></tr>
+                <tr><th>Второй</th><td>Пусто</td><td>Пусто</td></tr>*@
         </tbody>
     </table>
 </div>
 <h3>Качество дорог</h3>
+<h5>Необходимо указать среднее качество дорог (от 1 до 10).</h5>
+
 <div class="table-responsive">
     <table id="tableQuality" class="table table-sm  table-bordered table-hover" style="padding:100px 0px">
         <thead class="thead-dark" id="thead"></thead>
@@ -25,6 +29,8 @@
     </table>
 </div>
 <h3>Интенсивность движения</h3>
+<h5>Необходимо указать среднюю скорость на дорогах (авт./сут.).</h5>
+<h5>Минимальная интенсивность движения 200 авт./сут., интенсивность движения 14 000 авт./сут.</h5>
 <div class="table-responsive">
     <table id="tablePatency" class="table table-sm  table-bordered table-hover" style="padding:100px 0px">
         <thead class="thead-dark" id="thead"></thead>
@@ -32,13 +38,35 @@
         </tbody>
     </table>
 </div>
-<h3>Стоимость</h3>
+<h3>Платные дороги</h3>
+<h5>Необходимо указать протяженность платных дорог (км).</h5>
 <div class="table-responsive">
     <table id="tableСost" class="table table-sm  table-bordered table-hover" style="padding:100px 0px">
         <thead class="thead-dark" id="thead"></thead>
         <tbody name="tbody" id="tbody">
         </tbody>
     </table>
+</div>
+<div class="modal fade" id="messageModalLong" tabindex="-1" role="dialog" aria-labelledby="messageModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageModalLongTitle">Результат</h5>
+                <button type="button" class="close messageClose" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="messageForm">
+                <div class="modal-body">
+                    <p id="message"> </p>
+                </div>
+
+                <div class="modal-footer">
+                    <button id="messageOk" type="submit" class=" btn btn-primary messageClose" data-dismiss="modal">Ок</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 @Scripts.Render("~/bundles/jquery")
 <script>
@@ -98,8 +126,17 @@
                  AverageRoadIntensityTable: tablePatency,
                  CostTable: tableСost,
                 },
-                success: function (data) {
+              success: function (data) {
 
+                  if (data != 0) {
+                      //alert(data);
+                      //location.reload();
+                      $('#message').text(data);
+                      $('#messageModalLong').modal('show');
+                  }
+                  else {
+                      window.location.reload()
+                  }
              },
                 error: function (data) {
                     alert('Error occurred');
@@ -210,8 +247,8 @@
                                         $("#idInputAverageSpeedTable" + i + j).val(data2.AverageSpeedTable[i][j]);
                                         $("#idInputAverageRoadIntensityTable" + i + j).val(data2.AverageRoadIntensityTable[i][j]);
                                         $("#idInputRoadQualityTable" + i + j).val(data2.RoadQualityTable[i][j]);
-                                        $("#idInputCostTable" + i + j).val(data2.CostTable[i][j]);      
-                                    } 
+                                        $("#idInputCostTable" + i + j).val(data2.CostTable[i][j]);
+                                    }
                                 }
                             }
                         }

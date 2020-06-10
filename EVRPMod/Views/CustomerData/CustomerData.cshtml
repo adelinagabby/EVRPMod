@@ -172,7 +172,8 @@
                 $('#messageModalLong').modal('show');
             },
             error: function (data) {
-                alert('Error occurred');
+                $('#message').text("Ошибка. Введены некорректные значения");
+                $('#messageModalLong').modal('show');
             }
      });
     })
@@ -260,7 +261,8 @@
                     $('#messageModalLong').modal('show');
                 },
                 error: function (data) {
-                    alert('Error occurred');
+                    $('#message').text("Ошибка. Введены некорректные значения");
+                    $('#messageModalLong').modal('show');
                 }
             });
     });

@@ -45,15 +45,22 @@ namespace EVRPMod.Controllers
 
             string Result;
 
-            if (Obj != null)
-            {
-                Result = "Данный заказ уже имеется в списке";
+            //if (Obj != null)
+            //{
+            //    Result = "Данный заказ уже имеется в списке";
 
-                return Json(Result);
+            //    return Json(Result);
+            //}
+            //else
+            //{
+            if (count < 1)
+                Result = "Количество должно быть целым положительным числом";
+            else if(db.kitType.FirstOrDefault(x=>x.id == kitType)==null)
+            {
+                Result = "Указанный тип комплекта не существует";
             }
             else
             {
-
                 var newObj = new customerData
                 {
                     //id = (db.vehicleData.Max(x=>x.id)!=null? db.vehicleData.Max(x => x.id)+1:1),
@@ -73,9 +80,9 @@ namespace EVRPMod.Controllers
 
                 AdditionalVariablesAndFunctions.ArrangementOfAddresses();
                 AdditionalVariablesAndFunctions.RoadAccountingTablesAreSaved = false;
-
-                return Json(Result);
             }
+                return Json(Result);
+            //}
         }
         [HttpPost]
         public ActionResult EditCustomerData(string id, int newKitType, string newLatitude, string newLongitude, int newCount, 
@@ -86,9 +93,11 @@ namespace EVRPMod.Controllers
 
             string Result;
 
-            if (oldKitType == newKitType && oldLatitude == newLatitude && oldLongitude == newLongitude && oldCount == newCount)
+            if (newCount < 1)
+                Result = "Количество должно быть целым положительным числом";
+            else if (db.kitType.FirstOrDefault(x => x.id == newKitType) == null)
             {
-
+                Result = "Указанный тип комплекта не существует";
             }
             else
             {
@@ -109,13 +118,13 @@ namespace EVRPMod.Controllers
                     ObjEdit.count = newCount;
                     ObjEdit.address = address;
                     db.SaveChanges();
-
+                    Result = "Данные изменены";
                 }
 
 
             }
 
-            Result = "Данные изменены";
+          
 
             return Json(Result);
         }

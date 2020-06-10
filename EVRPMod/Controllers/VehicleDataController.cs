@@ -35,82 +35,102 @@ namespace EVRPMod.Controllers
             return Json(Obj);
         }
         [HttpPost]
-        public ActionResult AddVehiceData(string Name, int Capacity, int ServiceCost, int CostRoads)
+        public ActionResult AddVehiceData(string Name, string Capacity, string ServiceCost, string CostRoads)
         {
+            string Result;
 
             EVRPModContext db = new EVRPModContext();
 
-
-            var Obj = db.vehicleData.FirstOrDefault(x => x.name == Name && x.capacity == Capacity && x.serviceCost == ServiceCost && x.costRoads == CostRoads);
-
-            string Result;
-
-            if (Obj != null)
+            if (Name == "" || Capacity == "" || ServiceCost == "" || CostRoads == "")
             {
-                Result = "Данное транспортное средство уже имеется в списке";
-
-                return Json(Result);
+                Result = "Ошибка. Не все поля заполнены";
             }
+
+            //var Obj = db.vehicleData.FirstOrDefault(x => x.name == Name && x.capacity == Capacity && x.serviceCost == ServiceCost && x.costRoads == CostRoads);
+
+
+
+            //if (Obj != null)
+            //{
+            //    Result = "Данное транспортное средство уже имеется в списке";
+
+            //    return Json(Result);
+            //}
             else
             {
 
-                var newObj = new vehicleData
+                try
                 {
-                    //id = (db.vehicleData.Max(x=>x.id)!=null? db.vehicleData.Max(x => x.id)+1:1),
-                    name = Name,
-                    capacity = Capacity,
-                    serviceCost = ServiceCost,
-                    costRoads = CostRoads,
+                    var newObj = new vehicleData
+                    {
+                        //id = (db.vehicleData.Max(x=>x.id)!=null? db.vehicleData.Max(x => x.id)+1:1),
+                        name = Name,
+                        capacity = string.IsNullOrEmpty(Capacity) ? 0 : float.Parse(Capacity.Replace(".", ",")),
+                        serviceCost = string.IsNullOrEmpty(ServiceCost) ? 0 : float.Parse(ServiceCost.Replace(".", ",")),
+                        costRoads = string.IsNullOrEmpty(CostRoads) ? 0 : float.Parse(CostRoads.Replace(".", ",")),
+                    };
 
-                };
+
+                    db.vehicleData.Add(newObj);
+
+                    db.SaveChanges();
 
 
-                db.vehicleData.Add(newObj);
-
-                db.SaveChanges();
-
-                Result = "Новое транспортное средство добавлено";
-
-                return Json(Result);
+                    return Json("Новое транспортное средство добавлено");
+                }
+                catch
+                {
+                    return Json("Ошибка. Введено нечисловое значение");
+                }
             }
+            return Json(Result);
         }
         [HttpPost]
-        public ActionResult EditVehiceData(string id, string newName, int newCapacity, int newServiceCost, int newCostRoads, string oldName, int oldCapacity, int oldServiceCost, int oldCostRoads)
+        public ActionResult EditVehiceData(string id, string newName, string newCapacity, string newServiceCost, string newCostRoads, string oldName, string oldCapacity, string oldServiceCost, string oldCostRoads)
         {
 
             EVRPModContext db = new EVRPModContext();
 
             string Result;
-
-            if (oldName == newName && oldCapacity == newCapacity && oldServiceCost == newServiceCost && oldCostRoads == newCostRoads)
+            if (newName == "" || newCapacity == "" || newServiceCost == "" || newCostRoads == "")
             {
-
+                Result = "Ошибка. Не все поля заполнены";
             }
+
+            //if (oldName == newName && oldCapacity == newCapacity && oldServiceCost == newServiceCost && oldCostRoads == newCostRoads)
+            //{
+
+            //}
             else
             {
-                var Obj = db.vehicleData.FirstOrDefault(x => x.name == newName && x.capacity == newCapacity && x.serviceCost == newServiceCost && x.costRoads == newCostRoads);
+                //var Obj = db.vehicleData.FirstOrDefault(x => x.name == newName && x.capacity == newCapacity && x.serviceCost == newServiceCost && x.costRoads == newCostRoads);
 
-                if (Obj != null)
-                {
-                    Result = "Данное транспортное средство уже присутствует в списке";
+                //if (Obj != null)
+                //{
+                //    Result = "Данное транспортное средство уже присутствует в списке";
 
-                    return Json(Result);
-                }
-                else
+                //    return Json(Result);
+                //}
+                //else
+                try
                 {
                     var ObjEdit = db.vehicleData.FirstOrDefault(x => x.id == Convert.ToInt32(id));
                     ObjEdit.name = newName;
-                    ObjEdit.capacity = newCapacity;
-                    ObjEdit.serviceCost = newServiceCost;
-                    ObjEdit.costRoads = newCostRoads;
+                    ObjEdit.capacity = string.IsNullOrEmpty(newCapacity) ? 0 : float.Parse(newCapacity.Replace(".", ","));
+                    ObjEdit.serviceCost = string.IsNullOrEmpty(newServiceCost) ? 0 : float.Parse(newServiceCost.Replace(".", ","));
+                    ObjEdit.costRoads = string.IsNullOrEmpty(newCostRoads) ? 0 : float.Parse(newCostRoads.Replace(".", ","));
                     db.SaveChanges();
 
-                }
+                    Result = "Данные изменены";
 
+                }
+                catch
+                {
+                    return Json("Ошибка. Введено нечисловое значение");
+                }
 
             }
 
-            Result = "Данные изменены";
 
             return Json(Result);
         }

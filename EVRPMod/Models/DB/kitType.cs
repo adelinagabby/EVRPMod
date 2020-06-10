@@ -7,6 +7,6 @@ namespace EVRPMod.Models.DB
     {
         public int id { get; set; }
         public string name { get; set; }
-        public int? weight { get; set; }
+        public float? weight { get; set; }
     }
 }

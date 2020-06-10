@@ -7,9 +7,9 @@ namespace EVRPMod.Models.DB
     {
         public int id { get; set; }
         public string name { get; set; }
-        public int? capacity { get; set; }
-        public int? serviceCost { get; set; }
-        public int? costRoads { get; set; }
+        public float? capacity { get; set; }
+        public float? serviceCost { get; set; }
+        public float? costRoads { get; set; }
         public int? orderInAlgoritm { get; set; }
     }
 }

@@ -42,10 +42,10 @@ namespace EVRPMod.Controllers
 
         struct RoadTable
         {
-            public int[][] AverageSpeedTable;
-            public int[][] AverageRoadIntensityTable;
-            public int[][] RoadQualityTable;
-            public int[][] CostTable;
+            public double[][] AverageSpeedTable;
+            public double[][] AverageRoadIntensityTable;
+            public double[][] RoadQualityTable;
+            public double[][] CostTable;
         }
 
         public ActionResult GetTables()
@@ -60,23 +60,23 @@ namespace EVRPMod.Controllers
             if (AverageSpeedData.Any() && AverageRoadIntensityData.Any() && RoadQualityData.Any() && CostData.Any())
             {
                 int countAddress = (int)Math.Sqrt(AverageSpeedData.Count);
-                int[][] AverageSpeedTable = new int[countAddress][];
-                int[][] AverageRoadIntensityTable = new int[countAddress][];
-                int[][] RoadQualityTable = new int[countAddress][];
-                int[][] CostTable = new int[countAddress][];
+                double[][] AverageSpeedTable = new double[countAddress][];
+                double[][] AverageRoadIntensityTable = new double[countAddress][];
+                double[][] RoadQualityTable = new double[countAddress][];
+                double[][] CostTable = new double[countAddress][];
 
                 for (int i = 0; i < countAddress; i++)
                 {
-                    AverageSpeedTable[i] = new int[countAddress];
-                    AverageRoadIntensityTable[i] = new int[countAddress];
-                    RoadQualityTable[i] = new int[countAddress];
-                    CostTable[i] = new int[countAddress];
+                    AverageSpeedTable[i] = new double[countAddress];
+                    AverageRoadIntensityTable[i] = new double[countAddress];
+                    RoadQualityTable[i] = new double[countAddress];
+                    CostTable[i] = new double[countAddress];
                     for (int j = 0; j < countAddress; j++)
                     {
-                        AverageSpeedTable[i][j] = AverageSpeedData.Where(x => x.rowTable == i && x.columnTable == j).First().valueTable ?? 0;
-                        AverageRoadIntensityTable[i][j] = AverageRoadIntensityData.Where(x => x.rowTable == i && x.columnTable == j).First().valueTable ?? 0;
-                        RoadQualityTable[i][j] = RoadQualityData.Where(x => x.rowTable == i && x.columnTable == j).First().valueTable ?? 0;
-                        CostTable[i][j] = CostData.Where(x => x.rowTable == i && x.columnTable == j).First().valueTable ?? 0;
+                        AverageSpeedTable[i][j] = Math.Round(AverageSpeedData.Where(x => x.rowTable == i && x.columnTable == j).First().valueTable ?? 0,3);
+                        AverageRoadIntensityTable[i][j] = Math.Round(AverageRoadIntensityData.Where(x => x.rowTable == i && x.columnTable == j).First().valueTable ?? 0);
+                        RoadQualityTable[i][j] = Math.Round(RoadQualityData.Where(x => x.rowTable == i && x.columnTable == j).First().valueTable ?? 0);
+                        CostTable[i][j] = Math.Round(CostData.Where(x => x.rowTable == i && x.columnTable == j).First().valueTable ?? 0);
                     }
                 }
 
@@ -125,68 +125,99 @@ namespace EVRPMod.Controllers
 
             int countTable = AverageSpeedTable.Length;
             int id = 0;
-            for (int i = 0; i < countTable; i++)
+            float valueTableAverageSpeedTable;
+            float valueTableAverageRoadIntensityTable;
+            float valueTableRoadQualityTable;
+            float valueTableCostTable;
+            //float value = 0.000f;
+            try
             {
-                for (int j = 0; j < countTable; j++)
+                for (int i = 0; i < countTable; i++)
                 {
-                    var newObjAverageSpeedTable = new AverageSpeedTable
+                    for (int j = 0; j < countTable; j++)
                     {
-                        id = id,
-                        rowTable = i,
-                        columnTable = j,
-                        valueTable = Convert.ToInt32(string.IsNullOrEmpty(AverageSpeedTable[i][j])?"0": AverageSpeedTable[i][j])
 
-                    };
-                    var newObjAverageRoadIntensityTable = new AverageRoadIntensityTable
-                    {
-                        id = id,
-                        rowTable = i,
-                        columnTable = j,
-                        valueTable = Convert.ToInt32(string.IsNullOrEmpty(AverageRoadIntensityTable[i][j]) ? "0" : AverageRoadIntensityTable[i][j])
+                        valueTableAverageSpeedTable = string.IsNullOrEmpty(AverageSpeedTable[i][j]) ? 0 : float.Parse(AverageSpeedTable[i][j].Replace(".", ","));
+                        valueTableAverageRoadIntensityTable = string.IsNullOrEmpty(AverageRoadIntensityTable[i][j]) ? 0 : float.Parse(AverageRoadIntensityTable[i][j].Replace(".", ","));
+                        valueTableRoadQualityTable = string.IsNullOrEmpty(RoadQualityTable[i][j]) ? 0 : float.Parse(RoadQualityTable[i][j].Replace(".", ","));
+                        valueTableCostTable= string.IsNullOrEmpty(CostTable[i][j]) ? 0 : float.Parse(CostTable[i][j].Replace(".", ","));
+                        if (valueTableAverageSpeedTable<20 && valueTableAverageSpeedTable != 0 || valueTableAverageSpeedTable > 110 && valueTableAverageSpeedTable != 0)
+                            return Json("Ошибка. Значения средней скорости выходят за пределы");
+                        else if (valueTableAverageRoadIntensityTable < 1 && valueTableAverageRoadIntensityTable!=0 || valueTableAverageRoadIntensityTable > 10 && valueTableAverageRoadIntensityTable != 0)
+                            return Json("Ошибка. Значения среднего качества дорог выходят за пределы");
+                        else if (valueTableRoadQualityTable < 200 && valueTableRoadQualityTable != 0 || valueTableRoadQualityTable > 14000 && valueTableRoadQualityTable != 0)
+                            return Json("Ошибка. Значения интенсивности движения выходят за пределы");
+                        else if (valueTableCostTable < 0)
+                            return Json("Ошибка. Значения протяженности платных дорог не должны быть ниже нуля");
 
-                    };
-                    var newObjRoadQualityTable = new RoadQualityTable
-                    {
-                        id = id,
-                        rowTable = i,
-                        columnTable = j,
-                        valueTable = Convert.ToInt32(string.IsNullOrEmpty(RoadQualityTable[i][j]) ? "0" : RoadQualityTable[i][j])
+                        var newObjAverageSpeedTable = new AverageSpeedTable
+                        {
+                            id = id,
+                            rowTable = i,
+                            columnTable = j,
+                            valueTable = valueTableAverageSpeedTable
 
-                    };
-                    var newObjCostTable = new costTable
-                    {
-                        id = id,
-                        rowTable = i,
-                        columnTable = j,
-                        valueTable = Convert.ToInt32(string.IsNullOrEmpty(CostTable[i][j]) ? "0" : CostTable[i][j])
+                            //valueTable = float.TryParse(AverageSpeedTable[i][j].Replace(".", ","), out value) ? 0 : float.Parse(AverageSpeedTable[i][j].Replace(".", ","))
+                            //valueTable = Convert.ToDouble(string.IsNullOrEmpty(AverageSpeedTable[i][j]) ? "0" : (double) AverageSpeedTable[i][j])
 
-                    };
-                    db.AverageSpeedTable.Add(newObjAverageSpeedTable);
-                    db.AverageRoadIntensityTable.Add(newObjAverageRoadIntensityTable);
-                    db.RoadQualityTable.Add(newObjRoadQualityTable);
-                    db.costTable.Add(newObjCostTable);
+                        };
+                        var newObjAverageRoadIntensityTable = new AverageRoadIntensityTable
+                        {
+                            id = id,
+                            rowTable = i,
+                            columnTable = j,
+                            valueTable = valueTableAverageRoadIntensityTable
+                            //valueTable = Convert.ToInt32(string.IsNullOrEmpty(AverageRoadIntensityTable[i][j]) ? "0" : AverageRoadIntensityTable[i][j])
 
-                    id++;
+                        };
+                        var newObjRoadQualityTable = new RoadQualityTable
+                        {
+                            id = id,
+                            rowTable = i,
+                            columnTable = j,
+                            valueTable = valueTableRoadQualityTable
+                            //valueTable = Convert.ToInt32(string.IsNullOrEmpty(RoadQualityTable[i][j]) ? "0" : RoadQualityTable[i][j])
+
+                        };
+                        var newObjCostTable = new costTable
+                        {
+                            id = id,
+                            rowTable = i,
+                            columnTable = j,
+                            valueTable = valueTableCostTable
+                            //valueTable = Convert.ToInt32(string.IsNullOrEmpty(CostTable[i][j]) ? "0" : CostTable[i][j])
+
+                        };
+                        db.AverageSpeedTable.Add(newObjAverageSpeedTable);
+                        db.AverageRoadIntensityTable.Add(newObjAverageRoadIntensityTable);
+                        db.RoadQualityTable.Add(newObjRoadQualityTable);
+                        db.costTable.Add(newObjCostTable);
+
+                        id++;
+                    }
                 }
+
+                //var newObj = new depotData
+                //{
+                //    //id = (db.vehicleData.Max(x=>x.id)!=null? db.vehicleData.Max(x => x.id)+1:1),
+                //    name = name,
+                //    latitude = latitude,
+                //    longitude = longitude,
+                //    address = address,
+                //};
+
+
+                //db.depotData.Add(newObj);
+
+                db.SaveChanges();
+                return Json(0);
+            }
+            catch
+            {
+                return Json("Ошибка. Введено нечисловое значение");
             }
 
-            //var newObj = new depotData
-            //{
-            //    //id = (db.vehicleData.Max(x=>x.id)!=null? db.vehicleData.Max(x => x.id)+1:1),
-            //    name = name,
-            //    latitude = latitude,
-            //    longitude = longitude,
-            //    address = address,
-            //};
-
-
-            //db.depotData.Add(newObj);
-
-            db.SaveChanges();
-
-
-
-            return Json(0);
+          
         }
     }
 }

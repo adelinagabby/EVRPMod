@@ -66,13 +66,14 @@ namespace EVRPMod.Controllers
 
                 db.depotData.Add(newObj);
 
-                db.SaveChanges();
+               // db.SaveChanges();
 
                 Result = "Новое депо добавлено";
 
                 AdditionalVariablesAndFunctions.ArrangementOfAddresses();
-                AdditionalVariablesAndFunctions.RoadAccountingTablesAreSaved = false;
-
+                // AdditionalVariablesAndFunctions.RoadAccountingTablesAreSaved = false;
+                db.AlgorithmSettings.Where(x => x.variable == "RoadAccountingTablesAreSaved").FirstOrDefault().state = false;
+                db.SaveChanges();
                 return Json(Result);
             }
         }

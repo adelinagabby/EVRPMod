@@ -74,12 +74,13 @@ namespace EVRPMod.Controllers
 
                 db.customerData.Add(newObj);
 
-                db.SaveChanges();
+                //db.SaveChanges();
 
                 Result = "Новый заказ добавлен";
 
                 AdditionalVariablesAndFunctions.ArrangementOfAddresses();
-                AdditionalVariablesAndFunctions.RoadAccountingTablesAreSaved = false;
+                db.AlgorithmSettings.Where(x => x.variable == "RoadAccountingTablesAreSaved").FirstOrDefault().state = false;
+                db.SaveChanges();
             }
                 return Json(Result);
             //}

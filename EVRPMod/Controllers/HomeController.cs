@@ -116,6 +116,78 @@ namespace EVRPMod.Controllers
             return Json(StatesVariablesAlgoritm);
         }
 
+
+
+        [HttpPost]
+        public ActionResult CheckingForCorrectConnections()
+        {
+            string Result = "";
+
+            EVRPModContext db = new EVRPModContext();
+            var DepotData = db.depotData.ToList();
+            var CustomerData = db.customerData.ToList();
+            var VehicleData = db.vehicleData.ToList();
+            var VehicleInDepot = db.vehicleInDepot.ToList();
+            var KitType = db.kitType.ToList();
+
+            if(CustomerData.Count == 0)
+            {
+                Result = "Ошибка. Отсутствует информация о заказах";
+                return Json(Result);
+            }
+
+            if (Result == "")
+            {
+                if (VehicleInDepot.Count == 0)
+                {
+                    Result = "Ошибка. Отсутствует информация о транспортных средствах в депо";
+                    return Json(Result);
+                }
+            }
+                if (Result == "")
+            {
+                for (int i = 0; i < CustomerData.Count; i++)
+                {
+                    if (KitType.FirstOrDefault(x => x.id == CustomerData[i].kitType) == null)
+                    {
+                        Result = "Ошибка. В заказе №" + CustomerData[i].id + " указан несуществующий вид комплекта";
+                        return Json(Result);
+                    }
+
+                }
+            }
+            if (Result == "")
+            {
+                for (int i = 0; i < VehicleInDepot.Count; i++)
+                {
+                    if (DepotData.FirstOrDefault(x => x.id == VehicleInDepot[i].depotId) == null)
+                    {
+                        Result = "Ошибка. В \"Транспортные средства в депо\" указано несуществующее депо";
+                        return Json(Result);
+                    }
+
+                    if (VehicleData.FirstOrDefault(x => x.id == VehicleInDepot[i].vehicleId) == null)
+                    {
+                        Result = "Ошибка.  В \"Транспортные средства в депо\" указано несуществующее транспортное средство";
+                        return Json(Result);
+                    }
+                }
+            }
+
+            if (Result == "")
+            {
+                if(db.AlgorithmSettings.Where(x=>x.variable == "ConsideringTypeAndQualityOfRoads").FirstOrDefault().state == true && db.AlgorithmSettings.Where(x => x.variable == "RoadAccountingTablesAreSaved").FirstOrDefault().state == false)
+                {
+                    Result = "Ошибка. Были добавлены новые адреса. Информация о дорогах неактуальная";
+                    return Json(Result);
+                }
+            }
+            
+                return Json(0);
+        }
+
+
+
         [HttpPost]
         public ActionResult SetStatesVariables(bool ConsideringTypeAndQualityOfRoads, bool SeparateDeliveryAccounting)
         {

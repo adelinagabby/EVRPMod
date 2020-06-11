@@ -28,7 +28,7 @@ namespace EVRPMod.Controllers
                 if (itemCustomerData.orderAddress != orderAddress)
                 {
                     Address.Add(itemCustomerData.address);
-                    orderAddress = (int) itemCustomerData.orderAddress;
+                    //orderAddress = (int) itemCustomerData.orderAddress;
                 }
             }
             foreach (var itemDepotData in DepotData)
@@ -73,10 +73,10 @@ namespace EVRPMod.Controllers
                     CostTable[i] = new double[countAddress];
                     for (int j = 0; j < countAddress; j++)
                     {
-                        AverageSpeedTable[i][j] = Math.Round(AverageSpeedData.Where(x => x.rowTable == i && x.columnTable == j).First().valueTable ?? 0,3);
-                        AverageRoadIntensityTable[i][j] = Math.Round(AverageRoadIntensityData.Where(x => x.rowTable == i && x.columnTable == j).First().valueTable ?? 0);
-                        RoadQualityTable[i][j] = Math.Round(RoadQualityData.Where(x => x.rowTable == i && x.columnTable == j).First().valueTable ?? 0);
-                        CostTable[i][j] = Math.Round(CostData.Where(x => x.rowTable == i && x.columnTable == j).First().valueTable ?? 0);
+                        AverageSpeedTable[i][j] = Math.Round(AverageSpeedData.Where(x => x.rowTable == i && x.columnTable == j).FirstOrDefault()?.valueTable ?? 0);
+                        AverageRoadIntensityTable[i][j] = Math.Round(AverageRoadIntensityData.Where(x => x.rowTable == i && x.columnTable == j).FirstOrDefault()?.valueTable ?? 0);
+                        RoadQualityTable[i][j] = Math.Round(RoadQualityData.Where(x => x.rowTable == i && x.columnTable == j).FirstOrDefault()?.valueTable ?? 0);
+                        CostTable[i][j] = Math.Round(CostData.Where(x => x.rowTable == i && x.columnTable == j).FirstOrDefault()?.valueTable ?? 0);
                     }
                 }
 
@@ -107,10 +107,11 @@ namespace EVRPMod.Controllers
         {
             //AdditionalVariablesAndFunctions.ArrangementOfAddresses();
 
-            AdditionalVariablesAndFunctions.RoadAccountingTablesAreSaved = true;
-
+            //AdditionalVariablesAndFunctions.RoadAccountingTablesAreSaved = true;
+         
             EVRPModContext db = new EVRPModContext();
 
+        
 
             var AverageSpeedData = db.AverageSpeedTable.ToList();
             var AverageRoadIntensityData = db.AverageRoadIntensityTable.ToList();
@@ -208,7 +209,8 @@ namespace EVRPMod.Controllers
 
 
                 //db.depotData.Add(newObj);
-
+                db.AlgorithmSettings.Where(x => x.variable == "RoadAccountingTablesAreSaved").FirstOrDefault().state = true;
+             
                 db.SaveChanges();
                 return Json(0);
             }

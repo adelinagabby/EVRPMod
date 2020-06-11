@@ -81,11 +81,6 @@ namespace EVRPMod.Models.DB
                 entity.Property(e => e.name).HasMaxLength(50);
             });
 
-            modelBuilder.Entity<kitType>(entity =>
-            {
-                entity.Property(e => e.name).HasMaxLength(50);
-            });
-
             modelBuilder.Entity<parametersKiniRayfaMethods>(entity =>
             {
                 entity.HasKey(e => e.Criterion);

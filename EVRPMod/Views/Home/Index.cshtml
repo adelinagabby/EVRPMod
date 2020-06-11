@@ -24,89 +24,137 @@
     </label>
 </div>
 <button id="routeSearch" type="button" class="btn">Поиск</button>
+
+
+<div class="modal fade" id="messageModalLong" tabindex="-1" role="dialog" aria-labelledby="messageModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageModalLongTitle">Результат</h5>
+                <button type="button" class="close messageClose" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="messageForm">
+                <div class="modal-body">
+                    <p id="message"> </p>
+                </div>
+
+                <div class="modal-footer">
+                    <button id="messageOk" type="submit" class=" btn btn-primary messageClose" data-dismiss="modal">Ок</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @Scripts.Render("~/bundles/jquery")
 <script>
     ymaps.ready(function () {
         $("#routeSearch").on('click', function (e) {
-            $.ajax({
+             $.ajax({
 
-                url: "@Url.Action("FindingDistancesBetweenCustomersAndDepots", "Home")",
+                url: "@Url.Action("CheckingForCorrectConnections", "Home")",
                 type: "POST",
                 data: {
 
 
 
                 },
-                success: function (data) {
-                    let distanceMatrixBetweenCustomersAndDepots = [];
-                    for (var i = 0; i < data.countDepot; i++) {
-                        let auxiliaryMatrix = [];
-                        for (var j = 0; j < data.countCustomer; j++) {
-                            auxiliaryMatrix[j] = ymaps.coordSystem.geo.getDistance([data.CoordinateDepot[i].latitude, data.CoordinateDepot[i].longitude],
-                                [data.CoordinateCustomer[j].latitude, data.CoordinateCustomer[j].longitude]);
-                        }
-                        distanceMatrixBetweenCustomersAndDepots[i] = auxiliaryMatrix;
-                    }
+                 success: function (data) {
+                     if (data == 0) {
 
 
-                    $.ajax({
+                         $.ajax({
 
-                        url: "@Url.Action("FindingMatrixsDistancesBetweenCustomersAndDepots", "Home")",
-                        type: "POST",
-                        data: {
-                            distanceMatrixBetweenCustomersAndDepots: distanceMatrixBetweenCustomersAndDepots
-                        },
-                        success: function (data2) {
-
-                            let distanceMatrixBetweenCustomersAndDepots = [];
-
-                            for (var k = 0; k < data2.length; k++) {
-                                let distanceMatrix = [];
-
-                                for (var i = 0; i < data2[k].Coordinate.length; i++) {
-                                    let auxiliaryMatrix = [];
-
-                                    for (var j = 0; j < data2[k].Coordinate.length; j++) {
-                                        auxiliaryMatrix[j] = ymaps.coordSystem.geo.getDistance([data2[k].Coordinate[i].latitude, data2[k].Coordinate[i].longitude],
-                                            [data2[k].Coordinate[j].latitude, data2[k].Coordinate[j].longitude]);
-                                    }
-
-                                    distanceMatrix[i] = auxiliaryMatrix;
-                                }
-
-                                distanceMatrixBetweenCustomersAndDepots[k] = distanceMatrix;
+                             url: "@Url.Action("FindingDistancesBetweenCustomersAndDepots", "Home")",
+                             type: "POST",
+                             data: {
 
 
 
-                                      $.ajax({
-
-                        url: "@Url.Action("FindingShortestPaths", "Home")",
-                        type: "POST",
-                        data: {
-                            distanceMatrixBetweenCustomersAndDepots: distanceMatrixBetweenCustomersAndDepots
-                        },
-                        success: function (data3) {
-
-
-
-                        },
-                        error: function (data3) {
-                            alert('Error occurred');
-                        }
-                    });
-                            }
+                             },
+                             success: function (data) {
+                                 let distanceMatrixBetweenCustomersAndDepots = [];
+                                 for (var i = 0; i < data.countDepot; i++) {
+                                     let auxiliaryMatrix = [];
+                                     for (var j = 0; j < data.countCustomer; j++) {
+                                         auxiliaryMatrix[j] = ymaps.coordSystem.geo.getDistance([data.CoordinateDepot[i].latitude, data.CoordinateDepot[i].longitude],
+                                             [data.CoordinateCustomer[j].latitude, data.CoordinateCustomer[j].longitude]);
+                                     }
+                                     distanceMatrixBetweenCustomersAndDepots[i] = auxiliaryMatrix;
+                                 }
 
 
-                        },
-                        error: function (data2) {
-                            alert('Error occurred');
-                        }
-                    });
-                },
-                error: function (data) {
-                    alert('Error occurred');
-                }
-            });
+                                 $.ajax({
+
+                                     url: "@Url.Action("FindingMatrixsDistancesBetweenCustomersAndDepots", "Home")",
+                                     type: "POST",
+                                     data: {
+                                         distanceMatrixBetweenCustomersAndDepots: distanceMatrixBetweenCustomersAndDepots
+                                     },
+                                     success: function (data2) {
+
+                                         let distanceMatrixBetweenCustomersAndDepots = [];
+
+                                         for (var k = 0; k < data2.length; k++) {
+                                             let distanceMatrix = [];
+
+                                             for (var i = 0; i < data2[k].Coordinate.length; i++) {
+                                                 let auxiliaryMatrix = [];
+
+                                                 for (var j = 0; j < data2[k].Coordinate.length; j++) {
+                                                     auxiliaryMatrix[j] = ymaps.coordSystem.geo.getDistance([data2[k].Coordinate[i].latitude, data2[k].Coordinate[i].longitude],
+                                                         [data2[k].Coordinate[j].latitude, data2[k].Coordinate[j].longitude]);
+                                                 }
+
+                                                 distanceMatrix[i] = auxiliaryMatrix;
+                                             }
+
+                                             distanceMatrixBetweenCustomersAndDepots[k] = distanceMatrix;
+
+
+
+                                             $.ajax({
+
+                                                 url: "@Url.Action("FindingShortestPaths", "Home")",
+                                                 type: "POST",
+                                                 data: {
+                                                     distanceMatrixBetweenCustomersAndDepots: distanceMatrixBetweenCustomersAndDepots
+                                                 },
+                                                 success: function (data3) {
+
+
+
+                                                 },
+                                                 error: function (data3) {
+                                                     alert('Error occurred');
+                                                 }
+                                             });
+                                         }
+
+
+                                     },
+                                     error: function (data2) {
+                                         alert('Error occurred');
+                                     }
+                                 });
+                             },
+                             error: function (data) {
+                                 alert('Error occurred');
+                             }
+                         });
+                     }
+                     else {
+
+                         $('#message').text(data);
+                         $('#messageModalLong').modal('show');
+
+                     }
+                 },
+                 error: function (data) {
+                     alert('Error occurred');
+                 }
+             });
         })
     });
 

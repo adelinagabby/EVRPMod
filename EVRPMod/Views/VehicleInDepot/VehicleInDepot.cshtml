@@ -120,10 +120,10 @@
         //window.location.reload()
     })
 
-    $('.table thead').append('<tr> <th>' + dataHead[0] + '</th> <th>'
-        + dataHead[1] + '</th> <th>'
+    $('.table thead').append('<tr> <th style="text-align: center;">' + dataHead[0] + '</th> <th style="text-align: center;">'
+        + dataHead[1] + '</th> <th style="text-align: center;">'
         + dataHead[2]
-        + '</th> <th>' + dataHead[3] + '</th> <th>' + dataHead[4] + '</th> </th>')
+        + '</th> <th style="text-align: center;">' + dataHead[3] + '</th> <th style="text-align: center;">' + dataHead[4] + '</th> </th>')
 
     $.ajax({
         url: "@Url.Action("GetVehicleInDepot", "VehicleInDepot")",
@@ -136,8 +136,8 @@
                 $('.table tbody').append('<tr> <td>' + row.depotId + '</td> <td>'
                     + row.vehicleId + '</td> <td>'
                     + row.count
-                    + '</td> <td  data-id=' + row.id + '> <button class="btn" id="editBtn"><i class="fa fa-edit" aria-hidden="true"></i></button> </td>'
-                    + '<td  data-id=' + row.id +'> <button class="btn" id="deleteBtn"><i class="fa fa-times" aria-hidden="true"></i></button> </td> </tr>')
+                    + '</td> <td  data-id=' + row.id + ' style="text-align: center;"> <button class="btn" id="editBtn"><i class="fa fa-edit" aria-hidden="true"></i></button> </td>'
+                    + '<td  data-id=' + row.id +' style="text-align: center;"> <button class="btn" id="deleteBtn"><i class="fa fa-times" aria-hidden="true"></i></button> </td> </tr>')
             });
         },
         error: function (data) {

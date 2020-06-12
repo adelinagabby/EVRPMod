@@ -144,9 +144,9 @@ namespace EVRPMod.Controllers
                         valueTableCostTable= string.IsNullOrEmpty(CostTable[i][j]) ? 0 : float.Parse(CostTable[i][j].Replace(".", ","));
                         if (valueTableAverageSpeedTable<20 && valueTableAverageSpeedTable != 0 || valueTableAverageSpeedTable > 110 && valueTableAverageSpeedTable != 0)
                             return Json("Ошибка. Значения средней скорости выходят за пределы");
-                        else if (valueTableAverageRoadIntensityTable < 1 && valueTableAverageRoadIntensityTable!=0 || valueTableAverageRoadIntensityTable > 10 && valueTableAverageRoadIntensityTable != 0)
+                        else if (valueTableRoadQualityTable < 1 && valueTableRoadQualityTable != 0 || valueTableRoadQualityTable > 10 && valueTableRoadQualityTable != 0)
                             return Json("Ошибка. Значения среднего качества дорог выходят за пределы");
-                        else if (valueTableRoadQualityTable < 200 && valueTableRoadQualityTable != 0 || valueTableRoadQualityTable > 14000 && valueTableRoadQualityTable != 0)
+                        else if (valueTableAverageRoadIntensityTable < 200 && valueTableAverageRoadIntensityTable != 0 || valueTableAverageRoadIntensityTable > 14000 && valueTableAverageRoadIntensityTable != 0)
                             return Json("Ошибка. Значения интенсивности движения выходят за пределы");
                         else if (valueTableCostTable < 0)
                             return Json("Ошибка. Значения протяженности платных дорог не должны быть ниже нуля");
@@ -197,6 +197,10 @@ namespace EVRPMod.Controllers
                         id++;
                     }
                 }
+
+
+
+
 
                 //var newObj = new depotData
                 //{

@@ -81,7 +81,8 @@ namespace EVRPMod.Controllers
             public int VehicleId;
             public int carryingСapacity;
             public int loadOccupied;
-            public int costRoads;
+            public double serviceRoads;
+            public double costRoads;
             public int orderInAlgoritm;
         }
 
@@ -300,7 +301,7 @@ namespace EVRPMod.Controllers
 
             for (int i = 0; i < distanceMatrixBetweenCustomersAndDepots.Length; i++)
             {
-                doubleDistanceMatrixBetweenCustomersAndDepots[i] = new double[distanceMatrixBetweenCustomersAndDepots.Length];
+                doubleDistanceMatrixBetweenCustomersAndDepots[i] = new double[distanceMatrixBetweenCustomersAndDepots[0].Length];
                 for (int j = 0; j < distanceMatrixBetweenCustomersAndDepots[0].Length; j++)
                 {
                     doubleDistanceMatrixBetweenCustomersAndDepots[i][j] = Convert.ToDouble(distanceMatrixBetweenCustomersAndDepots[i][j].Replace(".", ","));
@@ -437,7 +438,7 @@ namespace EVRPMod.Controllers
                 for (int j = 0; j < VehicleInDepot[i].count; j++)
                 {
                    // Vehicle tempVehicle = new Vehicle { VehicleId = objVehicle.id, carryingСapacity = (int)objVehicle.capacity, orderInAlgoritm  = orderInAlgoritm};
-                    vehicles.Add(new Vehicle { VehicleId = objVehicle.id, carryingСapacity = (int)objVehicle.capacity, orderInAlgoritm = orderVehicleInAlgoritm, costRoads = (int)objVehicle.costRoads });
+                    vehicles.Add(new Vehicle { VehicleId = objVehicle.id, carryingСapacity = (int)objVehicle.capacity, orderInAlgoritm = orderVehicleInAlgoritm, costRoads = (double)objVehicle.costRoads, serviceRoads = (double) objVehicle.serviceCost });
                     orderVehicleInAlgoritm++;
                 }
             }
@@ -621,11 +622,18 @@ namespace EVRPMod.Controllers
                             BranchAndBoundaryMethod.bestCostWayBranchAndBoundaryMethod = double.MaxValue;
                             BranchAndBoundaryMethod.flag = false;
                             shortWayVehicle = BranchAndBoundaryMethod.Branch_And_Boundary_Method(vehicleSpecificDistanceMatrix, I, J, shortWayVehicle);
-                            double costForSpecificVehicle = BranchAndBoundaryMethod.CostWayBranchAndBoundaryMethod(vehicleSpecificDistanceMatrix, shortWayVehicle);
-                            double costRoadForSpecificVehicle = BranchAndBoundaryMethod.CostWayBranchAndBoundaryMethod(vehicleCostRoadMatrix, shortWayVehicle)*
-                                vehicles.Where(x=>x.VehicleId == tempVehiclesOrdering[iVehicle].Vehicle).First().costRoads;
-                            //умножть на стоимость ТС
-                            costForPopulationOfVehicles += costForSpecificVehicle + costRoadForSpecificVehicle;
+
+
+
+                        //double costForSpecificVehicle = BranchAndBoundaryMethod.CostWayBranchAndBoundaryMethod(vehicleSpecificDistanceMatrix, shortWayVehicle);
+                        // double costRoadForSpecificVehicle = BranchAndBoundaryMethod.CostWayBranchAndBoundaryMethod(vehicleCostRoadMatrix, shortWayVehicle)*
+                        // vehicles.Where(x=>x.VehicleId == tempVehiclesOrdering[iVehicle].Vehicle).First().costRoads;
+                        double costForSpecificVehicle = BranchAndBoundaryMethod.CostWayBranchAndBoundaryMethod(vehicleSpecificDistanceMatrix, shortWayVehicle)*
+                              vehicles.Where(x => x.VehicleId == tempVehiclesOrdering[iVehicle].Vehicle).First().serviceRoads;
+                        double costRoadForSpecificVehicle = BranchAndBoundaryMethod.CostWayBranchAndBoundaryMethod(vehicleCostRoadMatrix, shortWayVehicle) *
+                            vehicles.Where(x => x.VehicleId == tempVehiclesOrdering[iVehicle].Vehicle).First().costRoads;
+                        //умножть на стоимость ТС
+                        costForPopulationOfVehicles += costForSpecificVehicle + costRoadForSpecificVehicle;
                         }
 
                       

@@ -199,10 +199,10 @@
                             if (data2 != 0) {
                                 for (var j = 0; j < data.length; j++) {
                                     if (i != j) {
-                                        stringTableSpeed += '<td> <input id = "idInputAverageSpeedTable'+i+j+'">'+'</input></td>';
-                                        stringTableQuality += '<td> <input  id = "idInputAverageRoadIntensityTable' + i + j + '">' + '</input></td>';
-                                        stringTablePatency += '<td> <input id = "idInputRoadQualityTable' + i + j + '">'  + '</input></td>';
-                                        stringTableСost += '<td> <input id = "idInputCostTable' + i + j + '">'+ '</input></td>';
+                                        stringTableSpeed += '<td> <input id = "idInputAverageSpeedTablei'+i+'j'+j+'">'+'</input></td>';
+                                        stringTableQuality += '<td> <input  id = "idInputRoadQualityTablei' + i + 'j' + j + '">' + '</input></td>';
+                                        stringTablePatency += '<td> <input id = "idInputAverageRoadIntensityTablei' + i + 'j' + j + '">'  + '</input></td>';
+                                        stringTableСost += '<td> <input id = "idInputCostTablei' + i + 'j'+ j + '">'+ '</input></td>';
 
                                     }
                                     else {
@@ -216,10 +216,10 @@
                             else {
                                 for (var j = 0; j < data.length; j++) {
                                     if (i != j) {
-                                        stringTableSpeed += '<td> <input id = "idInput' + i + j + '"></input></td>';
-                                        stringTableQuality += '<td> <input id = "idInput' + i + j + '"></input></td>';
-                                        stringTablePatency += '<td> <input id = "idInput' + i + j + '" ></input></td>';
-                                        stringTableСost += '<td> <input id = "idInput' + i + j + '" ></input></td>';
+                                        stringTableSpeed += '<td> <input id = "idInputi' + i + 'j'+ j + '"></input></td>';
+                                        stringTableQuality += '<td> <input id = "idInputi' + i + 'j' + j + '"></input></td>';
+                                        stringTablePatency += '<td> <input id = "idInputi' + i + 'j'+ j + '" ></input></td>';
+                                        stringTableСost += '<td> <input id = "idInputi' + i + 'j'+ j + '" ></input></td>';
                                     }
                                     else {
                                         stringTableSpeed += '<td></td>';
@@ -244,10 +244,10 @@
                             if (data2 != 0) {
                                 for (var j = 0; j < data.length; j++) {
                                     if (i != j) {
-                                        $("#idInputAverageSpeedTable" + i + j).val(data2.AverageSpeedTable[i][j]);
-                                        $("#idInputAverageRoadIntensityTable" + i + j).val(data2.AverageRoadIntensityTable[i][j]);
-                                        $("#idInputRoadQualityTable" + i + j).val(data2.RoadQualityTable[i][j]);
-                                        $("#idInputCostTable" + i + j).val(data2.CostTable[i][j]);
+                                        $("#idInputAverageSpeedTablei" + i + 'j'+ j).val(data2.AverageSpeedTable[i][j]);
+                                        $("#idInputAverageRoadIntensityTablei" + i + 'j'+ j).val(data2.AverageRoadIntensityTable[i][j]);
+                                        $("#idInputRoadQualityTablei" + i + 'j' + j).val(data2.RoadQualityTable[i][j]);
+                                        $("#idInputCostTablei" + i + 'j'+ j).val(data2.CostTable[i][j]);
                                     }
                                 }
                             }

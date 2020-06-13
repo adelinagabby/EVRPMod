@@ -252,29 +252,32 @@ namespace EVRPMod.Controllers
 
         public static List<int[]> Sort(List<PopulationAndCost> populationAndCosts)
         {
-            double[] costWays = new double[populationAndCosts.Count];
+            //double[] costWays = new double[populationAndCosts.Count];
 
-            for (int i = 0; i < costWays.Length; i++)
+            List<double> costWays = new List<double>();
+            for (int i = 0; i < costWays.Count; i++)
             {
                 costWays[i] = populationAndCosts[i].cost;
             }
 
 
-            double tmp;
-            for (int i = 1, j; i < costWays.Length; ++i) // цикл проходов, i - номер прохода
-            {
-                tmp = costWays[i];
-                for (j = i - 1; j >= 0 && costWays[j] < tmp; --j) // поиск места элемента в готовой последовательности
-                {
-                    costWays[j + 1] = costWays[j];    // сдвигаем элемент направо, пока не дошли 
-                }
-                costWays[j + 1] = tmp; // место найдено, вставить элемент
+            //double tmp;
+            //for (int i = 1, j; i < costWays.Length; ++i) // цикл проходов, i - номер прохода
+            //{
+            //    tmp = costWays[i];
+            //    for (j = i - 1; j >= 0 && costWays[j] < tmp; --j) // поиск места элемента в готовой последовательности
+            //    {
+            //        costWays[j + 1] = costWays[j];    // сдвигаем элемент направо, пока не дошли 
+            //    }
+            //    costWays[j + 1] = tmp; // место найдено, вставить элемент
               
-            }
+            //}
 
             List<int[]> newPopulationAndCosts = new List<int[]>();
 
-            for (int i = 0; i < costWays.Length; i++)
+            
+
+            for (int i = 0; i < costWays.Count; i++)
             {
                 bool flag = false;
                 int j = 0;
@@ -284,6 +287,7 @@ namespace EVRPMod.Controllers
                     {
                         newPopulationAndCosts.Add(populationAndCosts[j].population);
                         populationAndCosts.RemoveAt(j);
+                        flag = true;
                     }
                     j++;
                 }
@@ -356,11 +360,13 @@ namespace EVRPMod.Controllers
                 //List<CoordinateAndCount> CoordinateAndCount = new List<CoordinateAndCount>();
                 List<Coordinate> CoordinateAllAddress = new List<Coordinate>();
                 CoordinateAllAddress.Add(new Coordinate() { latitude = itemDepot.latitude, longitude = itemDepot.longitude });
+
                 int orderInAlgoritm = 0;
-               
                 itemDepot.orderInAlgoritm = orderInAlgoritm;
+                orderInAlgoritm++;
                 //CustomerData.Where(x => x.depot == itemDepot.id).First();
                 CustomerData = db.customerData.Where(x => x.depot == itemDepot.id).OrderBy(x=>x.orderAddress).ToList();
+
                 foreach (var itemCustomer in CustomerData)
                 {
                     
@@ -400,7 +406,7 @@ namespace EVRPMod.Controllers
         public ActionResult FindingShortestPaths(string[][][] distanceMatrixBetweenCustomersAndDepots)
         {
             EVRPModContext db = new EVRPModContext();
-
+            var DepotData = db.depotData.OrderBy(x => x.orderAddress).ToList();
 
             double[][][] doubleDistanceMatrixBetweenCustomersAndDepots = new double[distanceMatrixBetweenCustomersAndDepots.Length][][];
 
@@ -422,13 +428,14 @@ namespace EVRPMod.Controllers
 
             for (int k = 0; k < distanceMatrixBetweenCustomersAndDepots.Length; k++)
             {
-                FindingShortestPaths(doubleDistanceMatrixBetweenCustomersAndDepots[k],db.depotData.Where(x=>x.orderInAlgoritm == k).First().id);
+                //FindingShortestPaths(doubleDistanceMatrixBetweenCustomersAndDepots[k],db.depotData.Where(x=>x.orderInAlgoritm == k).First().id);
+                FindingShortestPaths(doubleDistanceMatrixBetweenCustomersAndDepots[k], DepotData[k].id);
             }
 
             return Json(0);
         }
 
-        
+
 
         public VehiclesOfDepot FindingShortestPaths(double[][] distanceMatrixBetweenCustomersAndDepots, int depotId)
         {
@@ -436,7 +443,7 @@ namespace EVRPMod.Controllers
             EVRPModContext db = new EVRPModContext();
             var VehicleData = db.vehicleData.OrderBy(x => x.orderInAlgoritm).ToList();
             var KitType = db.kitType.ToList();
-            var VehicleInDepot = db.vehicleInDepot.Where(x=>x.depotId == depotId).ToList();
+            var VehicleInDepot = db.vehicleInDepot.Where(x => x.depotId == depotId).ToList();
 
             List<Vehicle> vehicles = new List<Vehicle>();
             //int Vehicle;
@@ -445,23 +452,23 @@ namespace EVRPMod.Controllers
             int orderVehicleInAlgoritm = 0;
             for (int i = 0; i < VehicleInDepot.Count; i++)
             {
-                var objVehicle = VehicleData.Where(x=>x.id== VehicleInDepot[i].vehicleId).First();
+                var objVehicle = VehicleData.Where(x => x.id == VehicleInDepot[i].vehicleId).First();
 
                 for (int j = 0; j < VehicleInDepot[i].count; j++)
                 {
-                   // Vehicle tempVehicle = new Vehicle { VehicleId = objVehicle.id, carryingСapacity = (int)objVehicle.capacity, orderInAlgoritm  = orderInAlgoritm};
-                    vehicles.Add(new Vehicle { VehicleId = objVehicle.id, carryingСapacity = (int)objVehicle.capacity, orderInAlgoritm = orderVehicleInAlgoritm, costRoads = (double)objVehicle.costRoads, serviceRoads = (double) objVehicle.serviceCost });
+                    // Vehicle tempVehicle = new Vehicle { VehicleId = objVehicle.id, carryingСapacity = (int)objVehicle.capacity, orderInAlgoritm  = orderInAlgoritm};
+                    vehicles.Add(new Vehicle { VehicleId = objVehicle.id, carryingСapacity = (int)objVehicle.capacity, orderInAlgoritm = orderVehicleInAlgoritm, costRoads = (double)objVehicle.costRoads, serviceRoads = (double)objVehicle.serviceCost });
                     orderVehicleInAlgoritm++;
                 }
             }
 
             //List<VehicleOrders> bestVehicleOrdering = new List<VehicleOrders>();
-            СostOfJourney bestCostAndPopulation = new СostOfJourney() { cost = double.MaxValue};
+            СostOfJourney bestCostAndPopulation = new СostOfJourney() { cost = double.MaxValue };
 
             int numberOfAddress = distanceMatrixBetweenCustomersAndDepots.Length;
             int numberOfVehicles = vehicles.Count;
 
-            int numberIterationForVehicle = 100;
+            int numberIterationForVehicle = 10;
             //int numberIterationForOrder = 100;
 
             //int[] bestWay = new int[matrixWay.Length + 1];
@@ -494,13 +501,13 @@ namespace EVRPMod.Controllers
 
 
             List<PopulationAndCost> populationsAndCosts = new List<PopulationAndCost>();
-            
+
 
             //нахождение общего пути от депо и по клиентам
             int[] GeneralWayFromDepotToCustomers = new int[distanceMatrixBetweenCustomersAndDepots.Length];
             GeneralWayFromDepotToCustomers = GeneticAlgoritm.GeneticAlgorithm(distanceMatrixBetweenCustomersAndDepots, 10, 0);
             //GeneralWayFromDepotToCustomers = BranchAndBoundaryMethod.Branch_And_Boundary_Method()
-            int[] CustomersOrder = new int[distanceMatrixBetweenCustomersAndDepots.Length-1];
+            int[] CustomersOrder = new int[distanceMatrixBetweenCustomersAndDepots.Length - 1];
 
             for (int i = 0; i < CustomersOrder.Length; i++)
             {
@@ -512,7 +519,8 @@ namespace EVRPMod.Controllers
             //итерации по ТС
             while (numberIterationForVehicle > 0)
             {
-               int[] tmpForVehicle;
+                populationsAndCosts = new List<PopulationAndCost>();
+                int[] tmpForVehicle;
                 //для каждой популяции ТС
                 for (int iPopulationForVehicle = 0; iPopulationForVehicle < sizePopulationForVehicle; iPopulationForVehicle++)
                 {
@@ -524,46 +532,56 @@ namespace EVRPMod.Controllers
 
                     //int[] tmpForOrder;
                     //for (int i = 0; i < sizePopulationForOrder; i++)//по наборам
-                   // {
-                        //tmpForOrder = GeneticAlgoritm.GetSet(populationForOrder, i);
+                    // {
+                    //tmpForOrder = GeneticAlgoritm.GetSet(populationForOrder, i);
                     //    newPopulationForOrder.Add(GeneticAlgoritm.GetSet(populationForOrder, i));
-                   // }
+                    // }
                     ////для каждой популяции заказов
                     //for (int iPopulationForOrder = 0; iPopulationForVehicle < sizePopulationForOrder; iPopulationForOrder++)
                     //{
-                        List<VehicleOrders> tempVehiclesOrdering = new List<VehicleOrders>();
+                    List<VehicleOrders> tempVehiclesOrdering = new List<VehicleOrders>();
 
-                        //bool flag = false;
+                    //bool flag = false;
 
-                        //int[] tmpForOrder;
-                       // tmpForOrder = GeneticAlgoritm.GetSet(populationForOrder, iPopulationForOrder);
+                    //int[] tmpForOrder;
+                    // tmpForOrder = GeneticAlgoritm.GetSet(populationForOrder, iPopulationForOrder);
 
-                        //while (flag == false)
-                        //{
-                            //for (int iVehicle = 0; iVehicle < tmpForVehicle.Length; iVehicle++)
-                            //{
-                            int iVehicle = 0;
-                            //int iCustomer = 0;
+                    //while (flag == false)
+                    //{
+                    //for (int iVehicle = 0; iVehicle < tmpForVehicle.Length; iVehicle++)
+                    //{
+                    int iVehicle = 0;
+                    //int iCustomer = 0;
+                    var tempVehicle = vehicles.Where(x => x.orderInAlgoritm == tmpForVehicle[iVehicle]).First();
+                    List<CustomerAndKit> tempCustomersAndKits = new List<CustomerAndKit>();
+                   // List<CustomerAndKit> tempRemainsCustomersAndKits = new List<CustomerAndKit>();
+                    //распределение заказов по ТС
+                    for (int iCustomer = 0; iCustomer < CustomersOrder.Length; iCustomer++)
+                    {
+                        var CustomerOrder = db.customerData.Where(x => x.orderInAlgoritm == CustomersOrder[iCustomer] && x.depot == depotId).ToList();
+                        for (int iOrder = 0; iOrder < CustomerOrder.Count; iOrder++)
+                        {
+                            //var tempVehicle = vehicles.Where(x => x.orderInAlgoritm == tmpForVehicle[iVehicle]).First();
+                            var tempKits = KitType.Where(x => x.id == CustomerOrder[iOrder].kitType).First();
 
-                        //распределение заказов по ТС
-                            for (int iCustomer = 0; iCustomer < CustomersOrder.Length; iCustomer++)
+                            int remains = CustomerOrder[iOrder].count ?? 0;
+                            while (remains > 0)
                             {
-                                var CustomerOrder = db.customerData.Where(x => x.orderInAlgoritm == iCustomer).ToList();
-                                for (int iOrder = 0; iOrder < CustomerOrder.Count; iOrder++)
+                                //Если все комплекты помещаются целиком
+                                if (tempVehicle.carryingСapacity - tempVehicle.loadOccupied > tempKits.weight * remains)
                                 {
-                                    var tempVehicle = vehicles.Where(x => x.orderInAlgoritm == tmpForVehicle[iVehicle]).First();
-                                    var tempKits = KitType.Where(x => x.id == CustomerOrder[iOrder].kitType).First();
+                                    tempCustomersAndKits.Add(new CustomerAndKit() { Customer = CustomerOrder[iOrder].id, Kit = (int)CustomerOrder[iOrder].kitType, Count = remains });
+                                    tempVehicle.loadOccupied += (int)tempKits.weight * remains;
+                                    remains = 0;
 
-                                    List<CustomerAndKit> tempCustomersAndKits = new List<CustomerAndKit>();
-                                    if (tempVehicle.carryingСapacity - tempVehicle.loadOccupied > tempKits.weight * CustomerOrder[iOrder].count)
+                                }
+                                else
+                                {
+                                    int countKits = 0;
+                                  
+                                    while (true)
                                     {
-                                        tempCustomersAndKits.Add(new CustomerAndKit() { Customer = CustomerOrder[iOrder].id, Kit = (int)CustomerOrder[iOrder].kitType, Count = (int)CustomerOrder[iOrder].count });
-                                        tempVehicle.loadOccupied += (int)tempKits.weight * (int)CustomerOrder[iOrder].count;
-
-                                    }
-                                    else
-                                    {
-                                        int countKits = 0;
+                                        //Заполняем ТС по одному комплекту
                                         if (tempVehicle.carryingСapacity - tempVehicle.loadOccupied > tempKits.weight)
                                         {
                                             tempVehicle.loadOccupied += (int)tempKits.weight;
@@ -571,129 +589,165 @@ namespace EVRPMod.Controllers
                                         }
                                         else
                                         {
-                                            tempCustomersAndKits.Add(new CustomerAndKit()
-                                            {
-                                                Customer = CustomerOrder[iOrder].id,
-                                                Kit = (int)CustomerOrder[iOrder].kitType,
-                                                Count = countKits
-                                            });
-                                            countKits = 0;
-                                            VehicleOrders tempVehicleOrders = new VehicleOrders() { Vehicle = vehicles[iVehicle].VehicleId, customersAndKits = tempCustomersAndKits };
-                                        //добавить в список
-                                        tempVehiclesOrdering.Add(tempVehicleOrders);
-                                        iVehicle++;
 
+                                            if (countKits != 0)
+                                            {
+                                                tempCustomersAndKits.Add(new CustomerAndKit()
+                                                {
+                                                    Customer = CustomerOrder[iOrder].id,
+                                                    Kit = (int)CustomerOrder[iOrder].kitType,
+                                                    Count = countKits
+                                                });
+                                            }
+                                            else
+                                            {
+                                                //Если в ТС уже нет места ни для одного комплекта заказа
+
+                                                //iVehicle++;
+                                            }
+
+                                            //var temp = new List<CustomerAndKit>();
+
+
+
+                                            VehicleOrders tempVehicleOrders = new VehicleOrders() { Vehicle = vehicles[iVehicle].VehicleId, customersAndKits = tempCustomersAndKits };
+                                            //добавить в список
+                                            tempVehiclesOrdering.Add(tempVehicleOrders);
+                                            iVehicle++;
+                                            tempVehicle = vehicles.Where(x => x.orderInAlgoritm == tmpForVehicle[iVehicle]).FirstOrDefault();
+                                            tempCustomersAndKits = new List<CustomerAndKit>();
+                                            remains -= countKits;
+                                            break;
                                         }
                                     }
                                 }
-
-                           
+                                
                             }
 
-                        double costForPopulationOfVehicles = 0;
-                        //узнать стоимость данной комбинации
-                        for (iVehicle = 0; iVehicle < tempVehiclesOrdering.Count; iVehicle++)
-                        {
-                            
-                            //сформировать матрицу расстояний для конктерного ТС
 
-                            int[] addressOrderForAlgorithm = new int[tempVehiclesOrdering[iVehicle].customersAndKits.Count+1];
+                        }
+
+
+                    }
+
+                    if (tempCustomersAndKits.Count != 0)
+                    {
+                        VehicleOrders tempVehicleOrders = new VehicleOrders() { Vehicle = vehicles[iVehicle].VehicleId, customersAndKits = tempCustomersAndKits };
+                        //добавить в список
+                        tempVehiclesOrdering.Add(tempVehicleOrders);
+                    }
+                    double costForPopulationOfVehicles = 0;
+                    //узнать стоимость данной комбинации
+                    for (iVehicle = 0; iVehicle < tempVehiclesOrdering.Count; iVehicle++)
+                    {
+
+                        //сформировать матрицу расстояний для конктерного ТС
+                        
+                            int[] addressOrderForAlgorithm = new int[tempVehiclesOrdering[iVehicle].customersAndKits.Count + 1];
                             addressOrderForAlgorithm[0] = 0;
                             //цикл по клиентам
                             for (int iCustomer = 0; iCustomer < tempVehiclesOrdering[iVehicle].customersAndKits.Count; iCustomer++)
                             {
-                                addressOrderForAlgorithm[iCustomer + 1] = (int) db.customerData.Where(x => x.id == tempVehiclesOrdering[iVehicle].customersAndKits[iCustomer].Customer).First().orderInAlgoritm;
+                                addressOrderForAlgorithm[iCustomer + 1] = (int)db.customerData.Where(x => x.id == tempVehiclesOrdering[iVehicle].customersAndKits[iCustomer].Customer).First().orderInAlgoritm;
                             }
 
                             //формируем матрицу расстояний для конкретного iVehicle ТС
-                            double[,] vehicleSpecificDistanceMatrix = new double[addressOrderForAlgorithm.Length, addressOrderForAlgorithm.Length];
-                            double[,] vehicleCostRoadMatrix = new double[addressOrderForAlgorithm.Length, addressOrderForAlgorithm.Length];
+                            //double[,] vehicleSpecificDistanceMatrix = new double[addressOrderForAlgorithm.Length, addressOrderForAlgorithm.Length];
+                            double[][] vehicleSpecificDistanceMatrix = new double[addressOrderForAlgorithm.Length][];
+                            double[][] vehicleCostRoadMatrix = new double[addressOrderForAlgorithm.Length][];
 
                             for (int i = 0; i < addressOrderForAlgorithm.Length; i++)
                             {
-                                //vehicleSpecificDistanceMatrix[i] = new double[addressOrderForAlgorithm.Length];
-
+                                vehicleSpecificDistanceMatrix[i] = new double[addressOrderForAlgorithm.Length];
+                                vehicleCostRoadMatrix[i] = new double[addressOrderForAlgorithm.Length];
                                 for (int j = 0; j < addressOrderForAlgorithm.Length; j++)
                                 {
-                                    vehicleSpecificDistanceMatrix[i,j] = distanceMatrixBetweenCustomersAndDepots[addressOrderForAlgorithm[i]][addressOrderForAlgorithm[j]];
-                                    vehicleCostRoadMatrix[i, j] = (int) db.costTable.Where(x => x.rowTable == addressOrderForAlgorithm[i] && x.columnTable == addressOrderForAlgorithm[j]).First().valueTable;
+                                    vehicleSpecificDistanceMatrix[i][j] = distanceMatrixBetweenCustomersAndDepots[addressOrderForAlgorithm[i]][addressOrderForAlgorithm[j]];
+                                    vehicleCostRoadMatrix[i][j] = (int)db.costTable.Where(x => x.rowTable == addressOrderForAlgorithm[i] && x.columnTable == addressOrderForAlgorithm[j]).First().valueTable;
                                 }
                             }
 
-                            int[] I = new int[addressOrderForAlgorithm.Length];
-                            int[] J = new int[addressOrderForAlgorithm.Length];
+                            //int[] I = new int[addressOrderForAlgorithm.Length];
+                            //int[] J = new int[addressOrderForAlgorithm.Length];
                             int[] shortWayVehicle = new int[addressOrderForAlgorithm.Length];
 
-                            for (int i = 0; i < addressOrderForAlgorithm.Length; i++)
-                            {
-                                I[i] = int.MaxValue;
-                                J[i] = int.MaxValue;
-                            }
-
-
-                                
-                            BranchAndBoundaryMethod.bestCostWayBranchAndBoundaryMethod = double.MaxValue;
-                            BranchAndBoundaryMethod.flag = false;
-                            shortWayVehicle = BranchAndBoundaryMethod.Branch_And_Boundary_Method(vehicleSpecificDistanceMatrix, I, J, shortWayVehicle);
+                        //for (int i = 0; i < addressOrderForAlgorithm.Length; i++)
+                        //{
+                        //    I[i] = int.MaxValue;
+                        //    J[i] = int.MaxValue;
+                        //}
 
 
 
+                        // BranchAndBoundaryMethod.bestCostWayBranchAndBoundaryMethod = double.MaxValue;
+                        // BranchAndBoundaryMethod.flag = false;
+                        // shortWayVehicle = BranchAndBoundaryMethod.Branch_And_Boundary_Method(vehicleSpecificDistanceMatrix, I, J, shortWayVehicle);
+                        if (tempVehiclesOrdering[iVehicle].customersAndKits.Count > 1)
+                        {
+                            shortWayVehicle = GeneticAlgoritm.GeneticAlgorithm(vehicleSpecificDistanceMatrix, 10);
+                        }
+                        else
+                        {
+
+                            shortWayVehicle[0] = 0;
+                            shortWayVehicle[0] = 1;
+                        }
                         //double costForSpecificVehicle = BranchAndBoundaryMethod.CostWayBranchAndBoundaryMethod(vehicleSpecificDistanceMatrix, shortWayVehicle);
                         // double costRoadForSpecificVehicle = BranchAndBoundaryMethod.CostWayBranchAndBoundaryMethod(vehicleCostRoadMatrix, shortWayVehicle)*
                         // vehicles.Where(x=>x.VehicleId == tempVehiclesOrdering[iVehicle].Vehicle).First().costRoads;
-                        double costForSpecificVehicle = BranchAndBoundaryMethod.CostWayBranchAndBoundaryMethod(vehicleSpecificDistanceMatrix, shortWayVehicle)*
+                        double costForSpecificVehicle = BranchAndBoundaryMethod.CostWayBranchAndBoundaryMethod(vehicleSpecificDistanceMatrix, shortWayVehicle) *
                               vehicles.Where(x => x.VehicleId == tempVehiclesOrdering[iVehicle].Vehicle).First().serviceRoads;
                         double costRoadForSpecificVehicle = BranchAndBoundaryMethod.CostWayBranchAndBoundaryMethod(vehicleCostRoadMatrix, shortWayVehicle) *
                             vehicles.Where(x => x.VehicleId == tempVehiclesOrdering[iVehicle].Vehicle).First().costRoads;
                         //умножть на стоимость ТС
                         costForPopulationOfVehicles += costForSpecificVehicle + costRoadForSpecificVehicle;
-                        }
+                    }
 
-                      
-                        if (costForPopulationOfVehicles<bestCostAndPopulation.cost)
-                        {
-                            bestCostAndPopulation.cost = costForPopulationOfVehicles;
-                            bestCostAndPopulation.vehicleOrders = tempVehiclesOrdering;
-                        }
 
-                        //запишем перестановку и стоимость
-                        populationsAndCosts.Add(new PopulationAndCost() { population = tmpForVehicle, cost = costForPopulationOfVehicles});
+                    if (costForPopulationOfVehicles < bestCostAndPopulation.cost)
+                    {
+                        bestCostAndPopulation.cost = costForPopulationOfVehicles;
+                        bestCostAndPopulation.vehicleOrders = tempVehiclesOrdering;
+                    }
 
-                        
+                    //запишем перестановку и стоимость
+                    populationsAndCosts.Add(new PopulationAndCost() { population = tmpForVehicle, cost = costForPopulationOfVehicles });
 
 
 
-                        //while (iVehicle < tmpForVehicle.Length)
-                        //{
-                        //    int iCustomer = 0;
-                        //    VehicleOrders tempVehicleOrders = new VehicleOrders() { };
-                        //    //for (int iCustomer = 0; iCustomer < tmpForOrder.Length; iCustomer++)
-                        //    //{
-                        //    while (iCustomer < tmpForOrder.Length)
-                        //    {
-                        //        //получаем все заказы клиента
-                        //        //получаем ВСЕ КОМПЛЕКТЫ ОТ КЛИЕНТА
-                        //        var CustomerOrder = db.customerData.Where(x => x.orderInAlgoritm == iCustomer).ToList();
-                        //        for (int iOrder = 0; iOrder < CustomerOrder.Count; iOrder++)
-                        //        {
-                        //            var tempVehicle = vehicles.Where(x => x.orderInAlgoritm == tmpForVehicle[iVehicle]).First();
-                        //            var tempKits = KitType.Where(x => x.id == CustomerOrder[iOrder].kitType).First();
-                        //            if (tempVehicle.carryingСapacity - tempVehicle.loadOccupied > tempKits.weight * CustomerOrder[iOrder].count)
-                        //            {
 
-                        //            }
-                        //        }
-                        //    }
-                        //}
-                        //}
-                        //}
+
+                    //while (iVehicle < tmpForVehicle.Length)
+                    //{
+                    //    int iCustomer = 0;
+                    //    VehicleOrders tempVehicleOrders = new VehicleOrders() { };
+                    //    //for (int iCustomer = 0; iCustomer < tmpForOrder.Length; iCustomer++)
+                    //    //{
+                    //    while (iCustomer < tmpForOrder.Length)
+                    //    {
+                    //        //получаем все заказы клиента
+                    //        //получаем ВСЕ КОМПЛЕКТЫ ОТ КЛИЕНТА
+                    //        var CustomerOrder = db.customerData.Where(x => x.orderInAlgoritm == iCustomer).ToList();
+                    //        for (int iOrder = 0; iOrder < CustomerOrder.Count; iOrder++)
+                    //        {
+                    //            var tempVehicle = vehicles.Where(x => x.orderInAlgoritm == tmpForVehicle[iVehicle]).First();
+                    //            var tempKits = KitType.Where(x => x.id == CustomerOrder[iOrder].kitType).First();
+                    //            if (tempVehicle.carryingСapacity - tempVehicle.loadOccupied > tempKits.weight * CustomerOrder[iOrder].count)
+                    //            {
+
+                    //            }
+                    //        }
+                    //    }
+                    //}
+                    //}
+                    //}
 
                     //}
 
 
 
-                  
-                 
+
+
 
 
                     //newPopulationForVehicle = GeneticAlgoritm.CreatingANewPopulation(newPopulationForVehicle, matrixWay);
@@ -723,7 +777,8 @@ namespace EVRPMod.Controllers
                 }
 
                 //Сортируем и создаем новую популяцию
-                populationForVehicle = Sort(populationsAndCosts);
+                //populationForVehicle = Sort(populationsAndCosts);
+                populationForVehicle = populationsAndCosts.OrderBy(x => x.cost).Select(x=>x.population).ToList();
                 //Кроссинговер
                 populationForVehicle = GeneticAlgoritm.Crossing(populationForVehicle);
                 //Мутация
@@ -733,7 +788,7 @@ namespace EVRPMod.Controllers
                 numberIterationForVehicle--;
             }
 
-            VehiclesOfDepot VehiclesOfDepot = new VehiclesOfDepot() { depot = depotId, vehicleOrders = bestCostAndPopulation.vehicleOrders};
+            VehiclesOfDepot VehiclesOfDepot = new VehiclesOfDepot() { depot = depotId, vehicleOrders = bestCostAndPopulation.vehicleOrders };
 
             return VehiclesOfDepot;
         }

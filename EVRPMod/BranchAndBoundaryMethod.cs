@@ -11,14 +11,14 @@ namespace EVRPMod
 
         public static bool flag = false;
         //Метод ветвей и границ
-       public static int[] Branch_And_Boundary_Method(double[,] A, int[] I, int[] J, int[] X0)
+       public static int[] Branch_And_Boundary_Method(double[][] A, int[] I, int[] J, int[] X0)
         {
             if (flag == true)
                 return X0;
             else
             {
                 int N = A.Length;
-                double[,] C = new double[N, N];
+                double[][] C = new double[N][];
                 //for (int i = 0; i < N; i++)
                 //    C[i] = [];
 
@@ -37,15 +37,17 @@ namespace EVRPMod
 
                 //Считаем матрицу допустимых переходов
                 for (int i = 0; i < N; i++)
+                {
+                    C[i] = new double[N];
                     for (int j = 0; j < N; j++)
-                        C[i,j] = A[i,j];
-
+                        C[i][j] = A[i][j];
+                }
 
                 //Запрещаем проезд из городов множества I в города множества J
 
 
                 for (int j = 0; j < q; j++)
-                    C[I[p - 1],J[j]] = double.MaxValue;
+                    C[I[p - 1]][J[j]] = double.MaxValue;
 
 
                 //Если количество городов во множестве I больше 1, то
@@ -60,7 +62,7 @@ namespace EVRPMod
                     for (int k = 0; k < p - 1; k++)// по множеству I
                         for (int j = 0; j < N; j++)
                             if (j != I[k + 1])
-                                C[I[k],j] = double.MaxValue;
+                                C[I[k]][j] = double.MaxValue;
 
                     //1)
                     //C[I[p - 2], I[p - 1]] = double.MaxValue;
@@ -70,7 +72,7 @@ namespace EVRPMod
                         for (int j = 0; j < N; j++)
                             if (j != I[k - 1])
                                 //if (I[k] != I[k + 1])
-                                C[j,I[k]] = double.MaxValue;
+                                C[j][I[k]] = double.MaxValue;
 
 
                 }
@@ -88,8 +90,8 @@ namespace EVRPMod
 
                         min = double.MaxValue;
                         for (int k = 0; k < N; k++)
-                            if (C[i,k] < min)
-                                min = C[i,k];
+                            if (C[i][k] < min)
+                                min = C[i][k];
                         Alpha[i] = min;
                     }
                     else Alpha[i] = 0;
@@ -104,8 +106,8 @@ namespace EVRPMod
                         for (int i = 0; i < N; i++)
                             if (!I.Contains(i) || (I.Contains(i) && I[i] == I[p - 1]))
                             {
-                                if (C[i,k] - Alpha[i] < min)
-                                    min = C[i,k] - Alpha[i];
+                                if (C[i][k] - Alpha[i] < min)
+                                    min = C[i][k] - Alpha[i];
                             }
                         Betta[k] = min;
                     }
@@ -116,7 +118,7 @@ namespace EVRPMod
 
                 for (int i = 0; i < p - 1; i++)
                     //LB += A[i, i + 1];
-                    LB += A[I[i],I[i + 1]];
+                    LB += A[I[i]][I[i + 1]];
 
                 for (int i = p - 1; i < N; i++)
                     LB += Alpha[i];
@@ -195,22 +197,22 @@ namespace EVRPMod
         }
 
         //Функция для подсчета стоимости дороги
-        public static double CostWayBranchAndBoundaryMethod(double[,] matrixWay, int[] way)
+        public static double CostWayBranchAndBoundaryMethod(double[][] matrixWay, int[] way)
         {
             double costWay = 0;
 
 
             for (int i = 0; i < way.Length - 1; i++)
             {
-                costWay += matrixWay[way[i],way[i + 1]];
+                costWay += matrixWay[way[i]][way[i + 1]];
             }
 
-            costWay += matrixWay[way[way.Length - 1],way[0]];
+            costWay += matrixWay[way[way.Length - 1]][way[0]];
             return costWay;
         }
 
         //Жадный алгоритм
-        public static int[] GreedyAlgorithm(double [,] matrixWay, int[] I, int[] J)
+        public static int[] GreedyAlgorithm(double [][] matrixWay, int[] I, int[] J)
         {
 
             int n = matrixWay.GetLength(0);
@@ -243,9 +245,9 @@ namespace EVRPMod
             for (int j = 0; j < n; j++)
             {
 
-                if (min > matrixWay[I[k],j] && !Y.Contains(j) && !J.Contains(j))
+                if (min > matrixWay[I[k]][j] && !Y.Contains(j) && !J.Contains(j))
                 {
-                    min = matrixWay[I[k],j];
+                    min = matrixWay[I[k]][j];
                     l = j;
                     flag = true;
                 }
@@ -266,9 +268,9 @@ namespace EVRPMod
                 for (int j = 0; j < n; j++)
                 {
 
-                    if (min > matrixWay[k,j] && !Y.Contains(j))
+                    if (min > matrixWay[k][j] && !Y.Contains(j))
                     {
-                        min = matrixWay[k,j];
+                        min = matrixWay[k][j];
                         l = j;
                     }
 

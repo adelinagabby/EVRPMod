@@ -159,6 +159,65 @@ namespace EVRPMod
                     }
 
                 }
+                l2 = rnd.Next(0, population[0].Length - 1);
+                k2 = rnd.Next(l2, population[0].Length);
+                //l2 = Math.floor(Math.random() * ((population[0].Length - 2) - 1)) + 1;
+                //k2 = Math.floor(Math.random() * ((population[0].Length - 1) - (l2 + 1))) + (l2 + 1);
+
+
+                for (int i = l2; i < k2; i++)
+                {
+
+                    newPopulation[k][i] = population[l][i];
+                    newPopulation[l][i] = population[k][i];
+                }
+                CheckOnUniqueness(newPopulation[k]);
+                CheckOnUniqueness(newPopulation[l]);
+
+            }
+            return newPopulation;
+        }
+        //Кроссинговер
+        public static List<int[]> CrossingWithFirstCity(List<int[]> population)
+        {
+
+            List<int> index = new List<int>();
+            List<int[]> newPopulation = new List<int[]>();
+
+            int flag;
+            int k = 0;
+            int l = 0;
+            int k2 = 0;
+            int l2 = 0;
+
+
+            for (int i = 0; i < population.Count; i++)//по наборам
+            {
+                newPopulation.Add(population[i]);
+                //for (int j = 0; j < population[0].Length; j++)//по набору
+                //{
+
+                //    //newPopulation[i].push(population[i][j]);
+                //    newPopulation[i][j] = population[i][j];
+                //}
+            }
+            while ((index.Count != population.Count) && (index.Count != (population.Count - 1)))
+            {
+                flag = 0;
+
+                while (flag == 0)
+                {
+                    k = rnd.Next(population.Count);
+                    l = rnd.Next(population.Count);
+
+                    if (k != l && !index.Contains(k) && !index.Contains(l))
+                    {
+                        flag = 1;
+                        index.Add(k);
+                        index.Add(l);
+                    }
+
+                }
                 l2 = rnd.Next(1, population[0].Length - 2);
                 k2 = rnd.Next(l2, population[0].Length - 1);
                 //l2 = Math.floor(Math.random() * ((population[0].Length - 2) - 1)) + 1;
@@ -177,7 +236,6 @@ namespace EVRPMod
             }
             return newPopulation;
         }
-
         //Проверка на уникальность
         public static void CheckOnUniqueness(int[] reshuffle)
         {
@@ -210,7 +268,7 @@ namespace EVRPMod
         {
             
             List<int[]> newPopulation = new List<int[]>();
-            newPopulation = Crossing(population);
+            newPopulation = CrossingWithFirstCity(population);
             double[] costWays = new double[population.Count];
             //int costWays = []; 
 
@@ -495,7 +553,7 @@ namespace EVRPMod
         public static int[] GeneticAlgorithm(double[][] matrixWay,int sizePopulation, int firstCity = 0)
         {
 
-            int numberIteration = 1000;
+            int numberIteration = 10;
            
             int[] bestWay = new int[matrixWay.Length + 1];
             double bestCostWay = infinity;

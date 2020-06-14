@@ -17,15 +17,15 @@
         Учет типа и качества дорог
     </label>
 </div>
-<div class="form-check">
+@*<div class="form-check">
     <input class="form-check-input" type="checkbox" value="" id="SeparateDeliveryAccounting">
     <label class="form-check-label" for="SeparateDeliveryAccounting">
         Учет раздельной доставки
     </label>
-</div>
+</div>*@
 <button id="routeSearch" type="button" class="btn">Поиск</button>
 <div id="dataOutput" style="padding-top:20px">
-
+ 
 </div>
 
 <div class="modal fade" id="messageModalLong" tabindex="-1" role="dialog" aria-labelledby="messageModalLongTitle" aria-hidden="true">
@@ -130,7 +130,79 @@
                                                      //document.getElementById("dataOutput").innerHTML =
                                                      //    '<textarea maxlength="5000" readonly="readonly" cols="1000" rows="80">' + data3 + '</textarea>';
                                                      $('#dataOutput').empty();
-                                                     $('#dataOutput').append($('<textarea style="width:300px; height:150px;">' + data3 + '</textarea>'));
+                                                     //$('#dataOutput').append($('<textarea style="width:300px; height:150px;">' + data3 + '</textarea>'));
+                                                     $('#dataOutput').append(' <table id="table" class="table table-sm  table-bordered table-hover" style="padding:100px 0px">'+
+                                                         '<thead class="thead-dark" id="thead"></thead>'+
+                                                        ' <tbody name="tbody" id="tbody"></tbody> </table>');
+                                                    
+                                                     $('.table thead').append('<tr> <th style="text-align: center; vertical-align:center;" rowspan="2">Депо</th> <th style="text-align: center; vertical-align:center;" rowspan="2"> '
+                                                         + 'Транспортное средство</th> <th  colspan="4" style="text-align: center;">'
+                                                         + 'Заказ</th> </tr>' +
+                                                         '<tr> <th style="text-align: center;" >Адрес</th> <th style="text-align: center;" > '
+                                                         + 'Номер комплекта</th> <th style="text-align: center;">'
+                                                         + 'Вид комплекта</th> <th style="text-align: center;">'
+                                                         + 'Количество</th></tr>');
+
+                                                     for (var i = 0; i < data3.length; i++) {
+
+                                                         var stringTable = "";
+                                                         var countDepotRow=0;
+
+                                                         for (var j = 0; j < data3[i].vehicleOrdersName.length; j++) {
+                                                             for (var k = 0; k < data3[i].vehicleOrdersName[j].customersAndKitsName.length; k++) {
+                                                                 countDepotRow++;
+                                                             }
+                                                         }
+
+                                                         stringTable += '<tr> <td style="text-align: center; vertical-align:center;" rowspan="' + countDepotRow + '">' + data3[i].depotName + '</td>';
+
+                                                         stringTable += '<td style="text-align: center; vertical-align:center;" rowspan="' + data3[i].vehicleOrdersName[0].customersAndKitsName.length + '">' + data3[i].vehicleOrdersName[0].VehicleName + '</td>';
+                                                         stringTable += '<td style="text-align: center; vertical-align:center;">' + data3[i].vehicleOrdersName[0].customersAndKitsName[0].CustomerName + '</td>';
+                                                         stringTable += '<td style="text-align: center; vertical-align:center;">' + data3[i].vehicleOrdersName[0].customersAndKitsName[0].Kit + '</td>';
+                                                         stringTable += '<td style="text-align: center; vertical-align:center;">' + data3[i].vehicleOrdersName[0].customersAndKitsName[0].KitName + '</td>';
+                                                         stringTable += '<td style="text-align: center; vertical-align:center;">' + data3[i].vehicleOrdersName[0].customersAndKitsName[0].Count + '</td>';
+                                                         stringTable += '</tr>';
+
+                                                         $('.table tbody').append(stringTable);
+                                                         stringTable = "";
+
+                                                         for (var k = 1; k < data3[i].vehicleOrdersName[0].customersAndKitsName.length; k++) {
+                                                             stringTable += '<tr>';
+                                                             stringTable += '<td style="text-align: center; vertical-align:center;">' + data3[i].vehicleOrdersName[0].customersAndKitsName[k].CustomerName + '</td>';
+                                                             stringTable += '<td style="text-align: center; vertical-align:center;">' + data3[i].vehicleOrdersName[0].customersAndKitsName[k].Kit + '</td>';
+                                                             stringTable += '<td style="text-align: center; vertical-align:center;">' + data3[i].vehicleOrdersName[0].customersAndKitsName[k].KitName + '</td>';
+                                                             stringTable += '<td style="text-align: center; vertical-align:center;">' + data3[i].vehicleOrdersName[0].customersAndKitsName[k].Count + '</td>';
+                                                             stringTable += '</tr>';
+                                                         }
+                                                         $('.table tbody').append(stringTable);
+                                                         stringTable = "";
+                                                         for (var j = 1; j < data3[i].vehicleOrdersName.length; j++) {
+                                                             stringTable += '<tr>';
+                                                             stringTable += '<td style="text-align: center; vertical-align:center;" rowspan="' + data3[i].vehicleOrdersName[j].customersAndKitsName.length + '">' + data3[i].vehicleOrdersName[0].VehicleName + '</td>';
+                                                             stringTable += '<td style="text-align: center; vertical-align:center;">' + data3[i].vehicleOrdersName[j].customersAndKitsName[0].CustomerName + '</td>';
+                                                             stringTable += '<td style="text-align: center; vertical-align:center;">' + data3[i].vehicleOrdersName[j].customersAndKitsName[0].Kit + '</td>';
+                                                             stringTable += '<td style="text-align: center; vertical-align:center;">' + data3[i].vehicleOrdersName[j].customersAndKitsName[0].KitName + '</td>';
+                                                             stringTable += '<td style="text-align: center; vertical-align:center;">' + data3[i].vehicleOrdersName[j].customersAndKitsName[0].Count + '</td>';
+                                                             stringTable += '</tr>';
+                                                             $('.table tbody').append(stringTable);
+                                                             stringTable = "";
+                                                             for (var k = 1; k < data3[i].vehicleOrdersName[j].customersAndKitsName.length; k++) {
+                                                                 stringTable += '<tr>';
+                                                                 stringTable += '<td style="text-align: center; vertical-align:center;">' + data3[i].vehicleOrdersName[j].customersAndKitsName[k].CustomerName + '</td>';
+                                                                 stringTable += '<td style="text-align: center; vertical-align:center;">' + data3[i].vehicleOrdersName[j].customersAndKitsName[k].Kit + '</td>';
+                                                                 stringTable += '<td style="text-align: center; vertical-align:center;">' + data3[i].vehicleOrdersName[j].customersAndKitsName[k].KitName + '</td>';
+                                                                 stringTable += '<td style="text-align: center; vertical-align:center;">' + data3[i].vehicleOrdersName[j].customersAndKitsName[k].Count + '</td>';
+                                                                 stringTable += '</tr>';
+                                                                 $('.table tbody').append(stringTable);
+                                                                 stringTable = "";
+                                                             }
+                                                         }
+                                                         $('.table tbody').append(stringTable);
+                                                         //for (var j = 0; j < data3.vehicleOrdersName.length; j++) {
+                                                            
+                                                         //}
+                                                     }
+
 
                                                  },
                                                  error: function (data3) {

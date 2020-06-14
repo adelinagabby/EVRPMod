@@ -70,15 +70,31 @@ namespace EVRPMod.Controllers
             public int Count;
         }
 
+
+        public struct CustomerNameAndKitName
+        {
+            public string CustomerName;
+            public int Kit;
+            public string KitName;
+            public int Count;
+        }
+
         public struct VehicleOrders
         {
             public int Vehicle;
             public List<CustomerAndKit> customersAndKits;
         }
 
+
+        public struct VehicleOrdersName
+        {
+            public string VehicleName;
+            public List<CustomerNameAndKitName> customersAndKitsName;
+        }
         public struct Vehicle
         {
             public int VehicleId;
+            public string VehicleName;
             public int carryingСapacity;
             public int loadOccupied;
             public double serviceRoads;
@@ -90,6 +106,11 @@ namespace EVRPMod.Controllers
         {
             public int depot;
             public List<VehicleOrders> vehicleOrders;
+        }
+        public struct VehiclesOfDepotName
+        {
+            public string depotName;
+            public List<VehicleOrdersName> vehicleOrdersName;
         }
 
         public struct СostOfJourney
@@ -250,51 +271,51 @@ namespace EVRPMod.Controllers
 
 
 
-        public static List<int[]> Sort(List<PopulationAndCost> populationAndCosts)
-        {
-            //double[] costWays = new double[populationAndCosts.Count];
+        //public static List<int[]> Sort(List<PopulationAndCost> populationAndCosts)
+        //{
+        //    //double[] costWays = new double[populationAndCosts.Count];
 
-            List<double> costWays = new List<double>();
-            for (int i = 0; i < costWays.Count; i++)
-            {
-                costWays[i] = populationAndCosts[i].cost;
-            }
+        //    List<double> costWays = new List<double>();
+        //    for (int i = 0; i < costWays.Count; i++)
+        //    {
+        //        costWays[i] = populationAndCosts[i].cost;
+        //    }
 
 
-            //double tmp;
-            //for (int i = 1, j; i < costWays.Length; ++i) // цикл проходов, i - номер прохода
-            //{
-            //    tmp = costWays[i];
-            //    for (j = i - 1; j >= 0 && costWays[j] < tmp; --j) // поиск места элемента в готовой последовательности
-            //    {
-            //        costWays[j + 1] = costWays[j];    // сдвигаем элемент направо, пока не дошли 
-            //    }
-            //    costWays[j + 1] = tmp; // место найдено, вставить элемент
+        //    //double tmp;
+        //    //for (int i = 1, j; i < costWays.Length; ++i) // цикл проходов, i - номер прохода
+        //    //{
+        //    //    tmp = costWays[i];
+        //    //    for (j = i - 1; j >= 0 && costWays[j] < tmp; --j) // поиск места элемента в готовой последовательности
+        //    //    {
+        //    //        costWays[j + 1] = costWays[j];    // сдвигаем элемент направо, пока не дошли 
+        //    //    }
+        //    //    costWays[j + 1] = tmp; // место найдено, вставить элемент
               
-            //}
+        //    //}
 
-            List<int[]> newPopulationAndCosts = new List<int[]>();
+        //    List<int[]> newPopulationAndCosts = new List<int[]>();
 
             
 
-            for (int i = 0; i < costWays.Count; i++)
-            {
-                bool flag = false;
-                int j = 0;
-                while(flag == false)
-                {
-                    if(populationAndCosts[j].cost == costWays[i])
-                    {
-                        newPopulationAndCosts.Add(populationAndCosts[j].population);
-                        populationAndCosts.RemoveAt(j);
-                        flag = true;
-                    }
-                    j++;
-                }
-            }
+        //    for (int i = 0; i < costWays.Count; i++)
+        //    {
+        //        bool flag = false;
+        //        int j = 0;
+        //        while(flag == false)
+        //        {
+        //            if(populationAndCosts[j].cost == costWays[i])
+        //            {
+        //                newPopulationAndCosts.Add(populationAndCosts[j].population);
+        //                populationAndCosts.RemoveAt(j);
+        //                flag = true;
+        //            }
+        //            j++;
+        //        }
+        //    }
 
-            return newPopulationAndCosts;
-        }
+        //    return newPopulationAndCosts;
+        //}
 
 
         [HttpPost]
@@ -497,10 +518,50 @@ namespace EVRPMod.Controllers
 
             }
 
-            return Json("dfofjsdfnsdfnsdkj");
+            
+            return Json(GettingTextResult(vehiclesOfDepots));
         }
 
-        
+        public List<VehiclesOfDepotName> GettingTextResult(List<VehiclesOfDepot> vehiclesOfDepots)
+        {
+            //string result = "";
+
+            EVRPModContext db = new EVRPModContext();
+            var DepotData = db.depotData.ToList();
+            var CustomerData = db.customerData.ToList();
+            var VehicleData = db.vehicleData.ToList();
+            var KitType = db.kitType.ToList();
+
+            List<VehiclesOfDepotName> vehiclesOfDepotNames = new List<VehiclesOfDepotName>();
+
+
+            for (int i = 0; i < vehiclesOfDepots.Count; i++)
+            {
+                VehiclesOfDepotName vehiclesOfDepotName = new VehiclesOfDepotName();
+                vehiclesOfDepotName.depotName = DepotData.Where(x => x.id == vehiclesOfDepots[i].depot).First().name;
+                vehiclesOfDepotName.vehicleOrdersName = new List<VehicleOrdersName>();
+                for (int j = 0; j < vehiclesOfDepots[i].vehicleOrders.Count; j++)
+                {
+                    VehicleOrdersName vehicleOrdersName = new VehicleOrdersName();
+                    vehicleOrdersName.VehicleName = VehicleData.Where(x => x.id == vehiclesOfDepots[i].vehicleOrders[j].Vehicle).First().name;
+                    vehicleOrdersName.customersAndKitsName = new List<CustomerNameAndKitName>();
+                    for (int k = 0; k < vehiclesOfDepots[i].vehicleOrders[j].customersAndKits.Count; k++)
+                    {
+                        CustomerNameAndKitName customerNameAndKitName = new CustomerNameAndKitName();
+                        customerNameAndKitName.Count = vehiclesOfDepots[i].vehicleOrders[j].customersAndKits[k].Count;
+                        customerNameAndKitName.CustomerName = CustomerData.Where(x => x.id == vehiclesOfDepots[i].vehicleOrders[j].customersAndKits[k].Customer).First().address;
+                        customerNameAndKitName.Kit = vehiclesOfDepots[i].vehicleOrders[j].customersAndKits[k].Kit;
+                        customerNameAndKitName.KitName = KitType.Where(x => x.id == vehiclesOfDepots[i].vehicleOrders[j].customersAndKits[k].Kit).First().name;
+                        vehicleOrdersName.customersAndKitsName.Add(customerNameAndKitName);
+                    }
+                    vehiclesOfDepotName.vehicleOrdersName.Add(vehicleOrdersName);
+                }
+                vehiclesOfDepotNames.Add(vehiclesOfDepotName);
+            }
+
+
+            return vehiclesOfDepotNames;
+        }
 
         public VehiclesOfDepot FindingShortestPaths(double[][] distanceMatrixBetweenCustomersAndDepots, int depotId)
         {

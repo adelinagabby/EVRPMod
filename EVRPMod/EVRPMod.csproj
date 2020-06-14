@@ -322,6 +322,8 @@
     <Content Include="font-awesome-4.7.0\font-awesome-4.7.0\scss\_stacked.scss" />
     <Content Include="font-awesome-4.7.0\font-awesome-4.7.0\scss\_variables.scss" />
     <Content Include="ClassDiagram1.cd" />
+    <Content Include="ClassDiagram2.cd" />
+    <Content Include="ClassDiagram3.cd" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />

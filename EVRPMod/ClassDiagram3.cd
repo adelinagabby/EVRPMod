@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="EVRPMod.Models.DB.AlgorithmSettings">
+    <Position X="7.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAEAAA=</HashCode>
+      <FileName>Models\DB\AlgorithmSettings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EVRPMod.Models.DB.AverageRoadIntensityTable">
+    <Position X="2.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAgAAAAAgA=</HashCode>
+      <FileName>Models\DB\AverageRoadIntensityTable.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EVRPMod.Models.DB.AverageSpeedTable">
+    <Position X="2.25" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAgAAAAAgA=</HashCode>
+      <FileName>Models\DB\AverageSpeedTable.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EVRPMod.Models.DB.costTable">
+    <Position X="4" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAgAAAAAgA=</HashCode>
+      <FileName>Models\DB\costTable.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EVRPMod.Models.DB.customerData">
+    <Position X="7.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAAAQAABEEAAAAACAIAAAAAAAAAAAAAQgA=</HashCode>
+      <FileName>Models\DB\customerData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EVRPMod.Models.DB.depotData">
+    <Position X="9.25" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAAAQAAAAAAAAAACAIEAAAAAAAAAAAAQgA=</HashCode>
+      <FileName>Models\DB\depotData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EVRPMod.Models.DB.EVRPModContext" Collapsed="true">
+    <Position X="12.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAUQgAAAAEAAAAAGgQgQEAAAAAACAAAAAA=</HashCode>
+      <FileName>Models\DB\EVRPModContext.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EVRPMod.Models.DB.kitType">
+    <Position X="9.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAgAAAAAAAAAgA=</HashCode>
+      <FileName>Models\DB\kitType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EVRPMod.Models.DB.parametersKiniRayfaMethods">
+    <Position X="5.75" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAEAIAAAAAAAAAAAAAAAAAABEAAAAIAQAAAAA=</HashCode>
+      <FileName>Models\DB\parametersKiniRayfaMethods.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EVRPMod.Models.DB.RoadQualityTable">
+    <Position X="4" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAgAAAAAgA=</HashCode>
+      <FileName>Models\DB\RoadQualityTable.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EVRPMod.Models.DB.vehicleData">
+    <Position X="11" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAAAAAIAAAAAAAAEABAAAAAAAAAAQgA=</HashCode>
+      <FileName>Models\DB\vehicleData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EVRPMod.Models.DB.vehicleInDepot">
+    <Position X="11" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAIAEAAAAAgA=</HashCode>
+      <FileName>Models\DB\vehicleInDepot.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="EVRPMod.Controllers.CustomerDataController">
+    <Position X="3.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAABAAAIIAAAAAAAAAAAAIAAAAAAgAA=</HashCode>
+      <FileName>Controllers\CustomerDataController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EVRPMod.Controllers.DepotDataController">
+    <Position X="5.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAAAAAAACAAAAAAACAAgAAAAAAAQBAAA=</HashCode>
+      <FileName>Controllers\DepotDataController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EVRPMod.Controllers.HomeController">
+    <Position X="1.75" Y="0.5" Width="1.5" />
+    <NestedTypes>
+      <Struct Name="EVRPMod.Controllers.HomeController.VehicleOrdersName" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Controllers\HomeController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="EVRPMod.Controllers.HomeController.VehiclesOfDepot" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Controllers\HomeController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="EVRPMod.Controllers.HomeController.VehicleOrders" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Controllers\HomeController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="EVRPMod.Controllers.HomeController.CoordinateAndCount" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Controllers\HomeController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="EVRPMod.Controllers.HomeController.Vehicle" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Controllers\HomeController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="EVRPMod.Controllers.HomeController.СostOfJourney" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Controllers\HomeController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="EVRPMod.Controllers.HomeController.CustomerAndKit" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Controllers\HomeController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="EVRPMod.Controllers.HomeController.PopulationAndCost" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Controllers\HomeController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="EVRPMod.Controllers.HomeController.VehiclesOfDepotName" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Controllers\HomeController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="EVRPMod.Controllers.HomeController.CoordinateAndCountDepotAndCustomer" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Controllers\HomeController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="EVRPMod.Controllers.HomeController.CustomerNameAndKitName" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Controllers\HomeController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="EVRPMod.Controllers.HomeController.StatesVariables" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Controllers\HomeController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+      <Struct Name="EVRPMod.Controllers.HomeController.Coordinate" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Controllers\HomeController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAgAAAACAAAAIAEEDAAAEAAIIABAAAAAUAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\HomeController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EVRPMod.Controllers.KitTypeController">
+    <Position X="3.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAwAAAAAAAABBAAAAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Controllers\KitTypeController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EVRPMod.Controllers.RoadAccountingController">
+    <Position X="5.25" Y="2.75" Width="1.5" />
+    <NestedTypes>
+      <Struct Name="EVRPMod.Controllers.RoadAccountingController.RoadTable" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Controllers\RoadAccountingController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>CEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAABAAAA=</HashCode>
+      <FileName>Controllers\RoadAccountingController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EVRPMod.Controllers.VehicleDataController">
+    <Position X="7" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAACAAAAEAAAAAAAABAAAAAAAAQAIAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\VehicleDataController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EVRPMod.Controllers.VehicleInDepotController">
+    <Position X="7" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQCAAAAAAAAAAAAQAAAAAABAIAAAAAAAgAA=</HashCode>
+      <FileName>Controllers\VehicleInDepotController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EVRPMod.AdditionalVariablesAndFunctions" Collapsed="true">
+    <Position X="1.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAAAAAAAAAAAABAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AdditionalVariablesAndFunctions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EVRPMod.GeneticAlgoritm">
+    <Position X="8.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAEABAAIAQAAAIAEAAQAABEEAAAAAIACAAgAACEAAE=</HashCode>
+      <FileName>GeneticAlgoritm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EVRPMod.MethodKiniRayfa">
+    <Position X="10.5" Y="0.5" Width="1.5" />
+    <NestedTypes>
+      <Struct Name="EVRPMod.MethodKiniRayfa.propertyValues" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>MethodKiniRayfa.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>KAAAABAYAAAAAAAAAAgQAAABAAAAAAAAAAAwAAAAAAA=</HashCode>
+      <FileName>MethodKiniRayfa.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EVRPMod.BranchAndBoundaryMethod">
+    <Position X="14.75" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAIAAAAACAAIQAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BranchAndBoundaryMethod.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

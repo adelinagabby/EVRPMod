@@ -24,7 +24,9 @@
     </label>
 </div>
 <button id="routeSearch" type="button" class="btn">Поиск</button>
+<div id="dataOutput" style="padding-top:20px">
 
+</div>
 
 <div class="modal fade" id="messageModalLong" tabindex="-1" role="dialog" aria-labelledby="messageModalLongTitle" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -122,8 +124,13 @@
                                                      distanceMatrixBetweenCustomersAndDepots: distanceMatrixBetweenCustomersAndDepots
                                                  },
                                                  success: function (data3) {
-
-
+                                                     //document.getElementById('dataOutput').onclick = function () {
+                                                     //    this.innerHTML = '';
+                                                     //}
+                                                     //document.getElementById("dataOutput").innerHTML =
+                                                     //    '<textarea maxlength="5000" readonly="readonly" cols="1000" rows="80">' + data3 + '</textarea>';
+                                                     $('#dataOutput').empty();
+                                                     $('#dataOutput').append($('<textarea style="width:300px; height:150px;">' + data3 + '</textarea>'));
 
                                                  },
                                                  error: function (data3) {

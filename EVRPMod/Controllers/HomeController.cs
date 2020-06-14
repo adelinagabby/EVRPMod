@@ -321,31 +321,36 @@ namespace EVRPMod.Controllers
             var RoadQualityData = db.RoadQualityTable.ToList();
             var CostData = db.costTable.ToList();
 
-
-
-            //Получение матриц дорог между депо и клиентами
-            double[][] MatrixAverageSpeed = new double[distanceMatrixBetweenCustomersAndDepots.Length][];
-            double[][] MatrixRoadQuality = new double[distanceMatrixBetweenCustomersAndDepots.Length][];
-            double[][] MatrixAverageRoadIntensity = new double[distanceMatrixBetweenCustomersAndDepots.Length][];
-
-
-            for (int i = 0; i < DepotData.Count; i++)
+            //если учет дорог, то применяем метод Кини-Райфа
+            if (db.AlgorithmSettings.Where(x => x.variable == "ConsideringTypeAndQualityOfRoads").FirstOrDefault().state == true)
             {
-                MatrixAverageSpeed[i] = new double[distanceMatrixBetweenCustomersAndDepots[0].Length];
-                MatrixRoadQuality[i] = new double[distanceMatrixBetweenCustomersAndDepots[0].Length];
-                MatrixAverageRoadIntensity[i] = new double[distanceMatrixBetweenCustomersAndDepots[0].Length];
+                //Получение матриц дорог между депо и клиентами
+                double[][] MatrixAverageSpeed = new double[distanceMatrixBetweenCustomersAndDepots.Length][];
+                double[][] MatrixRoadQuality = new double[distanceMatrixBetweenCustomersAndDepots.Length][];
+                double[][] MatrixAverageRoadIntensity = new double[distanceMatrixBetweenCustomersAndDepots.Length][];
 
-                for (int j = 0; j < CustomerData.Count; j++)
+
+                for (int i = 0; i < DepotData.Count; i++)
                 {
-                    MatrixAverageSpeed[i][j] = AverageSpeedData.Where(x => x.rowTable == DepotData[i].orderAddress && x.columnTable == CustomerData[j].orderAddress).First().valueTable ?? 0;
-                    MatrixRoadQuality[i][j] = RoadQualityData.Where(x => x.rowTable == DepotData[i].orderAddress && x.columnTable == CustomerData[j].orderAddress).First().valueTable ?? 0;
-                    MatrixAverageRoadIntensity[i][j] = AverageRoadIntensityData.Where(x => x.rowTable == DepotData[i].orderAddress && x.columnTable == CustomerData[j].orderAddress).First().valueTable ?? 0;
+                    MatrixAverageSpeed[i] = new double[distanceMatrixBetweenCustomersAndDepots[0].Length];
+                    MatrixRoadQuality[i] = new double[distanceMatrixBetweenCustomersAndDepots[0].Length];
+                    MatrixAverageRoadIntensity[i] = new double[distanceMatrixBetweenCustomersAndDepots[0].Length];
+
+                    for (int j = 0; j < CustomerData.Count; j++)
+                    {
+                        MatrixAverageSpeed[i][j] = AverageSpeedData.Where(x => x.rowTable == DepotData[i].orderAddress && x.columnTable == CustomerData[j].orderAddress).First().valueTable ?? 0;
+                        MatrixRoadQuality[i][j] = RoadQualityData.Where(x => x.rowTable == DepotData[i].orderAddress && x.columnTable == CustomerData[j].orderAddress).First().valueTable ?? 0;
+                        MatrixAverageRoadIntensity[i][j] = AverageRoadIntensityData.Where(x => x.rowTable == DepotData[i].orderAddress && x.columnTable == CustomerData[j].orderAddress).First().valueTable ?? 0;
+                    }
                 }
+
+
+                doubleDistanceMatrixBetweenCustomersAndDepots = MethodKiniRayfa.ModificationOfMatrix(doubleDistanceMatrixBetweenCustomersAndDepots,
+                    MatrixAverageSpeed, MatrixRoadQuality, MatrixAverageRoadIntensity);
+
+
             }
 
-
-            doubleDistanceMatrixBetweenCustomersAndDepots = MethodKiniRayfa.ModificationOfMatrix(doubleDistanceMatrixBetweenCustomersAndDepots,
-                MatrixAverageSpeed,MatrixRoadQuality,MatrixAverageRoadIntensity);
 
             DistributionOfCustomersByDepot(doubleDistanceMatrixBetweenCustomersAndDepots);
 
@@ -407,6 +412,7 @@ namespace EVRPMod.Controllers
         {
             EVRPModContext db = new EVRPModContext();
             var DepotData = db.depotData.OrderBy(x => x.orderAddress).ToList();
+            var CustomerData = db.customerData.OrderBy(x => x.orderAddress).ToList();
 
             double[][][] doubleDistanceMatrixBetweenCustomersAndDepots = new double[distanceMatrixBetweenCustomersAndDepots.Length][][];
 
@@ -418,24 +424,83 @@ namespace EVRPMod.Controllers
                     doubleDistanceMatrixBetweenCustomersAndDepots[k][i] = new double[distanceMatrixBetweenCustomersAndDepots[k].Length];
                     for (int j = 0; j < distanceMatrixBetweenCustomersAndDepots[k].Length; j++)
                     {
-                        doubleDistanceMatrixBetweenCustomersAndDepots[k][i][j] = Convert.ToDouble(distanceMatrixBetweenCustomersAndDepots[k][i][j].Replace(".", ","));
+
+                        //Делим на 1000 для того, чтобы перевести метры в км
+                        doubleDistanceMatrixBetweenCustomersAndDepots[k][i][j] = Convert.ToDouble(distanceMatrixBetweenCustomersAndDepots[k][i][j].Replace(".", ","))/1000;
                     }
                 }
             }
+
 
 
             List<VehiclesOfDepot> vehiclesOfDepots = new List<VehiclesOfDepot>();
 
             for (int k = 0; k < distanceMatrixBetweenCustomersAndDepots.Length; k++)
             {
+
+                //если учет дорог, то применяем метод Кини-Райфа
+                if (db.AlgorithmSettings.Where(x => x.variable == "ConsideringTypeAndQualityOfRoads").FirstOrDefault().state == true)
+                {
+                    var AverageSpeedData = db.AverageSpeedTable.ToList();
+                    var AverageRoadIntensityData = db.AverageRoadIntensityTable.ToList();
+                    var RoadQualityData = db.RoadQualityTable.ToList();
+
+                    //Получение матриц дорог между депо и клиентами
+                    double[][] MatrixAverageSpeed = new double[distanceMatrixBetweenCustomersAndDepots[0].Length][];
+                    double[][] MatrixRoadQuality = new double[distanceMatrixBetweenCustomersAndDepots[0].Length][];
+                    double[][] MatrixAverageRoadIntensity = new double[distanceMatrixBetweenCustomersAndDepots[0].Length][];
+
+
+                    MatrixAverageSpeed[0] = new double[distanceMatrixBetweenCustomersAndDepots[0].Length];
+                    MatrixRoadQuality[0] = new double[distanceMatrixBetweenCustomersAndDepots[0].Length];
+                    MatrixAverageRoadIntensity[0] = new double[distanceMatrixBetweenCustomersAndDepots[0].Length];
+
+                    MatrixAverageSpeed[0][0] = 0;
+                    MatrixRoadQuality[0][0] = 0;
+                    MatrixAverageRoadIntensity[0][0] = 0;
+
+                    for (int j = 1; j < distanceMatrixBetweenCustomersAndDepots[k].Length; j++)
+                    {
+                        
+                        MatrixAverageSpeed[0][j] = AverageSpeedData.Where(x => x.rowTable == DepotData[k].orderAddress && x.columnTable == CustomerData[j].orderAddress).First().valueTable ?? 0;
+                        MatrixRoadQuality[0][j] = RoadQualityData.Where(x => x.rowTable == DepotData[k].orderAddress && x.columnTable == CustomerData[j].orderAddress).First().valueTable ?? 0;
+                        MatrixAverageRoadIntensity[0][j] = AverageRoadIntensityData.Where(x => x.rowTable == DepotData[k].orderAddress && x.columnTable == CustomerData[j].orderAddress).First().valueTable ?? 0;
+                    }
+
+                    for (int i = 1; i < distanceMatrixBetweenCustomersAndDepots[k].Length; i++)
+                    {
+                        MatrixAverageSpeed[i] = new double[distanceMatrixBetweenCustomersAndDepots[0].Length];
+                        MatrixRoadQuality[i] = new double[distanceMatrixBetweenCustomersAndDepots[0].Length];
+                        MatrixAverageRoadIntensity[i] = new double[distanceMatrixBetweenCustomersAndDepots[0].Length];
+
+                        MatrixAverageSpeed[i][0] = AverageSpeedData.Where(x => x.rowTable == CustomerData[i].orderAddress && x.columnTable == DepotData[k].orderAddress).First().valueTable ?? 0;
+                        MatrixRoadQuality[i][0] = RoadQualityData.Where(x => x.rowTable == CustomerData[i].orderAddress&& x.columnTable == DepotData[k].orderAddress).First().valueTable ?? 0;
+                        MatrixAverageRoadIntensity[i][0] = AverageRoadIntensityData.Where(x => x.rowTable == CustomerData[i].orderAddress && x.columnTable == DepotData[k].orderAddress).First().valueTable ?? 0;
+
+
+                        for (int j = 1; j < distanceMatrixBetweenCustomersAndDepots[k].Length; j++)
+                        {
+                            MatrixAverageSpeed[i][j] = AverageSpeedData.Where(x => x.rowTable == CustomerData[i].orderAddress && x.columnTable == CustomerData[j].orderAddress).First().valueTable ?? 0;
+                            MatrixRoadQuality[i][j] = RoadQualityData.Where(x => x.rowTable == CustomerData[i].orderAddress && x.columnTable == CustomerData[j].orderAddress).First().valueTable ?? 0;
+                            MatrixAverageRoadIntensity[i][j] = AverageRoadIntensityData.Where(x => x.rowTable == CustomerData[i].orderAddress && x.columnTable == CustomerData[j].orderAddress).First().valueTable ?? 0;
+                        }
+                    }
+
+
+                    doubleDistanceMatrixBetweenCustomersAndDepots[k] = MethodKiniRayfa.ModificationOfMatrix(doubleDistanceMatrixBetweenCustomersAndDepots[k],
+                    MatrixAverageSpeed, MatrixRoadQuality, MatrixAverageRoadIntensity);
+
+
+                }
                 //FindingShortestPaths(doubleDistanceMatrixBetweenCustomersAndDepots[k],db.depotData.Where(x=>x.orderInAlgoritm == k).First().id);
-                FindingShortestPaths(doubleDistanceMatrixBetweenCustomersAndDepots[k], DepotData[k].id);
+                vehiclesOfDepots.Add(FindingShortestPaths(doubleDistanceMatrixBetweenCustomersAndDepots[k], DepotData[k].id));
+
             }
 
-            return Json(0);
+            return Json("dfofjsdfnsdfnsdkj");
         }
 
-
+        
 
         public VehiclesOfDepot FindingShortestPaths(double[][] distanceMatrixBetweenCustomersAndDepots, int depotId)
         {

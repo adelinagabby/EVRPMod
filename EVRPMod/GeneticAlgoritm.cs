@@ -10,6 +10,7 @@ namespace EVRPMod
 
 
         public static Random rnd = new Random();
+        public static Random rnd2 = new Random();
         public static double infinity = double.MaxValue;
         // Генетический алгоритм
 
@@ -160,7 +161,7 @@ namespace EVRPMod
 
                 }
                 l2 = rnd.Next(0, population[0].Length - 1);
-                k2 = rnd.Next(l2, population[0].Length);
+                k2 = rnd2.Next(l2, population[0].Length);
                 //l2 = Math.floor(Math.random() * ((population[0].Length - 2) - 1)) + 1;
                 //k2 = Math.floor(Math.random() * ((population[0].Length - 1) - (l2 + 1))) + (l2 + 1);
 
@@ -230,14 +231,40 @@ namespace EVRPMod
                     newPopulation[k][i] = population[l][i];
                     newPopulation[l][i] = population[k][i];
                 }
-                CheckOnUniqueness(newPopulation[k]);
-                CheckOnUniqueness(newPopulation[l]);
+                CheckOnUniquenessWithFirstCity(newPopulation[k]);
+                CheckOnUniquenessWithFirstCity(newPopulation[l]);
 
             }
             return newPopulation;
         }
         //Проверка на уникальность
         public static void CheckOnUniqueness(int[] reshuffle)
+        {
+            int flag;
+            int city;
+
+            for (int i = 0; i < reshuffle.Length; i++)
+                for (int j = 0; j < i; j++)
+                    if (reshuffle[i] == reshuffle[j])
+                    {
+
+                        flag = 0;
+                        while (flag == 0)
+                        {
+                            city = rnd.Next(reshuffle.Length);
+                            //city = Math.floor(Math.random() * (reshuffle.Length - 1));
+                            if (!reshuffle.Contains(city))
+                            {
+                                reshuffle[i] = city;
+                                flag = 1;
+                            }
+                        }
+                    }
+            //return reshuffle;
+        }
+
+        //Проверка на уникальность
+        public static void CheckOnUniquenessWithFirstCity(int[] reshuffle)
         {
             int flag;
             int city;

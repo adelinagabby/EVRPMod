@@ -38,7 +38,7 @@ namespace EVRPMod.Controllers
         {
 
 
-            string Result;
+            string Result = "";
             EVRPModContext db = new EVRPModContext();
 
             if (name == "" || weight == "")
@@ -57,7 +57,14 @@ namespace EVRPMod.Controllers
 
             //    return Json(Result);
             //}
-            else
+
+            float Weight = string.IsNullOrEmpty(weight) ? 0 : float.Parse(weight.Replace(".", ","));
+            if (Result == "")
+            {
+                if (Weight <= 0)
+                    Result = "Ошибка. Вес комплекта должен быть больше нуля";
+            }
+                if (Result == "")
             {
                 try
                 {
@@ -66,7 +73,7 @@ namespace EVRPMod.Controllers
                     {
                         //id = (db.vehicleData.Max(x=>x.id)!=null? db.vehicleData.Max(x => x.id)+1:1),
                         name = name,
-                        weight = string.IsNullOrEmpty(weight) ? 0 : float.Parse(weight.Replace(".", ",")),
+                        weight = Weight,
                     };
 
 
@@ -92,7 +99,7 @@ namespace EVRPMod.Controllers
 
             EVRPModContext db = new EVRPModContext();
 
-            string Result;
+            string Result = "";
             if (newName == "" || newWeight == "" )
             {
                 Result = "Ошибка. Не все поля заполнены";
@@ -101,7 +108,13 @@ namespace EVRPMod.Controllers
             //{
 
             //}
-            else
+            float Weight = string.IsNullOrEmpty(newWeight) ? 0 : float.Parse(newWeight.Replace(".", ","));
+            if (Result == "")
+            {
+                if (Weight <= 0)
+                    Result = "Ошибка. Вес комплекта должен быть больше нуля";
+            }
+            if (Result == "")
             {
                 //var Obj = db.kitType.FirstOrDefault(x => x.name == newName && x.weight == newWeight);
 
@@ -116,7 +129,7 @@ namespace EVRPMod.Controllers
                 {
                     var ObjEdit = db.kitType.FirstOrDefault(x => x.id == Convert.ToInt32(id));
                     ObjEdit.name = newName;
-                    ObjEdit.weight = string.IsNullOrEmpty(newWeight) ? 0 : float.Parse(newWeight.Replace(".", ","));
+                    ObjEdit.weight = Weight;
                     db.SaveChanges();
                     Result = "Данные изменены";
                 }

@@ -37,7 +37,7 @@ namespace EVRPMod.Controllers
         [HttpPost]
         public ActionResult AddVehiceData(string Name, string Capacity, string ServiceCost, string CostRoads)
         {
-            string Result;
+            string Result = "";
 
             EVRPModContext db = new EVRPModContext();
 
@@ -56,7 +56,28 @@ namespace EVRPMod.Controllers
 
             //    return Json(Result);
             //}
-            else
+
+
+            float capacity = string.IsNullOrEmpty(Capacity) ? 0 : float.Parse(Capacity.Replace(".", ","));
+            float serviceCost = string.IsNullOrEmpty(ServiceCost) ? 0 : float.Parse(ServiceCost.Replace(".", ","));
+            float costRoads = string.IsNullOrEmpty(CostRoads) ? 0 : float.Parse(CostRoads.Replace(".", ","));
+
+            if (Result == "")
+            {
+                if (capacity <= 0)
+                    Result = "Ошибка. Грузоподъемность должна быть больше нуля";
+            }
+            if (Result == "")
+            {
+                if (serviceCost <= 0)
+                    Result = "Ошибка. Обслуживание должно быть больше нуля";
+            }
+            if (Result == "")
+            {
+                if (serviceCost <= 0)
+                    Result = "Ошибка. Стоимость платных дорог должна быть больше нуля";
+            }
+            if (Result == "")
             {
 
                 try
@@ -65,9 +86,12 @@ namespace EVRPMod.Controllers
                     {
                         //id = (db.vehicleData.Max(x=>x.id)!=null? db.vehicleData.Max(x => x.id)+1:1),
                         name = Name,
-                        capacity = string.IsNullOrEmpty(Capacity) ? 0 : float.Parse(Capacity.Replace(".", ",")),
-                        serviceCost = string.IsNullOrEmpty(ServiceCost) ? 0 : float.Parse(ServiceCost.Replace(".", ",")),
-                        costRoads = string.IsNullOrEmpty(CostRoads) ? 0 : float.Parse(CostRoads.Replace(".", ",")),
+                        //capacity = string.IsNullOrEmpty(Capacity) ? 0 : float.Parse(Capacity.Replace(".", ",")),
+                        //serviceCost = string.IsNullOrEmpty(ServiceCost) ? 0 : float.Parse(ServiceCost.Replace(".", ",")),
+                        //costRoads = string.IsNullOrEmpty(CostRoads) ? 0 : float.Parse(CostRoads.Replace(".", ",")),
+                        capacity = capacity,
+                        serviceCost = serviceCost,
+                        costRoads = costRoads
                     };
 
 
@@ -91,7 +115,7 @@ namespace EVRPMod.Controllers
 
             EVRPModContext db = new EVRPModContext();
 
-            string Result;
+            string Result = "";
             if (newName == "" || newCapacity == "" || newServiceCost == "" || newCostRoads == "")
             {
                 Result = "Ошибка. Не все поля заполнены";
@@ -101,7 +125,26 @@ namespace EVRPMod.Controllers
             //{
 
             //}
-            else
+            float capacity = string.IsNullOrEmpty(newCapacity) ? 0 : float.Parse(newCapacity.Replace(".", ","));
+            float serviceCost = string.IsNullOrEmpty(newServiceCost) ? 0 : float.Parse(newServiceCost.Replace(".", ","));
+            float costRoads = string.IsNullOrEmpty(newCostRoads) ? 0 : float.Parse(newCostRoads.Replace(".", ","));
+
+            if (Result == "")
+            {
+                if (capacity <= 0)
+                    Result = "Ошибка. Грузоподъемность должна быть больше нуля";
+            }
+            if (Result == "")
+            {
+                if (serviceCost <= 0)
+                    Result = "Ошибка. Обслуживание должно быть больше нуля";
+            }
+            if (Result == "")
+            {
+                if (serviceCost <= 0)
+                    Result = "Ошибка. Стоимость платных дорог должна быть больше нуля";
+            }
+            if (Result == "")
             {
                 //var Obj = db.vehicleData.FirstOrDefault(x => x.name == newName && x.capacity == newCapacity && x.serviceCost == newServiceCost && x.costRoads == newCostRoads);
 
@@ -116,9 +159,9 @@ namespace EVRPMod.Controllers
                 {
                     var ObjEdit = db.vehicleData.FirstOrDefault(x => x.id == Convert.ToInt32(id));
                     ObjEdit.name = newName;
-                    ObjEdit.capacity = string.IsNullOrEmpty(newCapacity) ? 0 : float.Parse(newCapacity.Replace(".", ","));
-                    ObjEdit.serviceCost = string.IsNullOrEmpty(newServiceCost) ? 0 : float.Parse(newServiceCost.Replace(".", ","));
-                    ObjEdit.costRoads = string.IsNullOrEmpty(newCostRoads) ? 0 : float.Parse(newCostRoads.Replace(".", ","));
+                    ObjEdit.capacity = capacity;
+                    ObjEdit.serviceCost = serviceCost;
+                    ObjEdit.costRoads = costRoads;
                     db.SaveChanges();
 
                     Result = "Данные изменены";

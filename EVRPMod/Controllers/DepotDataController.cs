@@ -40,42 +40,51 @@ namespace EVRPMod.Controllers
 
             EVRPModContext db = new EVRPModContext();
 
-
-            var Obj = db.depotData.FirstOrDefault(x => x.name == name && x.latitude == latitude && x.longitude == longitude);
-
-            string Result;
-
-            if (Obj != null)
+            string Result = "";
+            if (name == "" || latitude == "" || longitude == "")
             {
-                Result = "Данное депо уже имеется в списке";
-
-                return Json(Result);
+                Result = "Ошибка. Не все поля заполнены";
             }
-            else
-            {
 
-                var newObj = new depotData
+            if (Result == "")
+            {
+                var Obj = db.depotData.FirstOrDefault(x => x.name == name && x.latitude == latitude && x.longitude == longitude);
+
+                //string Result;
+
+                if (Obj != null)
                 {
-                    //id = (db.vehicleData.Max(x=>x.id)!=null? db.vehicleData.Max(x => x.id)+1:1),
-                    name = name,
-                    latitude = latitude,
-                    longitude = longitude,
-                    address = address,
-                };
+                    Result = "Данное депо уже имеется в списке";
+
+                    return Json(Result);
+                }
+                else
+                {
+
+                    var newObj = new depotData
+                    {
+                        //id = (db.vehicleData.Max(x=>x.id)!=null? db.vehicleData.Max(x => x.id)+1:1),
+                        name = name,
+                        latitude = latitude,
+                        longitude = longitude,
+                        address = address,
+                    };
 
 
-                db.depotData.Add(newObj);
+                    db.depotData.Add(newObj);
 
-               // db.SaveChanges();
+                    // db.SaveChanges();
 
-                Result = "Новое депо добавлено";
+                    Result = "Новое депо добавлено";
 
-                AdditionalVariablesAndFunctions.ArrangementOfAddresses();
-                // AdditionalVariablesAndFunctions.RoadAccountingTablesAreSaved = false;
-                db.AlgorithmSettings.Where(x => x.variable == "RoadAccountingTablesAreSaved").FirstOrDefault().state = false;
-                db.SaveChanges();
-                return Json(Result);
+                    AdditionalVariablesAndFunctions.ArrangementOfAddresses();
+                    // AdditionalVariablesAndFunctions.RoadAccountingTablesAreSaved = false;
+                    db.AlgorithmSettings.Where(x => x.variable == "RoadAccountingTablesAreSaved").FirstOrDefault().state = false;
+                    db.SaveChanges();
+                    
+                }
             }
+            return Json(Result);
         }
         [HttpPost]
         public ActionResult EditDepotData(string id, string newName, string newLatitude, 
@@ -84,8 +93,13 @@ namespace EVRPMod.Controllers
 
             EVRPModContext db = new EVRPModContext();
 
-            string Result;
+            string Result = "";
+            if (newName == "" || newLatitude == "" || newLongitude == "")
+            {
+                Result = "Ошибка. Не все поля заполнены";
+            }
 
+            if (Result == "")
             if (oldName == newName && oldLatitude == newLatitude && oldLongitude == newLongitude)
             {
 
@@ -108,13 +122,13 @@ namespace EVRPMod.Controllers
                     ObjEdit.longitude = newLongitude;
                     ObjEdit.address = address;
                     db.SaveChanges();
-
-                }
+                        Result = "Данные изменены";
+                    }
 
 
             }
 
-            Result = "Данные изменены";
+           
 
             return Json(Result);
         }

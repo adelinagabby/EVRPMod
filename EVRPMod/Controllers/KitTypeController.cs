@@ -58,11 +58,20 @@ namespace EVRPMod.Controllers
             //    return Json(Result);
             //}
 
-            float Weight = string.IsNullOrEmpty(weight) ? 0 : float.Parse(weight.Replace(".", ","));
+            float Weight = 0;
+         
             if (Result == "")
             {
-                if (Weight <= 0)
-                    Result = "Ошибка. Вес комплекта должен быть больше нуля";
+                try
+                {
+                    Weight = string.IsNullOrEmpty(weight) ? 0 : float.Parse(weight.Replace(".", ","));
+                    if (Weight <= 0)
+                        Result = "Ошибка. Вес комплекта должен быть больше нуля";
+                }
+                catch
+                {
+                    return Json("Ошибка. Введено нечисловое значение");
+                }
             }
                 if (Result == "")
             {
@@ -108,11 +117,20 @@ namespace EVRPMod.Controllers
             //{
 
             //}
-            float Weight = string.IsNullOrEmpty(newWeight) ? 0 : float.Parse(newWeight.Replace(".", ","));
+            float Weight = 0;
             if (Result == "")
             {
-                if (Weight <= 0)
-                    Result = "Ошибка. Вес комплекта должен быть больше нуля";
+                try
+                {
+                     Weight = string.IsNullOrEmpty(newWeight) ? 0 : float.Parse(newWeight.Replace(".", ","));
+                    if (Weight <= 0)
+                        Result = "Ошибка. Вес комплекта должен быть больше нуля";
+                }
+                catch
+                {
+                    return Json("Ошибка. Введено нечисловое значение");
+                }
+              
             }
             if (Result == "")
             {

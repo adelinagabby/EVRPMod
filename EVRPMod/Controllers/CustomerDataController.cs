@@ -40,10 +40,14 @@ namespace EVRPMod.Controllers
 
             EVRPModContext db = new EVRPModContext();
 
+            string Result = "";
+            //var Obj = db.customerData.FirstOrDefault(x => x.kitType == kitType && x.latitude == latitude && x.longitude == longitude && x.count == count);
+            if (latitude == "" || latitude == "")
+            {
+                Result = "Ошибка. Не все поля заполнены";
+            }
 
-            var Obj = db.customerData.FirstOrDefault(x => x.kitType == kitType && x.latitude == latitude && x.longitude == longitude && x.count == count);
-
-            string Result;
+           
 
             //if (Obj != null)
             //{
@@ -53,11 +57,12 @@ namespace EVRPMod.Controllers
             //}
             //else
             //{
+            if(Result == "")
             if (count < 1)
-                Result = "Количество должно быть целым положительным числом";
+                Result = "Ошибка. Количество должно быть целым положительным числом";
             else if(db.kitType.FirstOrDefault(x=>x.id == kitType)==null)
             {
-                Result = "Указанный тип комплекта не существует";
+                Result = "Ошибка. Указанный тип комплекта не существует";
             }
             else
             {
@@ -94,24 +99,29 @@ namespace EVRPMod.Controllers
 
             string Result;
 
+            if (newLatitude == "" || newLongitude == "")
+            {
+                Result = "Ошибка. Не все поля заполнены";
+            }
+
             if (newCount < 1)
-                Result = "Количество должно быть целым положительным числом";
+                Result = "Ошибка. Количество должно быть целым положительным числом";
             else if (db.kitType.FirstOrDefault(x => x.id == newKitType) == null)
             {
-                Result = "Указанный тип комплекта не существует";
+                Result = "Ошибка. Указанный тип комплекта не существует";
             }
             else
             {
-                var Obj = db.customerData.FirstOrDefault(x => x.kitType == newKitType && x.latitude == newLatitude && x.longitude == newLongitude && x.count == newCount);
+                //var Obj = db.customerData.FirstOrDefault(x => x.kitType == newKitType && x.latitude == newLatitude && x.longitude == newLongitude && x.count == newCount);
 
-                if (Obj != null)
-                {
-                    Result = "Данный заказ уже присутствует в списке";
+                //if (Obj != null)
+                //{
+                //    Result = "Данный заказ уже присутствует в списке";
 
-                    return Json(Result);
-                }
-                else
-                {
+                //    return Json(Result);
+                //}
+                //else
+                //{
                     var ObjEdit = db.customerData.FirstOrDefault(x => x.id == Convert.ToInt32(id));
                     ObjEdit.kitType = newKitType;
                     ObjEdit.latitude = newLatitude;
@@ -120,7 +130,7 @@ namespace EVRPMod.Controllers
                     ObjEdit.address = address;
                     db.SaveChanges();
                     Result = "Данные изменены";
-                }
+                //}
 
 
             }

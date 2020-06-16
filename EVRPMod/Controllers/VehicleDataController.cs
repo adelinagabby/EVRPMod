@@ -57,26 +57,36 @@ namespace EVRPMod.Controllers
             //    return Json(Result);
             //}
 
-
-            float capacity = string.IsNullOrEmpty(Capacity) ? 0 : float.Parse(Capacity.Replace(".", ","));
-            float serviceCost = string.IsNullOrEmpty(ServiceCost) ? 0 : float.Parse(ServiceCost.Replace(".", ","));
-            float costRoads = string.IsNullOrEmpty(CostRoads) ? 0 : float.Parse(CostRoads.Replace(".", ","));
-
+            float capacity = 0;
+            float serviceCost = 0;
+            float costRoads = 0;
             if (Result == "")
+                try
             {
-                if (capacity <= 0)
-                    Result = "Ошибка. Грузоподъемность должна быть больше нуля";
+                 capacity = string.IsNullOrEmpty(Capacity) ? 0 : float.Parse(Capacity.Replace(".", ","));
+                 serviceCost = string.IsNullOrEmpty(ServiceCost) ? 0 : float.Parse(ServiceCost.Replace(".", ","));
+                 costRoads = string.IsNullOrEmpty(CostRoads) ? 0 : float.Parse(CostRoads.Replace(".", ","));
+                if (Result == "")
+                {
+                    if (capacity <= 0)
+                        Result = "Ошибка. Грузоподъемность должна быть больше нуля";
+                }
+                if (Result == "")
+                {
+                    if (serviceCost <= 0)
+                        Result = "Ошибка. Обслуживание должно быть больше нуля";
+                }
+                if (Result == "")
+                {
+                    if (serviceCost <= 0)
+                        Result = "Ошибка. Стоимость платных дорог должна быть больше нуля";
+                }
             }
-            if (Result == "")
+            catch
             {
-                if (serviceCost <= 0)
-                    Result = "Ошибка. Обслуживание должно быть больше нуля";
+                return Json("Ошибка. Введено нечисловое значение");
             }
-            if (Result == "")
-            {
-                if (serviceCost <= 0)
-                    Result = "Ошибка. Стоимость платных дорог должна быть больше нуля";
-            }
+         
             if (Result == "")
             {
 
@@ -125,25 +135,36 @@ namespace EVRPMod.Controllers
             //{
 
             //}
-            float capacity = string.IsNullOrEmpty(newCapacity) ? 0 : float.Parse(newCapacity.Replace(".", ","));
-            float serviceCost = string.IsNullOrEmpty(newServiceCost) ? 0 : float.Parse(newServiceCost.Replace(".", ","));
-            float costRoads = string.IsNullOrEmpty(newCostRoads) ? 0 : float.Parse(newCostRoads.Replace(".", ","));
+            float capacity = 0;
+            float serviceCost = 0;
+            float costRoads = 0;
+            if (Result == "")
+                try
+                {
+                     capacity = string.IsNullOrEmpty(newCapacity) ? 0 : float.Parse(newCapacity.Replace(".", ","));
+                     serviceCost = string.IsNullOrEmpty(newServiceCost) ? 0 : float.Parse(newServiceCost.Replace(".", ","));
+                     costRoads = string.IsNullOrEmpty(newCostRoads) ? 0 : float.Parse(newCostRoads.Replace(".", ","));
+                    if (Result == "")
+                    {
+                        if (capacity <= 0)
+                            Result = "Ошибка. Грузоподъемность должна быть больше нуля";
+                    }
+                    if (Result == "")
+                    {
+                        if (serviceCost <= 0)
+                            Result = "Ошибка. Обслуживание должно быть больше нуля";
+                    }
+                    if (Result == "")
+                    {
+                        if (serviceCost <= 0)
+                            Result = "Ошибка. Стоимость платных дорог должна быть больше нуля";
+                    }
+                }
+                catch
+                {
+                    return Json("Ошибка. Введено нечисловое значение");
+                }
 
-            if (Result == "")
-            {
-                if (capacity <= 0)
-                    Result = "Ошибка. Грузоподъемность должна быть больше нуля";
-            }
-            if (Result == "")
-            {
-                if (serviceCost <= 0)
-                    Result = "Ошибка. Обслуживание должно быть больше нуля";
-            }
-            if (Result == "")
-            {
-                if (serviceCost <= 0)
-                    Result = "Ошибка. Стоимость платных дорог должна быть больше нуля";
-            }
             if (Result == "")
             {
                 //var Obj = db.vehicleData.FirstOrDefault(x => x.name == newName && x.capacity == newCapacity && x.serviceCost == newServiceCost && x.costRoads == newCostRoads);

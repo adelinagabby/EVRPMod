@@ -254,17 +254,22 @@ namespace EVRPMod.Controllers
             //for()
             //Coonew Coordinate
             //CoordinateAllAddress.Add(new Coordinate() {latitude = });
-
+             
             foreach (var item in DepotData)
             {
                 CoordinateDepot.Add(new Coordinate() { latitude = item.latitude, longitude = item.latitude });
             }
+            int orderAddress = -1;
             foreach (var item in CustomerData)
             {
-                CoordinateCustomer.Add(new Coordinate() { latitude = item.latitude, longitude = item.latitude });
+                if (orderAddress != item.orderAddress)
+                {
+                    CoordinateCustomer.Add(new Coordinate() { latitude = item.latitude, longitude = item.latitude });
+                    orderAddress = (int)item.orderAddress;
+                }
             }
 
-            CoordinateAndCountDepotAndCustomer CoordinateAndCount = new CoordinateAndCountDepotAndCustomer() { CoordinateDepot = CoordinateDepot, CoordinateCustomer = CoordinateCustomer, countDepot = DepotData.Count, countCustomer = CustomerData.Count };
+            CoordinateAndCountDepotAndCustomer CoordinateAndCount = new CoordinateAndCountDepotAndCustomer() { CoordinateDepot = CoordinateDepot, CoordinateCustomer = CoordinateCustomer, countDepot = DepotData.Count, countCustomer = CoordinateCustomer.Count };
 
             return Json(CoordinateAndCount);
         }
@@ -287,7 +292,7 @@ namespace EVRPMod.Controllers
         //    //{
         //    //    tmp = costWays[i];
         //    //    for (j = i - 1; j >= 0 && costWays[j] < tmp; --j) // поиск места элемента в готовой последовательности
-        //    //    {
+        //    //    {{
         //    //        costWays[j + 1] = costWays[j];    // сдвигаем элемент направо, пока не дошли 
         //    //    }
         //    //    costWays[j + 1] = tmp; // место найдено, вставить элемент
@@ -357,7 +362,7 @@ namespace EVRPMod.Controllers
                     MatrixRoadQuality[i] = new double[distanceMatrixBetweenCustomersAndDepots[0].Length];
                     MatrixAverageRoadIntensity[i] = new double[distanceMatrixBetweenCustomersAndDepots[0].Length];
 
-                    for (int j = 0; j < CustomerData.Count; j++)
+                    for (int j = 0; j < distanceMatrixBetweenCustomersAndDepots[0].Length- DepotData.Count; j++)
                     {
                         MatrixAverageSpeed[i][j] = AverageSpeedData.Where(x => x.rowTable == DepotData[i].orderAddress && x.columnTable == CustomerData[j].orderAddress).First().valueTable ?? 0;
                         MatrixRoadQuality[i][j] = RoadQualityData.Where(x => x.rowTable == DepotData[i].orderAddress && x.columnTable == CustomerData[j].orderAddress).First().valueTable ?? 0;
@@ -514,7 +519,27 @@ namespace EVRPMod.Controllers
 
                 }
                 //FindingShortestPaths(doubleDistanceMatrixBetweenCustomersAndDepots[k],db.depotData.Where(x=>x.orderInAlgoritm == k).First().id);
-                vehiclesOfDepots.Add(FindingShortestPaths(doubleDistanceMatrixBetweenCustomersAndDepots[k], DepotData[k].id));
+            
+
+                var CostData = db.costTable.ToList();
+                
+                    int countAddress = (int)Math.Sqrt(CostData.Count);
+
+                    double[][] CostTable = new double[countAddress][];
+
+                    for (int i = 0; i < countAddress; i++)
+                    {
+
+                        CostTable[i] = new double[countAddress];
+                        for (int j = 0; j < countAddress; j++)
+                        {
+
+                            CostTable[i][j] = Math.Round(CostData.Where(x => x.rowTable == i && x.columnTable == j).FirstOrDefault()?.valueTable ?? 0);
+                        }
+                    }
+
+                
+                vehiclesOfDepots.Add(FindingShortestPaths(doubleDistanceMatrixBetweenCustomersAndDepots[k], DepotData[k].id, CostTable));
 
             }
 
@@ -563,7 +588,7 @@ namespace EVRPMod.Controllers
             return vehiclesOfDepotNames;
         }
 
-        public VehiclesOfDepot FindingShortestPaths(double[][] distanceMatrixBetweenCustomersAndDepots, int depotId)
+        public VehiclesOfDepot FindingShortestPaths(double[][] distanceMatrixBetweenCustomersAndDepots, int depotId, double[][] CostTable)
         {
 
             EVRPModContext db = new EVRPModContext();
@@ -630,8 +655,49 @@ namespace EVRPMod.Controllers
 
 
             //нахождение общего пути от депо и по клиентам
-            int[] GeneralWayFromDepotToCustomers = new int[distanceMatrixBetweenCustomersAndDepots.Length];
+             int[] GeneralWayFromDepotToCustomers = new int[distanceMatrixBetweenCustomersAndDepots.Length];
             GeneralWayFromDepotToCustomers = GeneticAlgoritm.GeneticAlgorithm(distanceMatrixBetweenCustomersAndDepots, 10, 0);
+
+            //if (distanceMatrixBetweenCustomersAndDepots.Length < 50)
+            //{
+            //    int[] I = new int[distanceMatrixBetweenCustomersAndDepots.Length];
+            //    int[] J = new int[distanceMatrixBetweenCustomersAndDepots.Length];
+            //    // int[] shortWayVehicle = new int[distanceMatrixBetweenCustomersAndDepots.Length];
+
+            //    for (int i = 0; i < distanceMatrixBetweenCustomersAndDepots.Length; i++)
+            //    {
+            //        I[i] = int.MaxValue;
+            //        J[i] = int.MaxValue;
+            //    }
+
+
+            //    double[][] vehicleSpecificDistanceMatrixBranchAndBoundaryMethod = new double[distanceMatrixBetweenCustomersAndDepots.Length][];
+
+            //    for (int i = 0; i < vehicleSpecificDistanceMatrixBranchAndBoundaryMethod.Length; i++)
+            //    {
+            //        vehicleSpecificDistanceMatrixBranchAndBoundaryMethod[i] = new double[vehicleSpecificDistanceMatrixBranchAndBoundaryMethod.Length];
+            //        for (int j = 0; j < vehicleSpecificDistanceMatrixBranchAndBoundaryMethod.Length; j++)
+            //        {
+            //            if (distanceMatrixBetweenCustomersAndDepots[i][j] == 0)
+            //                vehicleSpecificDistanceMatrixBranchAndBoundaryMethod[i][j] = double.MaxValue;
+            //            else
+            //                vehicleSpecificDistanceMatrixBranchAndBoundaryMethod[i][j] = distanceMatrixBetweenCustomersAndDepots[i][j];
+            //        }
+            //    }
+
+            //    BranchAndBoundaryMethod.bestCostWayBranchAndBoundaryMethod = double.MaxValue;
+            //    BranchAndBoundaryMethod.flag = false;
+            //    I[0] = 0;
+
+            //    GeneralWayFromDepotToCustomers = BranchAndBoundaryMethod.Branch_And_Boundary_Method(vehicleSpecificDistanceMatrixBranchAndBoundaryMethod, I, J, GeneralWayFromDepotToCustomers);
+            //}
+            //else
+            //{
+            //    GeneralWayFromDepotToCustomers = GeneticAlgoritm.GeneticAlgorithm(distanceMatrixBetweenCustomersAndDepots, 10, 0);
+            //}
+
+
+
             //GeneralWayFromDepotToCustomers = BranchAndBoundaryMethod.Branch_And_Boundary_Method()
             int[] CustomersOrder = new int[distanceMatrixBetweenCustomersAndDepots.Length - 1];
 
@@ -767,86 +833,95 @@ namespace EVRPMod.Controllers
                     for (iVehicle = 0; iVehicle < tempVehiclesOrdering.Count; iVehicle++)
                     {
 
+
+
                         //сформировать матрицу расстояний для конктерного ТС
-                        
-                            int[] addressOrderForAlgorithm = new int[tempVehiclesOrdering[iVehicle].customersAndKits.Count + 1];
-                            addressOrderForAlgorithm[0] = 0;
-                            //цикл по клиентам
-                            for (int iCustomer = 0; iCustomer < tempVehiclesOrdering[iVehicle].customersAndKits.Count; iCustomer++)
-                            {
-                                addressOrderForAlgorithm[iCustomer + 1] = (int)db.customerData.Where(x => x.id == tempVehiclesOrdering[iVehicle].customersAndKits[iCustomer].Customer).First().orderInAlgoritm;
-                            }
 
-                            //формируем матрицу расстояний для конкретного iVehicle ТС
-                            //double[,] vehicleSpecificDistanceMatrix = new double[addressOrderForAlgorithm.Length, addressOrderForAlgorithm.Length];
-                            double[][] vehicleSpecificDistanceMatrix = new double[addressOrderForAlgorithm.Length][];
-                            double[][] vehicleCostRoadMatrix = new double[addressOrderForAlgorithm.Length][];
-
-                            for (int i = 0; i < addressOrderForAlgorithm.Length; i++)
-                            {
-                                vehicleSpecificDistanceMatrix[i] = new double[addressOrderForAlgorithm.Length];
-                                vehicleCostRoadMatrix[i] = new double[addressOrderForAlgorithm.Length];
-                                for (int j = 0; j < addressOrderForAlgorithm.Length; j++)
-                                {
-                                    vehicleSpecificDistanceMatrix[i][j] = distanceMatrixBetweenCustomersAndDepots[addressOrderForAlgorithm[i]][addressOrderForAlgorithm[j]];
-                                    vehicleCostRoadMatrix[i][j] = (int)db.costTable.Where(x => x.rowTable == addressOrderForAlgorithm[i] && x.columnTable == addressOrderForAlgorithm[j]).First().valueTable;
-                                }
-                            }
-
-                            int[] I = new int[addressOrderForAlgorithm.Length];
-                            int[] J = new int[addressOrderForAlgorithm.Length];
-                            int[] shortWayVehicle = new int[addressOrderForAlgorithm.Length];
-
-                        for (int i = 0; i < addressOrderForAlgorithm.Length; i++)
+                        int[] addressOrderForAlgorithm = new int[tempVehiclesOrdering[iVehicle].customersAndKits.Count + 1];
+                        addressOrderForAlgorithm[0] = 0;
+                        //цикл по клиентам
+                        for (int iCustomer = 0; iCustomer < tempVehiclesOrdering[iVehicle].customersAndKits.Count; iCustomer++)
                         {
-                            I[i] = int.MaxValue;
-                            J[i] = int.MaxValue;
+                            addressOrderForAlgorithm[iCustomer + 1] = (int)db.customerData.Where(x => x.id == tempVehiclesOrdering[iVehicle].customersAndKits[iCustomer].Customer).First().orderInAlgoritm;
                         }
 
+                        double costForSpecificVehicle = BranchAndBoundaryMethod.CostWayBranchAndBoundaryMethod(distanceMatrixBetweenCustomersAndDepots, addressOrderForAlgorithm) *
+                            vehicles.Where(x => x.VehicleId == tempVehiclesOrdering[iVehicle].Vehicle).First().serviceRoads;
+                        double costRoadForSpecificVehicle = BranchAndBoundaryMethod.CostWayBranchAndBoundaryMethod(CostTable, addressOrderForAlgorithm) *
+                             vehicles.Where(x => x.VehicleId == tempVehiclesOrdering[iVehicle].Vehicle).First().costRoads;
+                        //умножть на стоимость ТС
+                        costForPopulationOfVehicles += costForSpecificVehicle + costRoadForSpecificVehicle;
 
-                        
+                        //формируем матрицу расстояний для конкретного iVehicle ТС
+                        //double[,] vehicleSpecificDistanceMatrix = new double[addressOrderForAlgorithm.Length, addressOrderForAlgorithm.Length];
+                        //double[][] vehicleSpecificDistanceMatrix = new double[addressOrderForAlgorithm.Length][];
+                        //double[][] vehicleCostRoadMatrix = new double[addressOrderForAlgorithm.Length][];
+
+                        //for (int i = 0; i < addressOrderForAlgorithm.Length; i++)
+                        //{
+                        //    vehicleSpecificDistanceMatrix[i] = new double[addressOrderForAlgorithm.Length];
+                        //    vehicleCostRoadMatrix[i] = new double[addressOrderForAlgorithm.Length];
+                        //    for (int j = 0; j < addressOrderForAlgorithm.Length; j++)
+                        //    {
+                        //        vehicleSpecificDistanceMatrix[i][j] = distanceMatrixBetweenCustomersAndDepots[addressOrderForAlgorithm[i]][addressOrderForAlgorithm[j]];
+                        //        vehicleCostRoadMatrix[i][j] = (int)db.costTable.Where(x => x.rowTable == addressOrderForAlgorithm[i] && x.columnTable == addressOrderForAlgorithm[j]).First().valueTable;
+                        //    }
+                        //}
+
+                        //    int[] I = new int[addressOrderForAlgorithm.Length];
+                        //    int[] J = new int[addressOrderForAlgorithm.Length];
+                        //    int[] shortWayVehicle = new int[addressOrderForAlgorithm.Length];
+
+                        //for (int i = 0; i < addressOrderForAlgorithm.Length; i++)
+                        //{
+                        //    I[i] = int.MaxValue;
+                        //    J[i] = int.MaxValue;
+                        //}
 
 
-                        if (tempVehiclesOrdering[iVehicle].customersAndKits.Count > 1)
-                        {
 
-                            double[][] vehicleSpecificDistanceMatrixBranchAndBoundaryMethod = new double[vehicleSpecificDistanceMatrix.Length][];
 
-                            for (int i = 0; i < vehicleSpecificDistanceMatrixBranchAndBoundaryMethod.Length; i++)
-                            {
-                                vehicleSpecificDistanceMatrixBranchAndBoundaryMethod[i] = new double[vehicleSpecificDistanceMatrixBranchAndBoundaryMethod.Length];
-                                for (int j = 0; j < vehicleSpecificDistanceMatrixBranchAndBoundaryMethod.Length; j++)
-                                {
-                                    if (vehicleSpecificDistanceMatrix[i][j] == 0)
-                                        vehicleSpecificDistanceMatrixBranchAndBoundaryMethod[i][j] = double.MaxValue;
-                                    else
-                                        vehicleSpecificDistanceMatrixBranchAndBoundaryMethod[i][j] = vehicleSpecificDistanceMatrix[i][j];
-                                }
-                            }   
 
-                            BranchAndBoundaryMethod.bestCostWayBranchAndBoundaryMethod = double.MaxValue;
-                            BranchAndBoundaryMethod.flag = false;
-                            I[0] = 0;
+                        //if (tempVehiclesOrdering[iVehicle].customersAndKits.Count > 1)
+                        //{
 
-                            shortWayVehicle = BranchAndBoundaryMethod.Branch_And_Boundary_Method(vehicleSpecificDistanceMatrixBranchAndBoundaryMethod, I, J, shortWayVehicle);
-                           
-                            //shortWayVehicle = GeneticAlgoritm.GeneticAlgorithm(vehicleSpecificDistanceMatrix, 10);
-                        }
-                        else
-                        {
+                        //    double[][] vehicleSpecificDistanceMatrixBranchAndBoundaryMethod = new double[vehicleSpecificDistanceMatrix.Length][];
 
-                            shortWayVehicle[0] = 0;
-                            shortWayVehicle[0] = 1;
-                        }
+                        //    for (int i = 0; i < vehicleSpecificDistanceMatrixBranchAndBoundaryMethod.Length; i++)
+                        //    {
+                        //        vehicleSpecificDistanceMatrixBranchAndBoundaryMethod[i] = new double[vehicleSpecificDistanceMatrixBranchAndBoundaryMethod.Length];
+                        //        for (int j = 0; j < vehicleSpecificDistanceMatrixBranchAndBoundaryMethod.Length; j++)
+                        //        {
+                        //            if (vehicleSpecificDistanceMatrix[i][j] == 0)
+                        //                vehicleSpecificDistanceMatrixBranchAndBoundaryMethod[i][j] = double.MaxValue;
+                        //            else
+                        //                vehicleSpecificDistanceMatrixBranchAndBoundaryMethod[i][j] = vehicleSpecificDistanceMatrix[i][j];
+                        //        }
+                        //    }   
+
+                        //    BranchAndBoundaryMethod.bestCostWayBranchAndBoundaryMethod = double.MaxValue;
+                        //    BranchAndBoundaryMethod.flag = false;
+                        //    I[0] = 0;
+
+                        //    shortWayVehicle = BranchAndBoundaryMethod.Branch_And_Boundary_Method(vehicleSpecificDistanceMatrixBranchAndBoundaryMethod, I, J, shortWayVehicle);
+
+                        //    //shortWayVehicle = GeneticAlgoritm.GeneticAlgorithm(vehicleSpecificDistanceMatrix, 10);
+                        //}
+                        //else
+                        //{
+
+                        //    shortWayVehicle[0] = 0;
+                        //    shortWayVehicle[0] = 1;
+                        //}
                         //double costForSpecificVehicle = BranchAndBoundaryMethod.CostWayBranchAndBoundaryMethod(vehicleSpecificDistanceMatrix, shortWayVehicle);
                         // double costRoadForSpecificVehicle = BranchAndBoundaryMethod.CostWayBranchAndBoundaryMethod(vehicleCostRoadMatrix, shortWayVehicle)*
                         // vehicles.Where(x=>x.VehicleId == tempVehiclesOrdering[iVehicle].Vehicle).First().costRoads;
-                        double costForSpecificVehicle = BranchAndBoundaryMethod.CostWayBranchAndBoundaryMethod(vehicleSpecificDistanceMatrix, shortWayVehicle) *
-                              vehicles.Where(x => x.VehicleId == tempVehiclesOrdering[iVehicle].Vehicle).First().serviceRoads;
-                        double costRoadForSpecificVehicle = BranchAndBoundaryMethod.CostWayBranchAndBoundaryMethod(vehicleCostRoadMatrix, shortWayVehicle) *
-                            vehicles.Where(x => x.VehicleId == tempVehiclesOrdering[iVehicle].Vehicle).First().costRoads;
+                        //double costForSpecificVehicle = BranchAndBoundaryMethod.CostWayBranchAndBoundaryMethod(vehicleSpecificDistanceMatrix, shortWayVehicle) *
+                        //      vehicles.Where(x => x.VehicleId == tempVehiclesOrdering[iVehicle].Vehicle).First().serviceRoads;
+                        //double costRoadForSpecificVehicle = BranchAndBoundaryMethod.CostWayBranchAndBoundaryMethod(vehicleCostRoadMatrix, shortWayVehicle) *
+                        //    vehicles.Where(x => x.VehicleId == tempVehiclesOrdering[iVehicle].Vehicle).First().costRoads;
                         //умножть на стоимость ТС
-                        costForPopulationOfVehicles += costForSpecificVehicle + costRoadForSpecificVehicle;
+                        // costForPopulationOfVehicles += costForSpecificVehicle + costRoadForSpecificVehicle;
                     }
 
 
